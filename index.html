@@ -520,7 +520,8 @@
 <div aria-label="Visor de obras de Harold Lezcano" aria-modal="true" class="modal" hidden="" id="imageModal" role="dialog">
 <button aria-label="Cerrar visor" class="close-modal" onclick="closeModal()" type="button">×</button>
 <button aria-label="Obra anterior" class="nav-modal prev-modal" onclick="changeImg(-1)" type="button">❮</button>
-<img alt="Obra de Harold Lezcano" id="modalImg"/>
+<img alt="Obra de Harold Lezcano" draggable="false" id="modalImg"/>
+<div aria-live="polite" class="modal-counter" id="modalCounter"></div>
 <button aria-label="Obra siguiente" class="nav-modal next-modal" onclick="changeImg(1)" type="button">❯</button>
 </div>
 <!-- LÓGICA FINANCIERA Y CONVERSIÓN EN VIVO -->

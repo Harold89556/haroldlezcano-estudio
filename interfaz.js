@@ -508,14 +508,14 @@
         
         document.querySelectorAll('.gallery-item').forEach(i => {
             if(i.classList.contains(cat)) {
-                i.style.display = 'block';
+                i.style.display = '';
                 i.classList.add('show');
             } else {
-                i.style.display = 'none';
+                i.style.display = '';
                 i.classList.remove('show');
             }
         });
-        document.getElementById('mainGallery').scrollLeft = 0;
+        document.getElementById('mainGallery').scrollTop = 0;
         document.querySelector('#vista-hojas .btn-volver').focus();
         
         setRoute('#galeria/'+cat);
@@ -530,86 +530,122 @@
 
     let currentImages = [];
     let currentIndex = 0;
-    let touchstartX = 0;
-    let isDragging = false;
     const modal = document.getElementById('imageModal');
     const modalImg = document.getElementById('modalImg');
+    const visor = { scale: 1, x: 0, y: 0, pointers: new Map(), startDist: 0, startScale: 1, startX: 0, startY: 0, baseX: 0, baseY: 0, swipeX: 0, lastTap: 0, moved: false };
 
-    function openModal(s) { 
-        let items = document.querySelectorAll('.gallery-item.show img');
-        currentImages = Array.from(items).map(img => img.src);
-        currentIndex = currentImages.indexOf(s);
-        if(currentIndex === -1) currentIndex = 0;
-        
-        modalImg.style.transition = 'none';
-        modalImg.style.transform = 'translateX(0px)';
-        modalImg.src = currentImages[currentIndex];
-        window.focoAnterior = document.activeElement;
-        modalImg.alt = document.querySelectorAll('.gallery-item.show img')[currentIndex]?.alt || 'Obra de Harold Lezcano';
-        modal.style.display = 'flex';
-        modal.hidden=false; document.querySelector('.close-modal').focus(); 
-        
-        setRoute('#galeria/'+window.albumActual+'/'+(currentIndex+1));
+    function aplicarVisor(anim) {
+        modalImg.style.transition = anim ? 'transform 0.25s ease-out' : 'none';
+        modalImg.style.transform = `translate(${visor.x + visor.swipeX}px, ${visor.y}px) scale(${visor.scale})`;
+        modal.classList.toggle('zoomed', visor.scale > 1.01);
     }
-    
+    function resetZoom(anim) { visor.scale = 1; visor.x = 0; visor.y = 0; visor.swipeX = 0; aplicarVisor(anim); }
+    function limitarPan() {
+        const w = modalImg.offsetWidth * visor.scale, h = modalImg.offsetHeight * visor.scale;
+        const mx = Math.max(0, (w - window.innerWidth) / 2), my = Math.max(0, (h - window.innerHeight) / 2);
+        visor.x = Math.min(mx, Math.max(-mx, visor.x)); visor.y = Math.min(my, Math.max(-my, visor.y));
+    }
+    function fotosAlbum() { return Array.from(document.querySelectorAll('.gallery-item.show img')); }
+    function mostrarFoto() {
+        const imgs = fotosAlbum();
+        modalImg.src = currentImages[currentIndex];
+        modalImg.alt = imgs[currentIndex]?.alt || 'Obra de Harold Lezcano';
+        const contador = document.getElementById('modalCounter');
+        if (contador) contador.textContent = (currentIndex + 1) + ' / ' + currentImages.length;
+        if (currentImages.length > 1) { const pre = new Image(); pre.src = currentImages[(currentIndex + 1) % currentImages.length]; const pre2 = new Image(); pre2.src = currentImages[(currentIndex - 1 + currentImages.length) % currentImages.length]; }
+    }
+
+    function openModal(s) {
+        currentImages = fotosAlbum().map(img => img.src);
+        currentIndex = currentImages.indexOf(s);
+        if (currentIndex === -1) currentIndex = 0;
+        resetZoom(false);
+        mostrarFoto();
+        if (modal.hidden || modal.style.display === 'none') window.focoAnterior = document.activeElement;
+        modal.style.display = 'flex';
+        modal.hidden = false;
+        document.body.classList.add('visor-abierto');
+        document.querySelector('.close-modal').focus();
+        setRoute('#galeria/' + window.albumActual + '/' + (currentIndex + 1));
+    }
+
     function closeModal() {
-        modal.style.display='none'; modal.hidden=true;
-        if(window.focoAnterior) window.focoAnterior.focus();
-        setRoute('#galeria/'+(window.albumActual||'retrato'),true);
+        modal.style.display = 'none'; modal.hidden = true;
+        document.body.classList.remove('visor-abierto');
+        visor.pointers.clear(); resetZoom(false);
+        if (window.focoAnterior) window.focoAnterior.focus();
+        setRoute('#galeria/' + (window.albumActual || 'retrato'), true);
     }
 
     function changeImg(dir) {
         if (currentImages.length === 0) return;
-        
-        modalImg.style.transition = 'transform 0.3s ease-in-out';
-        modalImg.style.transform = `translateX(${dir * -100}vw)`;
-        
+        const ancho = window.innerWidth;
+        visor.scale = 1; visor.x = 0; visor.y = 0; visor.swipeX = -dir * ancho; aplicarVisor(true);
         setTimeout(() => {
-            currentIndex += dir;
-            if (currentIndex < 0) currentIndex = currentImages.length - 1;
-            if (currentIndex >= currentImages.length) currentIndex = 0;
-            
-            modalImg.style.transition = 'none';
-            modalImg.src = currentImages[currentIndex];
-            modalImg.alt=document.querySelectorAll('.gallery-item.show img')[currentIndex]?.alt || 'Obra de Harold Lezcano';
-            setRoute('#galeria/'+window.albumActual+'/'+(currentIndex+1),true);
-            modalImg.style.transform = `translateX(${dir * 100}vw)`;
-            
-            setTimeout(() => {
-                modalImg.style.transition = 'transform 0.3s ease-in-out';
-                modalImg.style.transform = 'translateX(0px)';
-            }, 50);
-        }, 300);
+            currentIndex = (currentIndex + dir + currentImages.length) % currentImages.length;
+            mostrarFoto();
+            setRoute('#galeria/' + window.albumActual + '/' + (currentIndex + 1), true);
+            visor.swipeX = dir * ancho; aplicarVisor(false);
+            requestAnimationFrame(() => requestAnimationFrame(() => { visor.swipeX = 0; aplicarVisor(true); }));
+        }, 220);
     }
 
-    modal.addEventListener('touchstart', e => { 
-        if(e.target === modalImg) {
-            touchstartX = e.changedTouches[0].screenX; 
-            isDragging = true;
-            modalImg.style.transition = 'none'; 
-        }
-    }, {passive: true});
+    function zoomEn(px, py, escala) {
+        const r = modal.getBoundingClientRect();
+        const cx = px - r.width / 2, cy = py - r.height / 2;
+        const f = escala / visor.scale;
+        visor.x = cx - (cx - visor.x) * f; visor.y = cy - (cy - visor.y) * f; visor.scale = escala;
+        limitarPan();
+    }
 
-    modal.addEventListener('touchmove', e => {
-        if(!isDragging) return;
-        const currentX = e.changedTouches[0].screenX;
-        const diff = currentX - touchstartX;
-        modalImg.style.transform = `translateX(${diff}px)`; 
-    }, {passive: true});
-    
-    modal.addEventListener('touchend', e => { 
-        if(!isDragging) return;
-        isDragging = false;
-        const touchendX = e.changedTouches[0].screenX; 
-        const diff = touchendX - touchstartX;
-        
-        if (diff < -60) { changeImg(1); } 
-        else if (diff > 60) { changeImg(-1); } 
-        else {
-            modalImg.style.transition = 'transform 0.3s ease-out';
-            modalImg.style.transform = 'translateX(0px)';
+    modal.addEventListener('click', e => { if (e.target === modal && !visor.moved) closeModal(); });
+    modalImg.addEventListener('dragstart', e => e.preventDefault());
+    modalImg.addEventListener('dblclick', e => { e.preventDefault(); if (visor.scale > 1.01) resetZoom(true); else { zoomEn(e.clientX, e.clientY, 2.5); aplicarVisor(true); } });
+    modal.addEventListener('wheel', e => { if (modal.hidden) return; e.preventDefault(); const s = Math.min(5, Math.max(1, visor.scale * (e.deltaY < 0 ? 1.15 : 0.87))); zoomEn(e.clientX, e.clientY, s); if (s === 1) resetZoom(true); else aplicarVisor(false); }, { passive: false });
+
+    modal.addEventListener('pointerdown', e => {
+        if (e.target.closest('button')) return;
+        visor.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        try { modal.setPointerCapture(e.pointerId); } catch (_) {}
+        if (visor.pointers.size === 1) { visor.moved = false; visor.startX = e.clientX; visor.startY = e.clientY; visor.baseX = visor.x; visor.baseY = visor.y; }
+        if (visor.pointers.size === 2) {
+            const [a, b] = [...visor.pointers.values()];
+            visor.startDist = Math.hypot(a.x - b.x, a.y - b.y) || 1; visor.startScale = visor.scale; visor.swipeX = 0; visor.moved = true;
         }
-    }, {passive: true});
+    });
+    modal.addEventListener('pointermove', e => {
+        if (!visor.pointers.has(e.pointerId)) return;
+        visor.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (visor.pointers.size >= 2) {
+            const [a, b] = [...visor.pointers.values()];
+            const s = Math.min(5, Math.max(1, visor.startScale * Math.hypot(a.x - b.x, a.y - b.y) / visor.startDist));
+            zoomEn((a.x + b.x) / 2, (a.y + b.y) / 2, s); aplicarVisor(false); return;
+        }
+        const dx = e.clientX - visor.startX, dy = e.clientY - visor.startY;
+        if (Math.abs(dx) > 6 || Math.abs(dy) > 6) visor.moved = true;
+        if (visor.scale > 1.01) { visor.x = visor.baseX + dx; visor.y = visor.baseY + dy; limitarPan(); }
+        else visor.swipeX = dx;
+        aplicarVisor(false);
+    });
+    function finPuntero(e) {
+        if (!visor.pointers.has(e.pointerId)) return;
+        visor.pointers.delete(e.pointerId);
+        if (visor.pointers.size === 1) { const p = [...visor.pointers.values()][0]; visor.startX = p.x; visor.startY = p.y; visor.baseX = visor.x; visor.baseY = visor.y; return; }
+        if (visor.pointers.size > 0) return;
+        if (visor.scale <= 1.01) {
+            const dx = visor.swipeX;
+            if (dx < -60 && currentImages.length > 1) { changeImg(1); return; }
+            if (dx > 60 && currentImages.length > 1) { changeImg(-1); return; }
+            resetZoom(true);
+        }
+        if (!visor.moved && e.pointerType !== 'mouse' && e.target === modalImg) {
+            const ahora = Date.now();
+            if (ahora - visor.lastTap < 300) { if (visor.scale > 1.01) resetZoom(true); else { zoomEn(e.clientX, e.clientY, 2.5); aplicarVisor(true); } visor.lastTap = 0; }
+            else visor.lastTap = ahora;
+        }
+    }
+    modal.addEventListener('pointerup', finPuntero);
+    modal.addEventListener('pointercancel', finPuntero);
 
     window.addEventListener('resize', calcular);
 

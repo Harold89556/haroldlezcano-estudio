@@ -373,3 +373,21 @@ button:disabled { opacity: .55; cursor: wait; }
 .admin-category-row small { display: block; }
 #pending-files p { overflow-wrap: anywhere; }
 @media(max-width:600px) { .admin-container { padding: 24px 14px; }.admin-number-row { display: block; }.admin-price-group { padding: 8px; }.admin-container h1 { font-size: 19px; } }
+
+/* Álbumes: nombre debajo de la portada; interior en dos columnas; visor con zoom. */
+.album-book { display:flex; flex-direction:column; align-items:stretch; justify-content:flex-start; aspect-ratio:auto; background:#141414; overflow:hidden; text-align:center; }
+.album-cover-img { position:static; display:block; width:100%; aspect-ratio:1; height:auto; object-fit:cover; background:#000; }
+.album-book:hover .album-cover-img { transform:none; }
+.album-title { background:none; border:0; border-radius:0; backdrop-filter:none; padding:12px 8px 2px; font-size:13px; letter-spacing:2px; color:#f2f2f2; overflow-wrap:anywhere; }
+.album-book:hover .album-title { color:#d4af37; }
+.album-count { color:#bbb; padding:0 8px 12px; }
+.hojas-container { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; overflow:visible; scroll-snap-type:none; padding:4px 0 40px; }
+.gallery-item { flex:none; height:auto; width:100%; aspect-ratio:1; scroll-snap-align:none; box-shadow:0 6px 16px rgba(0,0,0,.6); }
+.gallery-item.show { display:flex; flex-direction:column; animation:fadeIn .4s; }
+.gallery-item img { object-fit:cover; flex:1; min-height:0; }
+.gallery-caption { padding:6px; font-size:11px; }
+.modal { touch-action:none; overscroll-behavior:contain; }
+#modalImg { user-select:none; -webkit-user-select:none; will-change:transform; cursor:zoom-in; max-height:88vh; }
+.modal.zoomed #modalImg { cursor:grab; }
+.modal-counter { position:absolute; top:24px; left:20px; color:#ddd; font-size:13px; letter-spacing:1px; z-index:10001; }
+body.visor-abierto { overflow:hidden; }
