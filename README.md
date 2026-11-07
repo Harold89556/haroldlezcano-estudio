@@ -4,11 +4,11 @@ Sitio en HTML, CSS y JavaScript, en español de Paraguay. Mantiene el cotizador,
 
 ## Sitio y fotos de referencia
 
-El cotizador permite elegir hasta **5 imágenes de 8 MB cada una**, verlas y quitarlas, o pedir asesoramiento sin fotos. Acepta imágenes habituales (no SVG ni documentos). Las vistas previas son locales: todavía no se suben.
+El cotizador permite elegir hasta **5 imágenes de 8 MB cada una**, verlas y quitarlas, o pedir asesoramiento sin fotos. Acepta imágenes habituales (no SVG ni documentos). Las vistas previas son locales.
 
-Al pulsar **Consultar por WhatsApp**, se suben primero a Storage en `referencias/{fecha_uuid}/{uuid_nombre}`. Se agregan los enlaces HTTPS al mensaje, que el cliente revisa y envía en WhatsApp. `wa.me` no adjunta archivos. Si falla la carga, se conserva la selección y **no se abre un mensaje sin esas imágenes**. Los enlaces ya obtenidos se reutilizan al reintentar dentro de la misma página. Hay un enlace alternativo si el navegador bloquea la ventana.
+Al pulsar **Consultar por WhatsApp** en un celular, el navegador comparte el mensaje y las fotos adjuntas (Web Share), para enviarlas por WhatsApp. El enlace `wa.me` no puede adjuntar archivos; por eso, si el navegador no permite compartir archivos (suele pasar en la computadora), se abre el chat con el pedido y el cliente envía las fotos en ese mismo chat. Hay un botón **Compartir fotos por WhatsApp** cuando el navegador sí puede adjuntarlas, y un enlace alternativo si hace falta reabrir el chat.
 
-**Privacidad:** las referencias no se incorporan a la galería. Son públicas para quien tenga el enlace; no deben cargarse documentos ni información sensible. Quitar una vista previa no borra un archivo ya subido. El administrador puede borrar referencias desde Storage. Se recomienda definir un plazo de retención y limpiar cargas abandonadas.
+**Privacidad:** las referencias no se incorporan a la galería ni se suben a Storage. Van solo al chat de WhatsApp que el cliente envía.
 
 ## Galería y administración
 

@@ -248,7 +248,7 @@
         .wa-btn {
             background: rgba(10,10,10,0.8); color: #aaa; padding: 10px 15px; border-radius: 8px; 
             text-decoration: none; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
-            border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px;
+            border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-family: inherit;
         }
         .wa-btn:hover { border-color: #d4af37; color: #fff; background: rgba(212,175,55,0.1); }
         .wa-btn i { color: #d4af37; font-size: 14px; }
@@ -334,6 +334,7 @@ input, select, textarea { font-size:16px; }
 /* Carga de referencias y administración: misma paleta del estudio. */
 [hidden] { display: none !important; }
 .reference-upload { margin-top: 16px; }
+.reference-upload .wa-btn { margin: 8px 8px 0 0; }
 .upload-help, #referencias-estado, .admin-container p, .admin-container small { color: #c8c8c8; font-size: 12px; line-height: 1.7; }
 .upload-previews { display: grid; grid-template-columns: repeat(auto-fill,minmax(110px,1fr)); gap: 10px; margin: 16px 0; }
 .upload-preview { padding: 8px; background: rgba(0,0,0,.4); border: 1px solid #444; border-radius: 10px; min-width: 0; }

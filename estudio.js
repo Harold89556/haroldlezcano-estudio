@@ -15,6 +15,31 @@
  const status = text => { $('referencias-estado').textContent = text; };
  const photoChoice = $('fotos_referencia');
  const picker = $('referencias_archivos');
+ const shareBtn = $('referencias-compartir');
+ const hideWhatsAppActions = () => { $('whatsapp-continuar').hidden = true; shareBtn.hidden = true; };
+ function referenceFiles() {
+  return references.map((item, n) => {
+   const raw = (item.file.name.split('.').pop() || 'jpg').toLowerCase();
+   const ext = /^[a-z0-9]{1,5}$/.test(raw) ? raw : 'jpg';
+   return new File([item.file], 'referencia-' + (n + 1) + '.' + ext, { type: item.file.type || 'image/jpeg' });
+  });
+ }
+ function canSharePhotos(files, text) {
+  try { return !!(files.length && navigator.canShare && navigator.canShare({ files, text })); }
+  catch { return false; }
+ }
+ function withPhotoNote(text) {
+  if (!references.length) return text;
+  return text + '\n📸 Te envío ' + (references.length === 1 ? 'la foto de referencia' : 'las ' + references.length + ' fotos de referencia') + ' en este chat.\n';
+ }
+ function whatsappUrl(message) {
+  return 'https://wa.me/' + window.sitioActual.whatsapp + '?text=' + encodeURIComponent(message);
+ }
+ function revealWhatsApp(url, allowShare) {
+  $('whatsapp-continuar').href = url;
+  $('whatsapp-continuar').hidden = false;
+  shareBtn.hidden = !allowShare;
+ }
  window.sitioActual = data.clone(defaults.sitio);
  let seed = [...document.querySelectorAll('#mainGallery .gallery-item')].map((button, order) => ({
   id: button.dataset.galleryId, category:[...button.classList].find(c => c !== 'gallery-item'),
@@ -31,7 +56,7 @@
    const label = document.createElement('span');label.textContent=item.file.name;
    const remove = document.createElement('button');remove.type='button';remove.textContent='Quitar';remove.disabled=uploading;
    remove.setAttribute('aria-label', 'Quitar ' + item.file.name);
-   remove.onclick = () => { URL.revokeObjectURL(item.preview); references=references.filter(r=>r!==item); renderPreviews(); $('whatsapp-continuar').hidden=true; status('Imagen quitada.'); };
+   remove.onclick = () => { URL.revokeObjectURL(item.preview); references=references.filter(r=>r!==item); renderPreviews(); hideWhatsAppActions(); status('Imagen quitada.'); };
    card.append(img,label,remove);$('referencias-previews').append(card);
   });
  }
@@ -47,11 +72,11 @@
   }
   picker.value='';
   if (references.length) photoChoice.value='Sí, quiero cargar fotos de guía';
-  $('whatsapp-continuar').hidden=true;
-  renderPreviews();status(errors.join(' ') || 'Fotos listas para subir al continuar por WhatsApp.');
+  hideWhatsAppActions();
+  renderPreviews();status(errors.join(' ') || 'Fotos listas. Al continuar, en el celular se adjuntan al mensaje de WhatsApp.');
  });
  photoChoice.addEventListener('change', () => {
-  $('whatsapp-continuar').hidden=true;
+  hideWhatsAppActions();
   if (references.length && photoChoice.value==='No, necesito asesoramiento') {
    photoChoice.value='Sí, quiero cargar fotos de guía';
    status('Si preferís pedir asesoramiento sin fotos, quitá primero las imágenes seleccionadas.');
@@ -63,39 +88,54 @@
    errorCampo('fotos_referencia','Cargá al menos una imagen o elegí que necesitás asesoramiento.');picker.focus();return;
   }
   const text = prepararMensajeObra();if (!text) return;
-  let target;
-  let message = text;
-  // Abrir una ventana en el gesto del usuario evita el bloqueo tras el await.
-  if (references.length) {
-   target = window.open('about:blank','_blank');
-   if (target) { target.opener=null;target.document.title='Preparando fotos de referencia';target.document.body.textContent='Subiendo fotos de referencia. El mensaje de WhatsApp se abrirá al terminar.'; }
-   uploading=true;lockQuote(true);renderPreviews();
-   try {
-    status('Conectando el servicio de carga… Tus fotos siguen seleccionadas.');
-    const api = await firebase();
-    await api.getServices();
-    const batch = Date.now() + '_' + api.newId();
-    for (const [n,item] of references.entries()) {
-     if (!item.url) {
-      // Un intento fallido usa otra ruta: no se permite sobrescribir referencias públicas.
-      item.path='referencias/'+batch+'/'+api.newId()+'_'+api.safeName(item.file.name);
-      item.url=await api.uploadImage(item.file,item.path,p=>status('Subiendo foto '+(n+1)+' de '+references.length+': '+p+'%'));
-     }
-    }
-    message += '\n📸 *Enlaces de las fotos de referencia:*\n' + references.map((item,n)=>(n+1)+'. '+item.url).join('\n') + '\n';
-   } catch (error) {
-    if (target) target.close();
-    const api = await firebase().catch(()=>null);
-    status('No pudimos completar la carga. El servicio se está conectando o no está disponible. Tus fotos siguen seleccionadas; no se abrió WhatsApp sin ellas. ' + (api?.explainError(error) || 'Revisá tu conexión y volvé a intentar.'));
-    return;
-   } finally { uploading=false;lockQuote(false);renderPreviews(); }
+  const message = withPhotoNote(text);
+  const url = whatsappUrl(message);
+  if (!references.length) {
+   revealWhatsApp(url, false);
+   status('Revisá el mensaje en WhatsApp antes de enviarlo.');
+   window.open(url,'_blank','noopener,noreferrer');
+   return;
   }
-  const url='https://wa.me/'+window.sitioActual.whatsapp+'?text='+encodeURIComponent(message);
-  $('whatsapp-continuar').href=url;$('whatsapp-continuar').hidden=false;
-  status(references.length ? 'Fotos cargadas. Revisá el mensaje en WhatsApp antes de enviarlo. Si no se abrió, usá el enlace de abajo.' : 'Revisá el mensaje en WhatsApp antes de enviarlo.');
-  if (target) target.location.replace(url);else window.open(url,'_blank','noopener,noreferrer');
+  const files = referenceFiles();
+  const sharable = canSharePhotos(files, message);
+  if (sharable) {
+   try {
+    await navigator.share({ files, text: message });
+    revealWhatsApp(url, true);
+    status('Revisá el mensaje en WhatsApp antes de enviarlo. Si no se adjuntaron las fotos, usá «Compartir fotos» o el enlace de abajo.');
+    return;
+   } catch (error) {
+    if (error && error.name === 'AbortError') {
+     revealWhatsApp(url, true);
+     status('No se envió. Si cancelaste, podés compartir las fotos de nuevo o abrir el chat de WhatsApp.');
+     return;
+    }
+   }
+  }
+  revealWhatsApp(url, sharable);
+  status(sharable
+   ? 'Se abre WhatsApp con el pedido. Si las fotos no se adjuntaron, usá «Compartir fotos».'
+   : 'Se abre WhatsApp con el pedido. En esta computadora el chat no puede adjuntar las fotos: envialas en el mismo chat después de abrir el mensaje.');
+  window.open(url,'_blank','noopener,noreferrer');
  };
- for(const event of ['input','change']) $('tab-cotizacion').addEventListener(event,()=>{$('whatsapp-continuar').hidden=true;});
+ shareBtn.addEventListener('click', async () => {
+  if (uploading || !references.length) return;
+  const text = prepararMensajeObra();if (!text) return;
+  const message = withPhotoNote(text);
+  const files = referenceFiles();
+  if (!canSharePhotos(files, message)) {
+   status('Este navegador no puede adjuntar las fotos. Abrí el chat y envialas ahí.');
+   return;
+  }
+  try {
+   await navigator.share({ files, text: message });
+   status('Revisá el mensaje en WhatsApp antes de enviarlo.');
+  } catch (error) {
+   if (error && error.name === 'AbortError') status('No se envió. Si cancelaste, podés intentar de nuevo.');
+   else status('No se pudieron compartir las fotos. Abrí el chat de WhatsApp y envialas ahí.');
+  }
+ });
+ for(const event of ['input','change']) $('tab-cotizacion').addEventListener(event,()=>{hideWhatsAppActions();});
  function applySite(config) {
   window.sitioActual=data.validateSite(config);
   for (const el of document.querySelectorAll('[data-setting]')) {

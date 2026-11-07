@@ -71,18 +71,41 @@ let base;
   const {page,context}=await session();await quote(page);await page.selectOption('#fotos_referencia','Sí, quiero cargar fotos de guía');await page.click('#enviar-obra');assert.match(await page.textContent('#error-fotos_referencia'),/al menos/);
   await page.setInputFiles('#referencias_archivos',Array.from({length:6},(_,n)=>photo(n+'.png')));assert.equal(await page.locator('.upload-preview').count(),5);assert.match(await page.textContent('#referencias-estado'),/hasta 5/);await context.close();
  });
- await test('WhatsApp contiene solo enlaces HTTPS tras subir referencias',async()=>{
+ await test('WhatsApp con fotos no sube a Storage y avisa que van en el chat',async()=>{
   const {page,context}=await session();await quote(page);await page.setInputFiles('#referencias_archivos',[photo('guía.png'),photo('otra.png')]);await page.click('#enviar-obra');await page.waitForFunction(()=>window.__opened.length===1);
-  const state=await page.evaluate(()=>window.__mock);assert.equal(state.uploads.length,2);assert.ok(state.uploads.every(u=>u.path.startsWith('referencias/')));
-  const link=await page.evaluate(()=>window.__opened[0]);const text=new URL(link).searchParams.get('text');for(const upload of state.uploads)assert.ok(text.includes(upload.url));assert.match(text,/700.000/);assert.equal(await page.locator('#whatsapp-continuar').isVisible(),true);await context.close();
+  const state=await page.evaluate(()=>window.__mock);assert.equal(state.uploads.length,0);
+  const link=await page.evaluate(()=>window.__opened[0]);const text=new URL(link).searchParams.get('text');
+  assert.match(text,/fotos de referencia/);assert.match(text,/700.000/);assert.ok(!/example\.com/.test(text));
+  assert.equal(await page.locator('#whatsapp-continuar').isVisible(),true);
+  assert.equal(await page.locator('#referencias-compartir').isHidden(),true);await context.close();
  });
- await test('Carga fallida conserva selección y bloquea apertura sin fotos',async()=>{
-  const {page,context}=await session({failUpload:true});await quote(page);await page.setInputFiles('#referencias_archivos',photo());await page.click('#enviar-obra');await page.waitForFunction(()=>window.__mock.closed);
-  assert.equal(await page.locator('.upload-preview').count(),1);assert.match(await page.textContent('#referencias-estado'),/siguen seleccionadas/);assert.deepEqual(await page.evaluate(()=>window.__opened),[]);assert.equal(await page.locator('#enviar-obra').isEnabled(),true);await context.close();
+ await test('En el celular comparte las fotos sin abrir un chat vacío',async()=>{
+  const {page,context}=await session();
+  await page.addInitScript(()=>{
+   window.__shared=[];
+   navigator.canShare=data=>!!(data&&data.files&&data.files.length);
+   navigator.share=async data=>{window.__shared.push({files:[...data.files].map(f=>f.name),text:data.text});};
+  });
+  await quote(page);await page.setInputFiles('#referencias_archivos',[photo('guía.png'),photo('otra.png')]);await page.click('#enviar-obra');
+  await page.waitForFunction(()=>window.__shared&&window.__shared.length===1);
+  assert.deepEqual(await page.evaluate(()=>window.__opened),[]);
+  assert.equal(await page.evaluate(()=>window.__mock.uploads.length),0);
+  const shared=await page.evaluate(()=>window.__shared[0]);
+  assert.deepEqual(shared.files,['referencia-1.png','referencia-2.png']);
+  assert.match(shared.text,/700.000/);assert.match(shared.text,/fotos de referencia/);
+  assert.equal(await page.locator('#referencias-compartir').isVisible(),true);await context.close();
  });
- await test('Reintento no vuelve a subir archivos ya enlazados',async()=>{
-  const {page,context}=await session({failAt:2});await quote(page);await page.setInputFiles('#referencias_archivos',[photo('primera.png'),photo('segunda.png')]);await page.click('#enviar-obra');await page.waitForFunction(()=>window.__mock.closed);await page.click('#enviar-obra');await page.waitForFunction(()=>window.__opened.length===1);
-  const state=await page.evaluate(()=>window.__mock);assert.equal(state.uploadAttempts,3);assert.equal(state.uploads.length,2);await context.close();
+ await test('Si se cancela el compartir no se abre WhatsApp sin las fotos',async()=>{
+  const {page,context}=await session();
+  await page.addInitScript(()=>{
+   navigator.canShare=()=>true;
+   navigator.share=async()=>{const error=new Error('Share canceled');error.name='AbortError';throw error;};
+  });
+  await quote(page);await page.setInputFiles('#referencias_archivos',photo());await page.click('#enviar-obra');
+  await page.waitForFunction(()=>/cancelaste|No se envió/.test(document.getElementById('referencias-estado').textContent));
+  assert.deepEqual(await page.evaluate(()=>window.__opened),[]);
+  assert.equal(await page.locator('.upload-preview').count(),1);
+  assert.equal(await page.locator('#enviar-obra').isEnabled(),true);await context.close();
  });
  await test('Mezcla pública preserva semilla, agrega categoría y trata textos como texto',async()=>{
   const {page,context}=await session({config:{categorias:{items:[{id:'nuevo',name:'Categoría de prueba'}]}},gallery:[{id:'nueva',url:'https://example.com/foto.png',category:'nuevo',order:180,caption:'<img src=x onerror=alert(1)>',cover:true,hidden:false},{id:'seed-001',url:'https://example.com/original.png',category:'retrato',caption:'',order:0,cover:false,hidden:true}]});
