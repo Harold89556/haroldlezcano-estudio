@@ -91,7 +91,7 @@ function renderGallery() {
    await persistItem({...item,category:cat.value,caption:caption.value.trim(),order:n,cover:cover.checked,hidden:hidden.checked});
    renderGallery();say('Foto actualizada.');
   },text=>{note.textContent=text;});};
-  if(!item.id.startsWith('seed-')) {
+  if(!item.id.startsWith('seed-') && !item.id.startsWith('ig-')) {
    const remove=document.createElement('button');remove.type='button';remove.className='admin-danger';remove.textContent='Eliminar foto';
    remove.onclick=()=>action(card,async()=>{
     if(!confirm('¿Eliminar definitivamente esta foto de la galería y su archivo?')) return;
@@ -148,6 +148,13 @@ async function loadWorkspace() {
  try {
   const response=await fetch('./galeria-seed.json');if(!response.ok) throw Error('No se pudo leer la galería original.');
   seed=await response.json();
+  try {
+   const extraRes=await fetch('./galeria-ig.json');
+   if(extraRes.ok){
+    const extra=await extraRes.json();
+    if(Array.isArray(extra)) seed=D.mergeGallery(seed,extra);
+   }
+  } catch { /* Si no carga el catálogo de Instagram, se editan solo las 152 originales. */ }
   // Si falla una lectura, no habilitar un formulario con valores por defecto que
   // pudiera sobrescribir una configuración existente por accidente.
   const [p,s,c,remote]=await Promise.all([api.readConfig('precios'),api.readConfig('sitio'),api.readConfig('categorias'),api.readGallery()]);
