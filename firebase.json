@@ -19,7 +19,9 @@
       "README.md",
       "CAMBIOS.md",
       "resultados-*.json",
-      "firebase-config.example.js"
+      "firebase-config.example.js",
+      "supabase/**",
+      "supabase-config.example.js"
     ],
     "headers": [
       {

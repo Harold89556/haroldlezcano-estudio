@@ -12,9 +12,9 @@ Al pulsar **Consultar por WhatsApp** en un celular, el navegador comparte el men
 
 ## Galería y administración
 
-`/admin.html` es el back-office del estudio. Usa Firebase Auth con correo/contraseña y sesión limitada al navegador. Solo **henro89@gmail.com con correo verificado** puede editar; la restricción se aplica también en las reglas, no solo en la pantalla. No hay registro público de administradores. Recuperación y verificación de correo tienen confirmación previa.
+`/admin.html` es el back-office del estudio. Usa Firebase Auth con correo/contraseña y sesión limitada al navegador. Solo **henro89@gmail.com con correo verificado** puede editar; la restricción se aplica también en las reglas, no solo en la pantalla. No hay registro público de administradores. Recuperación y verificación de correo tienen confirmación previa. Ingresar con la misma cuenta y contraseña ya guardada del administrador: después de Firebase, el panel abre la sesión de Supabase con esa contraseña. En el primer ingreso crea el usuario de Supabase; el trigger existente solo permite y confirma `henro89@gmail.com`. No hay una página de alta pública. Supabase conserva su sesión y renueva tokens; al salir se cierran ambas sesiones. Si venció la sesión de fotos, salir y entrar nuevamente. Si se cambia/restablece la contraseña en Firebase después de crear el usuario de Supabase, hay que actualizar también la de Supabase: son proveedores independientes, no una sincronización de contraseñas.
 
-- Fotos: subir hasta 10 por carga, asignar categoría, agregar texto opcional escrito por Harold, ordenar, cambiar portada u ocultar. Las nuevas fotos se pueden borrar de Firestore y Storage. Las originales se ocultan mediante un registro de modificación, sin borrar Postimg ni el archivo semilla. El panel muestra archivos pendientes si una carga/borrado no pudo completarse.
+- Fotos: subir hasta 10 por carga, asignar categoría, agregar texto opcional escrito por Harold, ordenar, cambiar portada u ocultar. Las fotos NUEVAS se suben a **Supabase Storage**, bucket público `fotos`, proyecto exclusivo `harold-lezcano-estudio` (`fbeihokebuekvqsfvnjv`), en el plan gratuito: no hace falta Firebase Storage ni Blaze. Se aceptan JPG, PNG, WEBP, GIF y AVIF de hasta 8 MB; convertir HEIC/HEIF/BMP/TIFF antes de subir. La metadata sigue en Firestore; se pueden borrar documento y archivo de Supabase. Las 152 originales y el catálogo de Instagram siguen con sus URLs y archivos actuales del sitio; solo se ocultan o recategorizan, sin borrar `seed-*` ni `ig-*`. El panel muestra archivos pendientes si una carga/borrado no pudo completarse.
 - Categorías: crear y cambiar nombres conservando identificadores y enlaces.
 - Precios: formularios numéricos para toda `MATRIZ_PRECIOS` (óleo, carbonilla, extras y marcos), `ESCULTURA_TIPOS` (Busto, Medio cuerpo, Figura completa, Relieve), factores, restauración, tarjeta, IVA, seña, cuotas, cambio de respaldo y cursos. Persisten en **`config/precios`**. El público usa esa configuración si es válida y, si falta o no responde Firebase, los valores originales de `estudio-datos.js`. El panel bloquea la edición si no pudo leer datos existentes para evitar sobrescribirlos por accidente. Las páginas públicas leen cambios al abrir/recargar.
 - Textos y contacto: WhatsApp, mapa, biografía, introducción y contenido existente de cursos, dirección y condiciones. Guardados en **`config/sitio`**, como texto sin HTML. No se generan títulos de obras ni testimonios.
@@ -27,29 +27,31 @@ El óleo realista 30×40/40×30 parte de **700.000 ₲**. Murales siempre **A co
 - `estudio-datos.js`: valores originales y validadores compartidos.
 - `estudio.js`: selección, vistas previas, carga y mezcla de galería.
 - `firebase-config.js`: configuración **pública** de la app web del proyecto `harold-lezcano-estudio`; no es una clave privada. `firebase-config.example.js` sirve de plantilla.
-- `firebase-client.js`: SDK modular oficial, cargado a demanda desde CDN. Sin dependencias de producción de npm.
+- `firebase-client.js`: conserva la API del administrador; Firebase Auth + Firestore y cliente Supabase oficial cargados a demanda desde CDN. Sin Firebase Storage ni dependencias de producción de npm.
+- `supabase-config.js`: URL y clave **pública publishable**, no una clave secreta; plantilla en `supabase-config.example.js`. Nunca incluir claves de servidor.
+- `supabase/schema.sql`: documentación del esquema existente verificado (admins, RLS, bucket, funciones y trigger). No es una migración pendiente ni debe ejecutarse sobre otro proyecto.
 - `admin.html`, `admin.js`: back-office.
 - `galeria-seed.json`: las mismas **152 fotos**, con IDs estables `seed-001`…`seed-152`, sin inventar títulos. El HTML conserva también las imágenes como respaldo. `galeria/{id}` se mezcla sobre la semilla: nuevas fotos se suman y registros con ID de semilla pueden recategorizar/ocultar sin duplicar.
 - `config/categorias`: `{items:[{id,name}]}`. `galeria/{id}`: `{url,category,caption,alt,order,cover,hidden,storagePath}`.
-- `firebase.json`, `firestore.rules`, `storage.rules`, `firestore.indexes.json`: Hosting, Firestore y Storage preparados. Los archivos de trabajo, pruebas, originales y volcados de Instagram no se sirven desde Hosting.
+- `firebase.json`, `firestore.rules`, `firestore.indexes.json`: Hosting y Firestore. `storage.rules` y sus pruebas de emulador son legado, no se usan ni se despliegan para estas cargas. Los archivos de trabajo, pruebas, SQL, originales y volcados de Instagram no se sirven desde Hosting.
 
-## Activación pendiente (no realizada por este cambio)
+## Servicios y publicación
 
-1. En el proyecto existente **harold-lezcano-estudio**, habilitar Firestore en modo nativo compatible con SDK Firebase, preferentemente **southamerica-east1** si todavía no fue creado; comprobar disponibilidad antes de elegir. No se ha creado ni seleccionado una base desde este repositorio.
-2. Habilitar Storage para `harold-lezcano-estudio.firebasestorage.app`. Confirmar requisitos vigentes de plan/facturación antes de activar servicios; no se aceptaron condiciones ni se contrataron servicios.
-3. Habilitar **Email/Password**, crear previamente la cuenta administradora, definir su contraseña de forma privada y **verificar su correo**. Autorizar los dominios de Hosting necesarios en Auth. No guardar contraseñas en GitHub.
-4. Revisar y probar las reglas en emuladores. Storage permite lectura individual pública; referencias permite solo **crear** imágenes de hasta 8 MB, nunca sobrescribir, listar públicamente ni borrar sin administrador. Otras rutas quedan denegadas. Galería y configuración solo admiten escrituras del administrador verificado.
-5. Antes de abrir al público, evaluar **App Check, monitoreo, alertas de consumo y limpieza de referencias**. El límite de 5 archivos es del navegador, no un límite global. Las reglas por sí solas no pueden impedir cargas automatizadas ilimitadas ni verificar el contenido real de un archivo más allá de su MIME y tamaño. Para cuotas por usuario/IP o validación profunda se necesita un backend. La lectura pública por enlace es una decisión explícita para WhatsApp.
-6. Cuando se autorice el despliegue: `npx -y firebase-tools@latest deploy --only hosting,firestore:rules,storage --project harold-lezcano-estudio`. El sitio de Hosting configurado es `harold-lezcano-estudio`, previsto en `https://harold-lezcano-estudio.web.app/`. **No se ejecutó deploy, selección/creación de proyecto ni aceptación de condiciones.** No hace falta sembrar Firestore para mostrar las fotos originales; guardar desde el panel crea solo los documentos necesarios.
-7. Comprobar en producción una carga, apertura/revisión del mensaje, acceso administrador y cambios de precio/galería. Solo después, cambiar Neocities para que sea la entrada al nuevo sitio.
+Firebase Auth (Email/Password, administrador verificado) y Firestore mantienen el acceso y la metadata. Supabase del estudio ya tiene el bucket público `fotos`, límite de 8 MB y MIME de imagen permitidos. Solo el administrador autenticado puede listar, subir, modificar o borrar archivos según `public.es_admin()`; las URLs públicas HTTPS se ven sin login. El trigger `preparar_admin_estudio` restringe el alta a la cuenta del estudio. No se recreó el backend ni se ejecutaron migraciones para este cambio.
 
-## Instagram
+Las referencias del cotizador siguen exclusivamente por WhatsApp (Web Share o adjunto manual), nunca se suben a ninguno de los dos almacenamientos. No hace falta sembrar Firestore ni migrar la galería original/Instagram. `galeria-ig.json` mantiene el catálogo existente; los volcados de trabajo `galeria-instagram/` siguen excluidos.
 
-`galeria-instagram/` se excluye de Git y Hosting. Las fotos descargadas deben revisarse y cargarse al Storage mediante el administrador con la categoría adecuada, dejando vacíos los textos salvo que Harold los escriba. No se subió un volcado ni se inventaron títulos. La galería puede sumar esas fotos sin reemplazar las originales. No se hizo una importación automática a Firestore en este cambio.
+Publicar **solo Hosting**, sin activar ni desplegar Firebase Storage, ni aceptar Blaze:
+
+```sh
+npx -y firebase-tools@latest deploy --only hosting --project harold-lezcano-estudio
+```
+
+Administrador: https://harold-lezcano-estudio.web.app/admin.html. Revisar consumo del plan gratuito de Supabase y límites vigentes: gratuito no significa capacidad ilimitada. No cambiar Neocities como parte de esta tarea.
 
 ## Pruebas locales
 
-Node 20+ (se verificó con Node 24). `npm ci`, luego:
+Node 20+ (se verificó con Node 24). `npm ci` y `npx playwright install chromium` (necesario para las pruebas del transporte), luego:
 
 ```sh
 npm run check
@@ -57,9 +59,10 @@ npm test
 npx playwright install chromium
 npm run test:browser
 npm run test:sdk
+npm run test:storage
 ```
 
-Las pruebas de navegador usan un servidor temporal local y Firebase simulado: no escriben en servicios reales ni envían WhatsApp/correos. `test:sdk` comprueba además la inicialización real de las APIs del CDN, sin acceder a datos del proyecto. Para reglas, Java 21+ y los emuladores:
+Las pruebas de navegador usan un servidor temporal local y Firebase simulado: no escriben en servicios reales ni envían WhatsApp/correos. `test:sdk` comprueba además la inicialización real de las APIs del CDN, sin acceder a datos del proyecto. Las pruebas `test:storage` verifican login dual de archivos, alta inicial, rutas, formatos, progreso, mensajes de errores RLS y borrado con SDKs simulados sin escribir en Supabase. Para reglas históricas de Firebase, Java 21+ y los emuladores:
 
 ```sh
 npm run test:rules
@@ -69,4 +72,4 @@ Ese comando usa únicamente el proyecto ficticio `demo-harold-estudio`, no el pr
 
 No subir `.env`, credenciales de servidor, claves privadas, `originales/`, `publicar-harold.zip`, `node_modules/` ni `galeria-instagram/`.
 
-Referencias técnicas: [SDK modular](https://firebase.google.com/docs/web/learn-more), [correo y contraseña](https://firebase.google.com/docs/auth/web/password-auth), [reglas de Storage](https://firebase.google.com/docs/storage/security/rules-conditions).
+Referencias técnicas: [SDK modular](https://firebase.google.com/docs/web/learn-more), [correo y contraseña](https://firebase.google.com/docs/auth/web/password-auth), [subida a Supabase](https://supabase.com/docs/reference/javascript/storage-from-upload).

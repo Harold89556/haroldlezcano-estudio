@@ -15,7 +15,7 @@
 <div id="admin-workspace" hidden>
 <nav class="admin-nav" aria-label="Secciones de administración"><a href="#galeria-admin">Galería</a><a href="#categorias-admin">Categorías</a><a href="#precios-admin">Precios</a><a href="#sitio-admin">Textos y contacto</a></nav>
 <section id="galeria-admin" class="form-card"><h2>Galería</h2><p>Se conservan las 152 imágenes originales. Podés cambiar su categoría, texto, orden o portada. Ocultar una original no borra el archivo de Postimg.</p>
-<form id="gallery-upload-form"><h3>Agregar fotos</h3><label for="gallery-files">Imágenes (hasta 10 por carga, 8 MB cada una)</label><input type="file" id="gallery-files" accept="image/*" multiple required/>
+<form id="gallery-upload-form"><h3>Agregar fotos</h3><label for="gallery-files">Imágenes JPG, PNG, WEBP, GIF o AVIF (hasta 10 por carga, 8 MB cada una)</label><input type="file" id="gallery-files" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" multiple required/>
 <label for="upload-category">Categoría</label><select id="upload-category" required></select><label for="upload-caption">Texto breve opcional (se aplica a las fotos seleccionadas)</label><input id="upload-caption" maxlength="240" placeholder="Dejá vacío si no querés agregar texto"/>
 <button type="submit" class="btn-confirmar btn-block">Subir a la galería</button><p id="gallery-upload-status" role="status"></p></form>
 <details id="pending-files-panel" hidden><summary>Archivos pendientes de limpieza</summary><p>Estos archivos se subieron, pero no se pudieron guardar o borrar completamente. Solo se muestran los pendientes de este navegador.</p><div id="pending-files"></div></details>

@@ -18,6 +18,8 @@ export const safeName=name=>name.replace(/[^a-zA-Z0-9._-]/g,'_');
 export const explainError=e=>e.message;
 export function checkImage(file){if(!file.type.startsWith('image/')||file.size>8*1024*1024)throw Error('Imagen inválida');}
 export function getServices(){if(state.offline)return Promise.reject(Error('Servicio sin habilitar'));return Promise.resolve({auth,authSDK:{browserSessionPersistence:'session',setPersistence:async()=>{},onAuthStateChanged:(a,fn)=>{state.listener=fn;queueMicrotask(()=>fn(auth.currentUser));},signInWithEmailAndPassword:async(a,email)=>{auth.currentUser={email,emailVerified:true};await state.listener(auth.currentUser);},signOut:async()=>{auth.currentUser=null;await state.listener(null);},sendPasswordResetEmail:async()=>{},sendEmailVerification:async()=>{},reload:async()=>{}}});}
+export async function signInStorage(email,password){if(state.failStorageLogin)throw Error('Sesión de fotos fallida');state.storageLogin={email,passwordPresent:!!password};}
+export async function signOutStorage(){state.storageSignedOut=true;}
 export async function readConfig(name){if(state.offline)throw Error('Offline');return state.config[name]||null;}
 export async function readGallery(){if(state.offline)throw Error('Offline');return state.gallery;}
 export async function saveConfig(name,value){state.config[name]=value;state.saved.push({name,value});}
@@ -118,6 +120,8 @@ let base;
  });
  await test('Administrador: login, precios, galería, categorías y contacto',async()=>{
   const {page,context,errors}=await session();await page.goto(base+'/admin.html');await page.fill('#admin-password','clave-simulada-local');await page.click('#login-button');await page.waitForSelector('#admin-workspace:not([hidden])');
+  assert.deepEqual(await page.evaluate(()=>window.__mock.storageLogin),{email:'henro89@gmail.com',passwordPresent:true});
+  assert.equal(await page.inputValue('#admin-password'),'');
   assert.equal(await page.locator('.admin-image-card').count(),152);
   await page.locator('details').evaluateAll(items=>items.forEach(i=>i.open=true));await page.fill('#price-matriz-30x40-realista','900000');await page.locator('#prices-form button[type=submit]').click();await page.waitForFunction(()=>window.__mock.config.precios?.matriz['30x40'].realista===900000);
   await page.fill('#category-name','Taller de prueba');await page.locator('#category-form button').click();await page.waitForFunction(()=>window.__mock.config.categorias?.items.some(i=>i.name==='Taller de prueba'));
@@ -126,7 +130,12 @@ let base;
   const first=page.locator('.admin-image-card').first();await first.locator('input[id^=caption]').fill('Texto ingresado en prueba');await first.locator('input[id^=hidden]').check();await first.locator('button[type=submit]').click();await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.id==='seed-001'&&i.hidden&&i.caption==='Texto ingresado en prueba'));
   await page.fill('#site-whatsapp','595971000000');await page.fill('#text-subtitulo','Texto local de prueba');await page.locator('#site-form button[type=submit]').click();await page.waitForFunction(()=>window.__mock.config.sitio?.whatsapp==='595971000000');
   const last=page.locator('.admin-image-card').last();await last.locator('button.admin-danger').click();await page.waitForFunction(()=>window.__mock.deleted.length===1);assert.equal(await page.locator('.admin-image-card').count(),152);
-  await page.screenshot({path:'/workspace/harold-admin-desktop.png',fullPage:false});assert.deepEqual(errors,[]);await context.close();
+  await page.screenshot({path:'/workspace/harold-admin-desktop.png',fullPage:false});assert.deepEqual(errors,[]);await page.click('#logout');await page.waitForFunction(()=>window.__mock.storageSignedOut&&!document.getElementById('login-panel').hidden);await context.close();
+ });
+ await test('Fallo del login de fotos cierra Firebase y conserva el panel bloqueado',async()=>{
+  const {page,context}=await session({failStorageLogin:true});await page.goto(base+'/admin.html');await page.fill('#admin-password','clave-simulada-local');await page.click('#login-button');
+  await page.waitForFunction(()=>document.getElementById('admin-status').textContent.includes('Sesión de fotos fallida'));
+  assert.equal(await page.locator('#admin-workspace').isHidden(),true);assert.equal(await page.inputValue('#admin-password'),'');assert.equal(await page.evaluate(()=>window.__mock.storageSignedOut),true);await context.close();
  });
  await test('Vista móvil y rutas de galería sin desbordamiento',async()=>{
   const {page,context}=await session();await page.setViewportSize({width:390,height:844});await quote(page);await page.setInputFiles('#referencias_archivos',photo());

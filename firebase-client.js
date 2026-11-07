@@ -1,4 +1,5 @@
 import { firebaseConfig } from './firebase-config.js';
+import { supabaseConfig } from './supabase-config.js';
 
 // SDK modular, cargado a demanda para que el cotizador y las vistas previas
 // sigan funcionando cuando Firebase o su CDN no están disponibles.
@@ -16,19 +17,15 @@ export function timeout(promise, ms = 12000) {
  return Promise.race([promise, new Promise((_, reject) => { timer = setTimeout(() => reject(Error('El servicio no respondió. Revisá tu conexión y volvé a intentar.')), ms); })]).finally(() => clearTimeout(timer));
 }
 export function getServices() {
- if (!firebaseConfig.apiKey || !firebaseConfig.projectId || !firebaseConfig.storageBucket) return Promise.reject(Error('El servicio de carga se está conectando. Tus archivos siguen seleccionados; todavía no se enviaron.'));
+ if (!firebaseConfig.apiKey || !firebaseConfig.projectId) return Promise.reject(Error('El servicio de carga se está conectando. Tus archivos siguen seleccionados; todavía no se enviaron.'));
  if (!servicesPromise) {
   servicesPromise = timeout(Promise.all([
    import('https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js'),
    import('https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js'),
-   import('https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js'),
-   import('https://www.gstatic.com/firebasejs/13.2.0/firebase-storage.js')
-  ]).then(([appSDK, authSDK, dbSDK, storageSDK]) => {
+   import('https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js')
+  ]).then(([appSDK, authSDK, dbSDK]) => {
    const app = appSDK.getApps().length ? appSDK.getApp() : appSDK.initializeApp(firebaseConfig);
-   const storage = storageSDK.getStorage(app);
-   storage.maxUploadRetryTime = 30000;
-   storage.maxOperationRetryTime = 15000;
-   return { auth: authSDK.getAuth(app), db: dbSDK.getFirestore(app), storage, authSDK, dbSDK, storageSDK };
+   return { auth: authSDK.getAuth(app), db: dbSDK.getFirestore(app), authSDK, dbSDK };
   })).catch(error => { servicesPromise = null; throw error; });
  }
  return servicesPromise;
@@ -61,33 +58,75 @@ export async function saveGallery(id, data) {
  if (!isAdmin(auth.currentUser)) throw Error('Necesitás iniciar sesión como administrador.');
  await dbSDK.setDoc(dbSDK.doc(db, 'galeria', id), data);
 }
+// Solo se carga Supabase al iniciar sesión o gestionar archivos del administrador.
+let storagePromise;
+async function getStorageClient() {
+ if (!storagePromise) storagePromise = import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm')
+  .then(({createClient}) => createClient(supabaseConfig.url, supabaseConfig.publishableKey, {
+   auth: {persistSession:true, autoRefreshToken:true, detectSessionInUrl:false}
+  })).catch(error => {storagePromise=null;throw error;});
+ return storagePromise;
+}
+export async function signInStorage(email, password) {
+ const {auth}=await getServices();
+ if (!isAdmin(auth.currentUser) || email.trim().toLowerCase()!==ADMIN_EMAIL) throw Error('Necesitás la cuenta administradora con correo verificado.');
+ const client=await getStorageClient();
+ const credentials={email:email.trim().toLowerCase(),password};
+ let result=await client.auth.signInWithPassword(credentials);
+ if (result.error && (/^(invalid_credentials|user_not_found)$/.test(result.error.code || '') || result.error.status===400 && /invalid login credentials/i.test(result.error.message))) {
+  // El trigger del proyecto permite únicamente la cuenta del estudio y la confirma.
+  result=await client.auth.signUp(credentials);
+  if (!result.error && !result.data.session) result=await client.auth.signInWithPassword(credentials);
+ }
+ if (result.error) throw result.error;
+ if (!result.data.session) throw Error('No se pudo abrir la sesión de fotos. Volvé a iniciar sesión.');
+}
+export async function signOutStorage() {
+ const client=await getStorageClient();
+ const {error}=await client.auth.signOut();
+ if(error) throw error;
+}
+function checkStoragePath(path) {
+ if(typeof path!=='string' || !path.startsWith('galeria/') || path.split('/').some(part=>!part || part==='.' || part==='..')) throw Error('Ruta no permitida.');
+}
+async function adminStorage() {
+ const {auth}=await getServices();
+ if(!isAdmin(auth.currentUser)) throw Error('Necesitás iniciar sesión como administrador.');
+ const client=await getStorageClient();
+ const {data,error}=await client.auth.getSession();
+ if(error) throw error;
+ if(!data.session) throw Error('La sesión de fotos venció. Cerrá sesión y volvé a entrar con tu cuenta del estudio.');
+ return client.storage.from('fotos');
+}
 export async function deleteGalleryItem(item) {
- const { auth, db, dbSDK, storage, storageSDK } = await getServices();
+ const { auth, db, dbSDK } = await getServices();
  if (!isAdmin(auth.currentUser)) throw Error('Necesitás iniciar sesión como administrador.');
- // El documento se borra primero; un fallo posterior deja un archivo huérfano,
- // no una imagen rota en la galería. El panel permite volver a limpiar Storage.
+ if (/^(seed-|ig-)/.test(item.id)) throw Error('Las fotos originales solo se pueden ocultar o recategorizar.');
+ // Borrar metadata primero evita imágenes rotas; el panel permite limpiar pendientes.
  await dbSDK.deleteDoc(dbSDK.doc(db, 'galeria', item.id));
  if (item.storagePath?.startsWith('galeria/')) {
-  try { await storageSDK.deleteObject(storageSDK.ref(storage, item.storagePath)); }
-  catch (error) { if (error.code !== 'storage/object-not-found') { const failure=Error('La foto salió de la galería, pero no se pudo borrar el archivo de Storage. Usá la limpieza de archivos pendientes.'); failure.galleryRemoved=true; throw failure; } }
+  try { await deleteStorageFile(item.storagePath); }
+  catch { const failure=Error('La foto salió de la galería, pero no se pudo borrar el archivo de Supabase. Usá la limpieza de archivos pendientes.'); failure.galleryRemoved=true; throw failure; }
  }
 }
 export async function uploadImage(file, path, progress) {
  checkImage(file);
- const { storage, storageSDK } = await getServices();
- const object = storageSDK.ref(storage, path);
- const task = storageSDK.uploadBytesResumable(object, file, { contentType: file.type, cacheControl: 'public,max-age=3600' });
- const timer = setTimeout(() => task.cancel(), 120000);
- try {
-  await new Promise((resolve, reject) => task.on('state_changed', snap => progress?.(Math.round(100 * snap.bytesTransferred / snap.totalBytes)), reject, resolve));
-  const url = await timeout(storageSDK.getDownloadURL(object));
-  if (!httpsURL(url)) throw Error('No se obtuvo un enlace HTTPS válido.');
-  return url;
- } finally { clearTimeout(timer); }
+ if(!/^image\/(jpeg|png|webp|gif|avif)$/i.test(file.type)) throw Error('Para la galería usá JPG, PNG, WEBP, GIF o AVIF. Convertí primero las fotos HEIC, HEIF, BMP o TIFF.');
+ checkStoragePath(path);
+ const bucket=await adminStorage();
+ progress?.(10);
+ const {error}=await bucket.upload(path,file,{upsert:false,contentType:file.type.toLowerCase(),cacheControl:'3600'});
+ if(error) throw error;
+ progress?.(90);
+ const {data}=bucket.getPublicUrl(path);
+ if(!httpsURL(data.publicUrl)) throw Error('No se obtuvo un enlace HTTPS válido.');
+ progress?.(100);
+ return data.publicUrl;
 }
 export function explainError(error) {
  const code = error?.code || '';
- if (/permission-denied|unauthorized/.test(code)) return 'El servicio de carga o las reglas todavía no están habilitados para esta operación. Tus archivos no se enviaron por WhatsApp.';
+ if (/permission-denied|unauthorized|not_authenticated|42501/i.test(code) || [401,403].includes(Number(error?.status || error?.statusCode)) || /row.level security|not authenticated|jwt expired|invalid jwt/i.test(error?.message || '')) return 'No tenés permiso para gestionar las fotos. Cerrá sesión y volvé a entrar con la cuenta del estudio; si continúa, revisá los permisos de Supabase.';
+ if (/invalid_credentials|user_already_exists/.test(code)) return 'No se pudo iniciar la sesión de fotos. Revisá la contraseña del administrador; si la cambiaste, también debe actualizarse en Supabase.';
  if (/auth\//.test(code)) return 'No se pudo iniciar sesión. Revisá correo, contraseña y la habilitación de Email/Password en Firebase.';
  return error?.message || 'No se pudo completar la operación. Volvé a intentar.';
 }
@@ -100,9 +139,8 @@ export async function saveGalleryBatch(items) {
  await batch.commit();
 }
 export async function deleteStorageFile(path) {
- if (!path.startsWith('galeria/')) throw Error('Ruta no permitida.');
- const { auth, storage, storageSDK } = await getServices();
- if (!isAdmin(auth.currentUser)) throw Error('Necesitás iniciar sesión como administrador.');
- try { await storageSDK.deleteObject(storageSDK.ref(storage,path)); }
- catch(error) { if(error.code !== 'storage/object-not-found') throw error; }
+ checkStoragePath(path);
+ const bucket=await adminStorage();
+ const {error}=await bucket.remove([path]);
+ if(error) throw error;
 }

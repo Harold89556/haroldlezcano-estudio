@@ -10,6 +10,7 @@ let gallery = [];
 let services;
 let readGeneration = 0;
 let uploading = false;
+let signingIn = false;
 let savedPending=[];try { savedPending=JSON.parse(localStorage.getItem('hl-pending-gallery') || '[]'); }catch{}
 const pending = new Set(Array.isArray(savedPending)?savedPending.filter(p=>typeof p==='string'&&p.startsWith('galeria/')):[]);
 const say = text => { $('admin-status').textContent = text; };
@@ -169,10 +170,17 @@ $('login-form').onsubmit=e=>{e.preventDefault();action(e.currentTarget,async()=>
  if($('admin-email').value.trim().toLowerCase()!==api.ADMIN_EMAIL) throw Error('Este acceso es solo para el correo de administración del estudio.');
  services=await api.getServices();
  await services.authSDK.setPersistence(services.auth,services.authSDK.browserSessionPersistence);
- await services.authSDK.signInWithEmailAndPassword(services.auth,$('admin-email').value.trim(),$('admin-password').value);
- $('admin-password').value='';
+ signingIn=true;
+ try {
+  await services.authSDK.signInWithEmailAndPassword(services.auth,$('admin-email').value.trim(),$('admin-password').value);
+  if(api.isAdmin(services.auth.currentUser)) await api.signInStorage($('admin-email').value.trim(),$('admin-password').value);
+ } catch(error) {
+  await Promise.allSettled([api.signOutStorage(),services.authSDK.signOut(services.auth)]);
+  throw error;
+ } finally {signingIn=false;$('admin-password').value='';}
+ if(api.isAdmin(services.auth.currentUser)) await loadWorkspace();
 });};
-$('logout').onclick=async()=>{try{await services.authSDK.signOut(services.auth);}catch(error){say(api.explainError(error));}};
+$('logout').onclick=async()=>{const results=await Promise.allSettled([api.signOutStorage(),services.authSDK.signOut(services.auth)]);const failed=results.find(r=>r.status==='rejected');if(failed)say(api.explainError(failed.reason));};
 $('reset-password').onclick=async()=>{
  if(!confirm('¿Enviar un enlace de recuperación de contraseña a henro89@gmail.com?')) return;
  try { services=await api.getServices();await services.authSDK.sendPasswordResetEmail(services.auth,api.ADMIN_EMAIL);say('Si la cuenta está habilitada, recibirás el enlace de recuperación.'); } catch(error){say(api.explainError(error));}
@@ -233,6 +241,6 @@ try {
   if(!user){say('Ingresá con la cuenta del estudio.');return;}
   if(user.email?.toLowerCase()!==api.ADMIN_EMAIL){await services.authSDK.signOut(services.auth);say('Esta cuenta no tiene acceso al administrador.');return;}
   if(!user.emailVerified){$('verification-panel').hidden=false;say('Verificá tu correo para habilitar la administración.');return;}
-  await loadWorkspace();
+  if(!signingIn) await loadWorkspace();
  });
 } catch(error) {say('Firebase todavía no está disponible: '+api.explainError(error));}

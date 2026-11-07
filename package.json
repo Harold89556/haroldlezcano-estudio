@@ -1,11 +1,12 @@
 {
   "private": true,
   "scripts": {
-    "test": "node pruebas.cjs && node integracion.cjs && node tests/galeria-ig.cjs",
+    "test": "node pruebas.cjs && node integracion.cjs && node tests/galeria-ig.cjs && node tests/storage.cjs",
     "test:browser": "node tests/navegador.cjs",
     "test:rules": "npx -y firebase-tools@latest emulators:exec --only firestore,storage --project demo-harold-estudio \"node tests/reglas.mjs\"",
     "check": "node scripts/comprobar.cjs",
-    "test:sdk": "node tests/sdk.cjs"
+    "test:sdk": "node tests/sdk.cjs",
+    "test:storage": "node tests/storage.cjs"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^6.0.0",
