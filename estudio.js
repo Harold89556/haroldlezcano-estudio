@@ -16,7 +16,7 @@
  const photoChoice = $('fotos_referencia');
  const picker = $('referencias_archivos');
  window.sitioActual = data.clone(defaults.sitio);
- const seed = [...document.querySelectorAll('#mainGallery .gallery-item')].map((button, order) => ({
+ let seed = [...document.querySelectorAll('#mainGallery .gallery-item')].map((button, order) => ({
   id: button.dataset.galleryId, category:[...button.classList].find(c => c !== 'gallery-item'),
   url:button.querySelector('img').src, alt:button.querySelector('img').alt,
   caption:'', order, cover:false, hidden:false, storagePath:''
@@ -136,6 +136,16 @@
   if (route[0]==='#galeria' && route[1] && nombresAlbum[route[1]]) restaurarRuta();
  }
  async function loadRemote() {
+  // El catálogo local no depende de Firebase: también funciona sin conexión al SDK.
+  try {
+   const response = await fetch('./galeria-ig.json');
+   if (!response.ok) throw Error('Catálogo no disponible');
+   const items = await response.json();
+   if (!Array.isArray(items)) throw Error('Catálogo inválido');
+   seed = data.mergeGallery(seed, items);
+  } catch { /* Si falla la descarga, conservar las 152 fotos originales. */ }
+  gallery = seed;
+  renderGallery();
   try {
    const api=await firebase();
    await Promise.allSettled([

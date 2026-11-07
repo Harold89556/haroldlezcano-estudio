@@ -386,7 +386,8 @@ window.EstudioDatos = (() => {
   const map = new Map(seed.map(item => [item.id, { ...item }]));
   for (const item of remote) {
    try {
-    const url = new URL(item.url || map.get(item.id)?.url);
+    const base = window.location?.origin || 'https://galeria.example';
+    const url = new URL(item.url || map.get(item.id)?.url, base);
     if (url.protocol !== 'https:' || !/^[a-z][a-z0-9-]{0,39}$/.test(item.category || '')) continue;
     map.set(item.id, { ...map.get(item.id), ...item, url:url.href, caption:typeof item.caption === 'string' ? item.caption.slice(0,240) : '', order:Number.isFinite(item.order) ? item.order : 0 });
    } catch { /* Un registro inválido no debe romper el resto de la galería. */ }

@@ -17,3 +17,6 @@ playwright-report/
 test-results/
 resultados-*.json
 .DS_Store
+
+# Fotos publicadas desde esta máquina; el catálogo JSON sí se versiona.
+galeria-ig/*.jpg

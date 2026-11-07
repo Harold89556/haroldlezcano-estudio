@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "test": "node pruebas.cjs && node integracion.cjs",
+    "test": "node pruebas.cjs && node integracion.cjs && node tests/galeria-ig.cjs",
     "test:browser": "node tests/navegador.cjs",
     "test:rules": "npx -y firebase-tools@latest emulators:exec --only firestore,storage --project demo-harold-estudio \"node tests/reglas.mjs\"",
     "check": "node scripts/comprobar.cjs",
