@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  function admin() {
+   return request.auth != null
+    && request.auth.token.email == 'henro89@gmail.com'
+    && request.auth.token.email_verified == true;
+  }
+  function galleryValid(d) {
+   return d.keys().hasAll(['url','category','caption','alt','order','cover','hidden','storagePath'])
+    && d.keys().hasOnly(['url','category','caption','alt','order','cover','hidden','storagePath'])
+    && d.url is string && d.url.size() <= 2048 && d.url.matches('https://.*')
+    && d.category is string && d.category.matches('[a-z][a-z0-9-]{0,39}')
+    && d.caption is string && d.caption.size() <= 240
+    && d.alt is string && d.alt.size() <= 500
+    && d.order is int && d.order >= 0 && d.order <= 1000000
+    && d.cover is bool && d.hidden is bool
+    && d.storagePath is string && d.storagePath.size() <= 300
+    && (d.storagePath == '' || d.storagePath.matches('galeria/.*'));
+  }
+  match /galeria/{id} {
+   allow read: if true;
+   allow create, update: if admin() && galleryValid(request.resource.data);
+   allow delete: if admin();
+  }
+  match /config/precios {
+   allow read: if true;
+   allow create, update: if admin()
+    && request.resource.data.keys().hasAll(['matriz','escultura','ajustes','cursos'])
+    && request.resource.data.keys().hasOnly(['matriz','escultura','ajustes','cursos'])
+    && request.resource.data.matriz is map && request.resource.data.matriz.size() <= 40
+    && request.resource.data.escultura is map && request.resource.data.escultura.size() == 4
+    && request.resource.data.ajustes is map && request.resource.data.ajustes.size() <= 60
+    && request.resource.data.cursos is map && request.resource.data.cursos.size() == 3;
+   allow delete: if admin();
+  }
+  match /config/sitio {
+   allow read: if true;
+   allow create, update: if admin()
+    && request.resource.data.keys().hasOnly(['whatsapp','mapaCurso','textos'])
+    && request.resource.data.whatsapp is string && request.resource.data.whatsapp.matches('[0-9]{8,15}')
+    && request.resource.data.mapaCurso is string && request.resource.data.mapaCurso.size() <= 2048 && request.resource.data.mapaCurso.matches('https://.*')
+    && request.resource.data.textos is map && request.resource.data.textos.size() <= 60;
+   allow delete: if admin();
+  }
+  match /config/categorias {
+   allow read: if true;
+   allow create, update: if admin()
+    && request.resource.data.keys().hasOnly(['items'])
+    && request.resource.data.items is list
+    && request.resource.data.items.size() > 0 && request.resource.data.items.size() <= 50;
+   allow delete: if admin();
+  }
+  // Todo lo no declarado queda denegado, también para otras cuentas autenticadas.
+ }
+}

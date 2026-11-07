@@ -1,0 +1,31 @@
+{
+  "name": "Harold Lezcano | Estudio de Arte",
+  "short_name": "Arte HL",
+  "description": "Estudio de arte, cotizaciones y cursos por el artista Harold Lezcano.",
+  "start_url": "/#cotizacion",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "icons": [
+    {
+      "src": "icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icono-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "id": "/",
+  "scope": "/"
+}

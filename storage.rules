@@ -1,0 +1,34 @@
+rules_version = '2';
+service firebase.storage {
+ match /b/{bucket}/o {
+  function admin() {
+   return request.auth != null
+    && request.auth.token.email == 'henro89@gmail.com'
+    && request.auth.token.email_verified == true;
+  }
+  function image() {
+   return request.resource != null
+    && request.resource.size > 0
+    && request.resource.size <= 8 * 1024 * 1024
+    && request.resource.contentType.matches('image/(jpeg|png|webp|gif|avif|heic|heif|bmp|tiff)');
+  }
+  match /galeria/{folder}/{fileName} {
+   allow get: if true;
+   allow list: if admin();
+   allow create, update: if admin() && image();
+   allow delete: if admin();
+  }
+  match /referencias/{batch}/{fileName} {
+   // Enlaces compartidos por WhatsApp: lectura por URL, no directorio público.
+   allow get: if true;
+   allow list: if admin();
+   // create jamás permite sobrescribir ni modificar metadatos existentes.
+   allow create: if image()
+    && batch.size() <= 100 && fileName.size() <= 160;
+   allow update: if false;
+   allow delete: if admin();
+  }
+  // También habilitar listar carpetas para limpieza administrativa.
+  match /{path=**} { allow list: if admin(); }
+ }
+}

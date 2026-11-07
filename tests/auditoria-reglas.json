@@ -1,0 +1,24 @@
+{
+  "score": 4,
+  "summary": "Identidad administrativa verificada, rutas explícitas, validación de galería y límites por objeto; requiere revisión y emuladores antes del despliegue.",
+  "findings": [
+    {
+      "check": "Storage Abuse",
+      "severity": "moderate",
+      "issue": "Las referencias admiten creación anónima pública por requisito de WhatsApp. El límite de 8 MB es por objeto, no limita volumen total ni verifica los bytes como imagen.",
+      "recommendation": "Antes del lanzamiento, evaluar App Check y backend con cuotas, validación real y retención; supervisar consumo."
+    },
+    {
+      "check": "Type Safety",
+      "severity": "minor",
+      "issue": "Las reglas de configuración validan mapas y tamaño de primer nivel; la validación numérica detallada y los campos anidados se comprueban en el cliente compartido. Solo el administrador verificado puede escribir.",
+      "recommendation": "Mantener los validadores del cliente y considerar esquema más estricto en reglas si se agregan múltiples administradores."
+    },
+    {
+      "check": "Verification",
+      "severity": "minor",
+      "issue": "No se ejecutaron emuladores por falta de Java; no se desplegaron las reglas.",
+      "recommendation": "Ejecutar npm run test:rules con Java 21+ antes de publicar."
+    }
+  ]
+}

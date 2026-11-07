@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Harold Lezcano | Estudio de Arte</title>
+<link href="manifest.json" rel="manifest"/>
+<meta content="#121212" name="theme-color"/>
+<link href="icono-192.png" rel="apple-touch-icon"/>
+<meta content="Harold Lezcano | Estudio de Arte" property="og:title"/>
+<meta content="Cotiza y encarga tus obras de arte personalizadas directamente desde mi estudio." property="og:description"/>
+<meta content="https://i.postimg.cc/1z3npnH8/Picsart-26-04-26-16-51-23-701.jpg" property="og:image"/>
+<meta content="website" property="og:type"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+<link href="style.css" rel="stylesheet"/><meta content="Obras de arte por encargo, galería y cursos de dibujo y pintura con Harold Lezcano en Fernando de la Mora, Paraguay." name="description"/><meta content="https://harold-lezcano-estudio.web.app/" property="og:url"/><link href="https://harold-lezcano-estudio.web.app/" rel="canonical"/><link href="icono-192.png" rel="icon" type="image/png"/></head>
+<body>
+<div class="page-background"></div>
+<div class="container">
+<div class="header">
+<h1>HAROLD LEZCANO</h1>
+<p data-setting="subtitulo">Artista Plástico | Maestro de Arte</p>
+<div class="social-links">
+<a aria-label="Instagram" href="https://www.instagram.com/artista_harold_lezcano?igsh=Y245bWM4dHc2NHQw" rel="noopener noreferrer" target="_blank"><i class="fab fa-instagram"></i></a>
+<a aria-label="Facebook" href="https://www.facebook.com/share/1AwixXnZUH/" rel="noopener noreferrer" target="_blank"><i class="fab fa-facebook-f"></i></a>
+<a aria-label="TikTok" href="https://www.tiktok.com/@artista_harold_lezcano?_r=1&amp;_t=ZS-95tf3WkUc1E" rel="noopener noreferrer" target="_blank"><i class="fab fa-tiktok"></i></a>
+<button aria-label="Compartir" onclick="compartirPagina(event)" title="Compartir página" type="button"><i class="fas fa-share-nodes"></i></button>
+</div>
+<p id="share-status" role="status"></p></div>
+<div class="bio-section" id="bioText">
+        Nací en Asunción en 1989, bendecido con un don artístico heredado de <strong>mi madre</strong> y forjado con la disciplina, la perseverancia y la visión para aprovechar cada oportunidad que me inculcó <strong>mi padre</strong>. Tuve el honor de perfeccionar este legado durante <strong>más de 20 años</strong> junto al gran Maestro <strong>Prof. Manuel Viedma</strong>. Hoy, fusiono esa pasión innata y trabajo duro con una técnica de élite para dar vida a obras exclusivas que transforman espacios.
+    </div>
+<div class="tab-container">
+<button class="tab-btn active" onclick="switchTab('cotizacion', event)">Cotización</button>
+<button class="tab-btn" onclick="switchTab('galeria', event)">Galería</button>
+<button class="tab-btn" onclick="switchTab('curso', event)">Cursos</button>
+</div>
+<div class="tab-content active" id="tab-cotizacion">
+<div class="form-card" id="card-especificaciones">
+<h3 class="card-title"><i class="fas fa-paint-brush"></i> 1. Especificaciones de la Obra</h3>
+<div id="step-estilo">
+<label for="estilo">Estilo de Acabado / Tipo</label>
+<select aria-describedby="error-estilo" class="" id="estilo" onchange="onEstiloChange()">
+<option disabled="" selected="" value="">Seleccioná un estilo o tipo...</option>
+<option value="Realista">Realista (Recomendado)</option>
+<option value="Hiperrealista">Hiperrealista</option>
+<option value="Espatulado">Espatulado</option>
+<option value="Bocetado">Bocetado</option>
+<option value="Mural">Mural sobre pared</option>
+<option value="Escultura">Escultura</option>
+<option value="Restauracion">Restauración de obras / fotos</option>
+</select><div aria-live="polite" class="field-error" id="error-estilo"></div>
+<div class="info-text" id="info-estilo"></div>
+</div>
+<div id="bloque-pintura">
+<div id="step-tecnica">
+<label for="tecnica">Técnica Material</label>
+<select aria-describedby="error-tecnica" class="" id="tecnica" onchange="onTecnicaChange();">
+<option disabled="" selected="" value="">Seleccioná...</option>
+<option value="Oleo">Óleo (Recomendado)</option>
+<option value="Acrilico">Acrílico</option>
+<option value="Carbonilla">Lápiz / Carbonilla</option>
+</select><div aria-live="polite" class="field-error" id="error-tecnica"></div>
+<div class="info-text" id="info-tecnica"></div>
+</div>
+<div id="step-color-lapiz" style="display:none;">
+<label for="color_lapiz">Opción de Lápiz</label>
+<select aria-describedby="error-color_lapiz" class="" id="color_lapiz" onchange="mostrarInfo('color_lapiz'); calcular();">
+<option disabled="" selected="" value="">Seleccioná una opción...</option>
+<option value="Sin color">Sin color (Blanco y Negro)</option>
+<option value="A color">A color</option>
+</select><div aria-live="polite" class="field-error" id="error-color_lapiz"></div>
+<div class="info-text" id="info-color_lapiz"></div>
+</div>
+</div>
+<div id="step-tema">
+<label for="tema">¿Qué temática deseas cotizar?</label>
+<select aria-describedby="error-tema" class="" id="tema" onchange="onTemaChange()">
+<option disabled="" selected="" value="">Seleccioná una temática...</option>
+<option value="Retrato">Retrato Humano / Animal</option>
+<option value="Paisaje">Paisaje Puro</option>
+<option value="Bodegon">Bodegón / Naturaleza Muerta</option>
+<option value="Abstracto">Abstracto</option>
+</select><div aria-live="polite" class="field-error" id="error-tema"></div>
+<div class="info-text" id="info-tema"></div>
+</div>
+</div>
+<div class="form-card" id="retratos-extras" style="display:none;">
+<h3 class="card-title"><i class="fas fa-user-friends"></i> Composición (Sujetos)</h3>
+<div class="stepper-group"><span>Personas extra</span><div class="stepper"><button onclick="step('personas', -1)">-</button><label for="personas">Personas extra</label><input aria-describedby="error-personas" id="personas" readonly="" value="0"/><div aria-live="polite" class="field-error" id="error-personas"></div><button onclick="step('personas', 1)">+</button></div></div>
+<div class="info-text">Agregá personas adicionales a la composición principal (el precio base ya incluye a 1 persona con fondo simple).</div>
+<div class="stepper-group"><span>Mascotas extra</span><div class="stepper"><button onclick="step('mascotas', -1)">-</button><label for="mascotas">Mascotas extra</label><input aria-describedby="error-mascotas" id="mascotas" readonly="" value="0"/><div aria-live="polite" class="field-error" id="error-mascotas"></div><button onclick="step('mascotas', 1)">+</button></div></div>
+<div class="info-text">Sumá a tus queridas mascotas como protagonistas de la obra.</div>
+<div id="contenedor-fondo">
+<hr style="border: 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 20px 0 15px 0;"/>
+<label class="checkbox-label" for="fondo"><input id="fondo" onchange="calcular()" type="checkbox"/> Incluir fondo detallado</label>
+<div class="info-text" style="margin-left: 28px; margin-top: -8px;">Agregá paisajes complejos, arquitectura o elementos detallados detrás de los sujetos principales.</div>
+</div>
+</div>
+<div class="form-card" id="contenedor-restauracion" style="display:none;">
+<h3 class="card-title" style="color:#d4af37;"><i class="fas fa-magic"></i> Detalles de Restauración</h3>
+<label for="tipo_restauracion" style="margin-top:0;">Tipo de Restauración</label>
+<select aria-describedby="error-tipo_restauracion" class="" id="tipo_restauracion" onchange="updateUI(); mostrarInfo('tipo_restauracion'); calcular()"><option disabled="" selected="" value="">Seleccioná el tipo...</option><option value="Digital">Digital Simple (Limpieza/Grietas - 180.000 Gs.)</option><option value="Digital Compleja">Digital Compleja (Reconstrucción - 350.000 Gs.)</option><option value="Fisica">Física (Obras Reales - A evaluar)</option></select><div aria-live="polite" class="field-error" id="error-tipo_restauracion"></div>
+<div class="info-text" id="info-tipo_restauracion" style="margin-top:10px;"></div>
+</div>
+<div class="form-card" id="contenedor-cuadros" style="display:none;">
+<h3 class="card-title"><i class="fas fa-ruler-combined"></i> 2. Dimensiones y Formato</h3>
+<div id="step-unidad" style="margin-bottom: 15px;">
+<label style="margin-top:0;">Unidad de Medida</label>
+<div style="display: flex; gap: 8px; margin-top: 10px;">
+<button class="filter-btn active" id="btn-uni-cm" onclick="setUnidad('cm', event)" style="flex:1;">CM</button>
+<button class="filter-btn" id="btn-uni-in" onclick="setUnidad('in', event)" style="flex:1;">IN</button>
+<button class="filter-btn" id="btn-uni-m" onclick="setUnidad('m', event)" style="flex:1;">M</button>
+</div>
+</div>
+<div id="formato-lienzo-container" style="display:none;">
+<label for="forma_lienzo">Formato de Lienzo</label>
+<select aria-describedby="error-forma_lienzo" class="" id="forma_lienzo" onchange="onFormaChange(); mostrarInfo('forma_lienzo');">
+<option disabled="" value="">Seleccioná un formato...</option>
+<option selected="" value="Estandar">Estándar (Cuadrado/Rectangular)</option>
+<option value="Circular">Circular</option>
+<option value="Ovalado">Ovalado</option>
+<option value="Hexagonal">Hexagonal</option>
+</select><div aria-live="polite" class="field-error" id="error-forma_lienzo"></div>
+<div class="info-text" id="info-forma_lienzo"></div>
+</div>
+<div id="step-tamano">
+<label for="tamano_predefinido">Tamaño</label>
+<select aria-describedby="error-tamano_predefinido" class="" id="tamano_predefinido" onchange="handleTamanoChange(); calcular();"></select><div aria-live="polite" class="field-error" id="error-tamano_predefinido"></div>
+</div>
+<div id="tamano_manual_container" style="display:none; margin-top:15px; background:rgba(0,0,0,0.3); padding:15px; border-radius:10px; border: 1px solid rgba(255,255,255,0.05);">
+<div style="display: flex; gap: 15px;">
+<div id="c_ancho" style="width:50%"><label for="ancho_cm" id="l_ancho" style="margin:0">Ancho (cm)</label><input aria-describedby="error-ancho_cm" id="ancho_cm" max="500" min="0.1" oninput="calcular()" step="any" type="number" value="50"/><div aria-live="polite" class="field-error" id="error-ancho_cm"></div></div>
+<div id="c_alto" style="width:50%"><label for="alto_cm" id="l_alto" style="margin:0">Alto (cm)</label><input aria-describedby="error-alto_cm" id="alto_cm" max="500" min="0.1" oninput="calcular()" step="any" type="number" value="70"/><div aria-live="polite" class="field-error" id="error-alto_cm"></div></div>
+</div>
+</div>
+<div id="step-enmarcado">
+<hr style="border: 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 20px 0 15px 0;"/>
+<label for="enmarcado" style="margin-top:0;">Enmarcado</label>
+<select aria-describedby="error-enmarcado" class="" id="enmarcado" onchange="mostrarInfo('enmarcado'); calcular()">
+<option disabled="" value="">Seleccioná un enmarcado...</option>
+<option selected="" value="SinMarco">Sin marco (Bordes pintados listos para colgar)</option>
+<option value="Estandar">Marco Estándar</option>
+<option value="Cajon">Marco Cajón</option>
+<option value="Clasico">Marco Clásico</option>
+<option value="SemiRelieve">Marco con Semi Relieve</option>
+<option value="GruesoRelieves">Marco Grueso con Relieves</option>
+</select><div aria-live="polite" class="field-error" id="error-enmarcado"></div>
+<div class="info-text" id="info-enmarcado"></div>
+</div>
+</div>
+<div class="form-card" id="contenedor-murales" style="display: none;">
+<h3 class="card-title"><i class="fas fa-paint-roller"></i> Dimensiones del Mural</h3>
+<label for="estilo_mural" style="margin-top:0;">Estilo del Mural</label>
+<select aria-describedby="error-estilo_mural" class="" id="estilo_mural" onchange="calcular()">
+<option selected="" value="Realista Mural">Realismo con detalles</option>
+<option value="Ilustracion Mural">Ilustración / Gráfico</option>
+<option value="Bocetado">Bocetado</option>
+</select><div aria-live="polite" class="field-error" id="error-estilo_mural"></div>
+<label style="margin-top:15px;">Tamaño (Metros)</label>
+<div style="display: flex; gap: 15px; margin-top:10px;">
+<div style="width:50%"><label for="mural_ancho" style="margin:0; font-size:11px;">Ancho</label><select aria-describedby="error-mural_ancho" class="" id="mural_ancho" onchange="calcular()"></select><div aria-live="polite" class="field-error" id="error-mural_ancho"></div></div>
+<div style="width:50%"><label for="mural_alto" style="margin:0; font-size:11px;">Alto</label><select aria-describedby="error-mural_alto" class="" id="mural_alto" onchange="calcular()"></select><div aria-live="polite" class="field-error" id="error-mural_alto"></div></div>
+</div>
+<div id="alerta-andamio" style="display:none; color:#d4af37; font-size:10px; margin-top:15px; padding: 10px; border-radius: 8px; background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2);">⚠️ Muros desde 2.5 metros de altura incluyen cargo logístico de andamios y equipo de seguridad.</div>
+</div>
+<div class="form-card" id="contenedor-escultura" style="display:none;">
+<h3 class="card-title"><i class="fab fa-studiovinari"></i> Detalles de la Escultura</h3>
+<label for="tipo_escultura" style="margin-top:0;">Tipo de escultura</label>
+<select aria-describedby="error-tipo_escultura" id="tipo_escultura" onchange="onTipoEsculturaChange(); calcular()">
+<option disabled="" selected="" value="">Seleccioná el tipo...</option>
+<option value="Busto">Busto</option>
+<option value="Medio cuerpo">Medio cuerpo</option>
+<option value="Figura completa">Figura de cuerpo entero</option>
+<option value="Relieve">Relieve</option>
+</select><div aria-live="polite" class="field-error" id="error-tipo_escultura"></div>
+<div class="info-text" id="info-tipo_escultura"></div>
+<div class="stepper-group" id="grupo-altura-escultura" style="margin-top: 15px; display:none;"><span id="label-altura-escultura">Altura</span><div class="stepper"><button onclick="stepEsc(-1)" type="button">-</button><label for="escultura_cm">Altura en centímetros</label><input aria-describedby="error-escultura_cm" id="escultura_cm" readonly="" value="50"/><div aria-live="polite" class="field-error" id="error-escultura_cm"></div><button onclick="stepEsc(1)" type="button">+</button></div></div>
+<div class="info-text" style="margin-top:15px;">Precio para pieza modelada a mano. No incluye fundición en bronce ni otros metales. La altura se mide de la base al punto más alto. Para piezas de más de 2 metros, consultame por WhatsApp.</div>
+</div>
+<div class="form-card" id="step-fotos" style="display:none;">
+<h3 class="card-title"><i class="far fa-lightbulb"></i> 3. Referencias y Detalles</h3>
+<div style="margin-bottom: 20px;">
+<label for="fotos_referencia" style="margin-top:0;">Imágenes de Referencia</label>
+<select aria-describedby="error-fotos_referencia" class="" id="fotos_referencia" onchange="calcular()">
+<option disabled="" selected="" value="">¿Tenés fotos de guía?</option>
+<option value="Sí, quiero cargar fotos de guía">Sí, quiero cargar fotos de guía</option>
+<option value="No, necesito asesoramiento">No tengo fotos, necesito asesoramiento</option>
+</select><div aria-live="polite" class="field-error" id="error-fotos_referencia"></div><div class="reference-upload"><label for="referencias_archivos">Cargá la foto que querés pintar o tus fotos de guía</label><input accept="image/*" aria-describedby="referencias-ayuda referencias-estado" id="referencias_archivos" multiple="" type="file"/><p class="upload-help" id="referencias-ayuda">Hasta 5 imágenes de 8 MB cada una. Al continuar, se subirán y se incluirán sus enlaces en el mensaje de WhatsApp. Las imágenes serán accesibles para quien tenga el enlace; no cargues documentos ni información sensible.</p><div class="upload-previews" id="referencias-previews"></div><p aria-live="polite" id="referencias-estado" role="status"></p><a class="wa-btn" hidden="" id="whatsapp-continuar" rel="noopener noreferrer" target="_blank">Abrir mensaje en WhatsApp</a></div>
+</div>
+<div id="step-idea">
+<label for="idea_cliente" style="margin-top:0;">Contame tu idea (Opcional)</label>
+<textarea aria-describedby="error-idea_cliente" id="idea_cliente" oninput="calcular()" placeholder="Describí detalles, paleta de colores, o la emoción que buscas..." rows="3"></textarea><div aria-live="polite" class="field-error" id="error-idea_cliente"></div>
+</div>
+</div>
+<div class="form-card" id="step-envio" style="display:none;">
+<h3 class="card-title"><i class="fas fa-shipping-fast"></i> 4. Cliente y Logística</h3>
+<div class="form-row"><label for="envio_nombre">Nombre y apellido</label><input aria-describedby="error-envio_nombre" id="envio_nombre" oninput="calcular()" placeholder="Nombre y Apellido" type="text"/><div aria-live="polite" class="field-error" id="error-envio_nombre"></div></div>
+<label style="margin-top:15px;">País de Residencia</label>
+<div class="form-row">
+<label for="envio_pais">Envio pais</label><select aria-describedby="error-envio_pais" class="" id="envio_pais" onchange="cambiarPaisLogistica()">
+<option selected="" value="Paraguay">Paraguay</option>
+<option value="Internacional">Otro país (Internacional)</option>
+</select><div aria-live="polite" class="field-error" id="error-envio_pais"></div>
+</div>
+<div id="datos_extra_envio" style="display:none; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; margin-top: 15px;">
+<label style="margin-top:0;">WhatsApp / Teléfono</label>
+<div class="input-group">
+<label for="envio_cod_pais">Código de país</label><select aria-describedby="error-envio_cod_pais" class="" id="envio_cod_pais" style="width: 40%;">
+<option value="+54">+54 🇦🇷</option>
+<option value="+55">+55 🇧🇷</option>
+<option value="+56">+56 🇨🇱</option>
+<option value="+598">+598 🇺🇾</option>
+<option value="+591">+591 🇧🇴</option>
+<option value="+1">+1 🇺🇸</option>
+<option value="+34">+34 🇪🇸</option>
+<option value="+52">+52 🇲🇽</option>
+<option value="">Otro...</option>
+</select><div aria-live="polite" class="field-error" id="error-envio_cod_pais"></div>
+<label for="envio_telefono">Número de teléfono</label><input aria-describedby="error-envio_telefono" id="envio_telefono" placeholder="Número..." style="width: 60%;" type="tel"/><div aria-live="polite" class="field-error" id="error-envio_telefono"></div>
+</div>
+<label style="margin-top:15px;">Ubicación Exacta</label>
+<div class="form-row">
+<label for="envio_pais_int">País</label><input aria-describedby="error-envio_pais_int" id="envio_pais_int" placeholder="País" type="text"/><div aria-live="polite" class="field-error" id="error-envio_pais_int"></div>
+<label for="envio_estado_int">Estado o provincia</label><input aria-describedby="error-envio_estado_int" id="envio_estado_int" placeholder="Estado / Provincia" type="text"/><div aria-live="polite" class="field-error" id="error-envio_estado_int"></div>
+<label for="envio_ciudad_int">Ciudad y barrio</label><input aria-describedby="error-envio_ciudad_int" id="envio_ciudad_int" placeholder="Ciudad y Barrio" type="text"/><div aria-live="polite" class="field-error" id="error-envio_ciudad_int"></div>
+<label for="envio_direccion">Dirección exacta</label><input aria-describedby="error-envio_direccion" id="envio_direccion" placeholder="Dirección exacta" type="text"/><div aria-live="polite" class="field-error" id="error-envio_direccion"></div>
+<label for="envio_cp">Código postal</label><input aria-describedby="error-envio_cp" id="envio_cp" placeholder="Código Postal" type="text"/><div aria-live="polite" class="field-error" id="error-envio_cp"></div>
+</div>
+</div>
+<div id="contenedor-factura" style="margin-top: 20px;">
+<hr style="border: 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 0 0 15px 0;"/>
+<label class="checkbox-label" for="factura"><input id="factura" onchange="toggleFactura()" type="checkbox"/> ¿Necesitás Factura Legal con RUC?</label>
+<div id="factura-datos" style="display:none; margin-top: 10px;">
+<label for="razon">Razón social</label><input aria-describedby="error-razon" id="razon" placeholder="Razón Social"/><div aria-live="polite" class="field-error" id="error-razon"></div>
+<label for="ruc">RUC</label><input aria-describedby="error-ruc" id="ruc" placeholder="R.U.C."/><div aria-live="polite" class="field-error" id="error-ruc"></div>
+</div>
+</div>
+<div id="pago-container" style="margin-top: 20px;">
+<hr style="border: 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 0 0 15px 0;"/>
+<label for="cuotas" style="margin-top:0;">Forma de Pago</label>
+<select aria-describedby="error-cuotas" class="" id="cuotas" onchange="mostrarInfo('cuotas'); calcular();"></select><div aria-live="polite" class="field-error" id="error-cuotas"></div>
+<div class="info-text" id="info-cuotas"></div>
+</div>
+</div>
+</div>
+<div class="tab-content" id="tab-galeria">
+<div class="album-grid" id="vista-albumes">
+<button class="album-book" data-album="retrato" onclick="openAlbum('retrato', 'Retratos')" type="button">
+<img alt="Álbum de retratos de Harold Lezcano" class="album-cover-img" loading="lazy" src="https://i.postimg.cc/KzS87GJg/1464351820687.jpg"/>
+<div class="album-title">Retratos</div>
+</button>
+<button class="album-book" data-album="paisaje" onclick="openAlbum('paisaje', 'Paisajes')" type="button">
+<img alt="Álbum de paisajes de Harold Lezcano" class="album-cover-img" loading="lazy" src="https://i.postimg.cc/N0VppVrZ/2012-10-03-061.jpg"/>
+<div class="album-title">Paisajes</div>
+</button>
+<button class="album-book" data-album="escultura" onclick="openAlbum('escultura', 'Esculturas')" type="button">
+<img alt="Álbum de esculturas de Harold Lezcano" class="album-cover-img" loading="lazy" src="https://i.postimg.cc/WpmwktXs/20210220-120524(1).jpg"/>
+<div class="album-title">Esculturas</div>
+</button>
+<button class="album-book" data-album="mural" onclick="openAlbum('mural', 'Murales')" type="button">
+<img alt="Álbum de murales de Harold Lezcano" class="album-cover-img" loading="lazy" src="https://i.postimg.cc/ZqrCMv9Z/1460758244301.jpg"/>
+<div class="album-title">Murales</div>
+</button>
+<button class="album-book" data-album="abstracto" onclick="openAlbum('abstracto', 'Abstractos')" type="button">
+<img alt="Álbum de abstractos de Harold Lezcano" class="album-cover-img" loading="lazy" src="https://i.postimg.cc/vmLZzRjh/20200302-235543.jpg"/>
+<div class="album-title">Abstractos</div>
+</button>
+<button class="album-book" data-album="otros" onclick="openAlbum('otros', 'Otros')" type="button">
+<img alt="Álbum de otros trabajos de Harold Lezcano" class="album-cover-img" loading="lazy" src="https://i.postimg.cc/jqGCthzK/2014-06-05-21-19-50.jpg"/>
+<div class="album-title">Otros</div>
+</button>
+</div>
+<div id="vista-hojas" style="display:none;">
+<div class="album-header">
+<button class="btn-volver" onclick="closeAlbum()"><i class="fas fa-arrow-left"></i> Volver a la Biblioteca</button>
+<h2 id="titulo-album-abierto">Álbum</h2>
+</div>
+<div class="hojas-container" id="mainGallery">
+<button class="gallery-item retrato" data-gallery-id="seed-001" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 1" loading="lazy" src="https://i.postimg.cc/KzS87GJg/1464351820687.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-002" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 2" loading="lazy" src="https://i.postimg.cc/KjmcV060/1715876237156.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-003" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 3" loading="lazy" src="https://i.postimg.cc/DZryB9MJ/1766089793686.png"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-004" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 4" loading="lazy" src="https://i.postimg.cc/wv8j5q0y/20130106-161233.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-005" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 5" loading="lazy" src="https://i.postimg.cc/KjmcV06D/2015-08-19-16.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-006" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 6" loading="lazy" src="https://i.postimg.cc/0j953VTC/20151218-113854-1-(1).jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-007" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 7" loading="lazy" src="https://i.postimg.cc/prPV7sww/20190823-174532.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-008" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 8" loading="lazy" src="https://i.postimg.cc/C1GLm3Qc/20200312-171736.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-009" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 9" loading="lazy" src="https://i.postimg.cc/26Q82sKx/20220123-102249.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-010" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 10" loading="lazy" src="https://i.postimg.cc/0j953VTH/20230118-204902-(1).jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-011" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 11" loading="lazy" src="https://i.postimg.cc/8cwkVhDN/20231012-203203.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-012" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 12" loading="lazy" src="https://i.postimg.cc/sx3f8nFD/20231030-200126.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-013" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 13" loading="lazy" src="https://i.postimg.cc/HxwsBqh4/20240127-200816(0).jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-014" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 14" loading="lazy" src="https://i.postimg.cc/4yX4MWDj/20240203-065556.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-015" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 15" loading="lazy" src="https://i.postimg.cc/j2vqrzKs/20240414-135623.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-016" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 16" loading="lazy" src="https://i.postimg.cc/2yCjJ0s2/20240514-183243.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-017" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 17" loading="lazy" src="https://i.postimg.cc/ydmYvMbF/20240524-001807.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-018" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 18" loading="lazy" src="https://i.postimg.cc/NM6fp3zm/20241110-160456.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-019" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 19" loading="lazy" src="https://i.postimg.cc/TwVYCz45/20241127-061338.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-020" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 20" loading="lazy" src="https://i.postimg.cc/KjmcV069/20250611-095335.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-021" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 21" loading="lazy" src="https://i.postimg.cc/V6qLDxVH/Cuadro-familiar-oleo-(artista-Harold-Lezcano).jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-022" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 22" loading="lazy" src="https://i.postimg.cc/768Z1HmC/FB-20150807-23-57-06-Saved-Picture.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-023" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 23" loading="lazy" src="https://i.postimg.cc/XJf7QRzX/FB-20150808-00-06-07-Saved-Picture.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-024" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 24" loading="lazy" src="https://i.postimg.cc/zBZGwz0y/FB-IMG-1510705255319.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-025" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 25" loading="lazy" src="https://i.postimg.cc/RF7VXkDV/FB-IMG-1559525970201.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-026" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 26" loading="lazy" src="https://i.postimg.cc/xCvTtw44/IMG-20140128-211943.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-027" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 27" loading="lazy" src="https://i.postimg.cc/26RSdk2j/IMG-20161008-WA0040.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-028" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 28" loading="lazy" src="https://i.postimg.cc/pTbLQWqr/IMG-20231128-162601-283.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-029" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 29" loading="lazy" src="https://i.postimg.cc/BbJZymrz/IMG-20240419-WA0023.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-030" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 30" loading="lazy" src="https://i.postimg.cc/Gtz31krb/IMG-20240512-WA0020.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-031" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 31" loading="lazy" src="https://i.postimg.cc/Y0t2Vd5N/Pics-Art-02-27-10-22-14.png"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-032" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 32" loading="lazy" src="https://i.postimg.cc/mDfg3L8g/Pics-Art-1407714938340.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-033" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 33" loading="lazy" src="https://i.postimg.cc/brLYjQP7/Picsart-23-10-27-08-24-57-491.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-034" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 34" loading="lazy" src="https://i.postimg.cc/J0R7gpfv/Proyecto-66.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-035" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 35" loading="lazy" src="https://i.postimg.cc/FR5HbrD1/Proyecto-71-(1).jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-036" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 36" loading="lazy" src="https://i.postimg.cc/4yX4M8Ck/SAVE-20231031-221103.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-037" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 37" loading="lazy" src="https://i.postimg.cc/Hn3WCQHg/SAVE-20231031-221417.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-038" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 38" loading="lazy" src="https://i.postimg.cc/vTG8jPRs/SAVE-20231031-221649.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-039" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 39" loading="lazy" src="https://i.postimg.cc/C5wMtc3J/Screenshot-20231203-115322-Instagram.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-040" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 40" loading="lazy" src="https://i.postimg.cc/763YmFWT/Screenshot-20240410-102826-Chrome.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-041" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 41" loading="lazy" src="https://i.postimg.cc/mkTZqdxx/Screenshot-20240528-103807-Instagram.jpg"/></button>
+<button class="gallery-item retrato" data-gallery-id="seed-042" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 42" loading="lazy" src="https://i.postimg.cc/zvqDMxsM/sketch1674081842049.png"/></button>
+<button class="gallery-item paisaje" data-gallery-id="seed-043" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de paisajes de Harold Lezcano, imagen 1" loading="lazy" src="https://i.postimg.cc/N0VppVrZ/2012-10-03-061.jpg"/></button>
+<button class="gallery-item paisaje" data-gallery-id="seed-044" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de paisajes de Harold Lezcano, imagen 2" loading="lazy" src="https://i.postimg.cc/zfM00Mgm/2014-11-17-04-09-22.jpg"/></button>
+<button class="gallery-item paisaje" data-gallery-id="seed-045" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de paisajes de Harold Lezcano, imagen 3" loading="lazy" src="https://i.postimg.cc/XvhQQhym/20140320-152307.jpg"/></button>
+<button class="gallery-item paisaje" data-gallery-id="seed-046" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de paisajes de Harold Lezcano, imagen 4" loading="lazy" src="https://i.postimg.cc/6QSYYSvJ/20151212-083713.jpg"/></button>
+<button class="gallery-item paisaje" data-gallery-id="seed-047" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de paisajes de Harold Lezcano, imagen 5" loading="lazy" src="https://i.postimg.cc/nL5005Q6/20160105-153540.jpg"/></button>
+<button class="gallery-item paisaje" data-gallery-id="seed-048" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de paisajes de Harold Lezcano, imagen 6" loading="lazy" src="https://i.postimg.cc/V6C4TRqv/20191013-182411.jpg"/></button>
+<button class="gallery-item paisaje" data-gallery-id="seed-049" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de paisajes de Harold Lezcano, imagen 7" loading="lazy" src="https://i.postimg.cc/9fSJJS77/20191220-140504.jpg"/></button>
+<button class="gallery-item paisaje" data-gallery-id="seed-050" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de paisajes de Harold Lezcano, imagen 8" loading="lazy" src="https://i.postimg.cc/q7YjjY3J/20230625-070406.jpg"/></button>
+<button class="gallery-item paisaje" data-gallery-id="seed-051" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de paisajes de Harold Lezcano, imagen 9" loading="lazy" src="https://i.postimg.cc/5tGnnGCJ/20240313-195620.jpg"/></button>
+<button class="gallery-item paisaje" data-gallery-id="seed-052" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de paisajes de Harold Lezcano, imagen 10" loading="lazy" src="https://i.postimg.cc/7LcmmcTF/ABCD0010.jpg"/></button>
+<button class="gallery-item paisaje" data-gallery-id="seed-053" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de paisajes de Harold Lezcano, imagen 11" loading="lazy" src="https://i.postimg.cc/QMP00PTd/IMG-20161016-WA0008.jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-054" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 1" loading="lazy" src="https://i.postimg.cc/WpmwktXs/20210220-120524(1).jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-055" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 2" loading="lazy" src="https://i.postimg.cc/G3Pxy9qd/20210517-095914(1).jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-056" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 3" loading="lazy" src="https://i.postimg.cc/BZ5BKtMG/20210622-155256.jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-057" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 4" loading="lazy" src="https://i.postimg.cc/wx5Qm30H/20210701-104315(1).jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-058" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 5" loading="lazy" src="https://i.postimg.cc/yxTh4rkR/20210916-160622.jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-059" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 6" loading="lazy" src="https://i.postimg.cc/vTv7FScB/20221111-161734.jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-060" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 7" loading="lazy" src="https://i.postimg.cc/ZnLPtDCn/20221112-120110.jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-061" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 8" loading="lazy" src="https://i.postimg.cc/0jCGRHb9/20221112-141730.jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-062" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 9" loading="lazy" src="https://i.postimg.cc/tJbdcHRv/IMG-20210305-070002-149.jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-063" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 10" loading="lazy" src="https://i.postimg.cc/MHY02rv7/IMG-20210709-200608-776(1).jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-064" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 11" loading="lazy" src="https://i.postimg.cc/tJzdQmYD/IMG-20210709-200608-800(1).jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-065" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 12" loading="lazy" src="https://i.postimg.cc/prBQb1pq/IMG-20210709-200608-852(1).jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-066" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 13" loading="lazy" src="https://i.postimg.cc/kGyN3hBb/IMG-20210804-WA0031.jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-067" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 14" loading="lazy" src="https://i.postimg.cc/tJzdQmYP/IMG-20210804-WA0038.jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-068" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 15" loading="lazy" src="https://i.postimg.cc/wx5Qm30q/Pics-Art-12-18-08(1).jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-069" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 16" loading="lazy" src="https://i.postimg.cc/BZ5BKtMq/Pics-Art-12-21-06(1).jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-070" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 17" loading="lazy" src="https://i.postimg.cc/7h41RyPQ/Picsart-26-04-27-11-21-04-233.jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-071" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 18" loading="lazy" src="https://i.postimg.cc/6qKVPN5q/Screenshot-20260427-113329-Gallery.jpg"/></button>
+<button class="gallery-item escultura" data-gallery-id="seed-072" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de esculturas de Harold Lezcano, imagen 19" loading="lazy" src="https://i.postimg.cc/Kj57SsR5/Video-Capture-20210702-203909.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-073" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 1" loading="lazy" src="https://i.postimg.cc/ZqrCMv9Z/1460758244301.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-074" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 2" loading="lazy" src="https://i.postimg.cc/R0rWdL0q/2012-05-24-006.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-075" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 3" loading="lazy" src="https://i.postimg.cc/ZqkWHxqR/2012-05-29-020.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-076" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 4" loading="lazy" src="https://i.postimg.cc/8Chj0fFC/20160325-170441.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-077" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 5" loading="lazy" src="https://i.postimg.cc/1tsfhR6D/20200916-210719.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-078" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 6" loading="lazy" src="https://i.postimg.cc/xdKc4NkG/20200921-150401.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-079" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 7" loading="lazy" src="https://i.postimg.cc/JhbG2HyD/20200921-150403.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-080" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 8" loading="lazy" src="https://i.postimg.cc/wBh7GRtR/20200921-150406.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-081" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 9" loading="lazy" src="https://i.postimg.cc/fbxJrS3k/20200921-150422.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-082" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 10" loading="lazy" src="https://i.postimg.cc/3RYd5rp6/20241226-203336.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-083" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 11" loading="lazy" src="https://i.postimg.cc/TPrp45yw/FB-IMG-1584030278296.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-084" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 12" loading="lazy" src="https://i.postimg.cc/jjzLFnWS/FB-IMG-1584030295754.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-085" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 13" loading="lazy" src="https://i.postimg.cc/XvMrLkvv/FB-IMG-1584030330125.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-086" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 14" loading="lazy" src="https://i.postimg.cc/1tsfhR6B/FB-IMG-1584031119418.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-087" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 15" loading="lazy" src="https://i.postimg.cc/PxTPsfZ4/FB-IMG-1584031132388.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-088" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 16" loading="lazy" src="https://i.postimg.cc/QthHGN5J/FB-IMG-1584031155478.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-089" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 17" loading="lazy" src="https://i.postimg.cc/GpkH5TBx/IMG-20200916-223434-354.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-090" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 18" loading="lazy" src="https://i.postimg.cc/50b6d9vw/IMG-20200920-WA0045.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-091" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 19" loading="lazy" src="https://i.postimg.cc/N015z2y1/IMG-20200921-WA0125.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-092" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 20" loading="lazy" src="https://i.postimg.cc/RF4N5CfG/IMG-20240723-WA0021.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-093" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 21" loading="lazy" src="https://i.postimg.cc/SskJFQ8T/IMG-20240726-WA0019.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-094" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 22" loading="lazy" src="https://i.postimg.cc/LX2nK4f0/IMG-20240726-WA0057.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-095" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 23" loading="lazy" src="https://i.postimg.cc/JnMGV7J3/IMG-20241205-WA0072.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-096" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 24" loading="lazy" src="https://i.postimg.cc/wvg78xJL/IMG-20241205-WA0074.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-097" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 25" loading="lazy" src="https://i.postimg.cc/HxdVDW54/Picsart-24-12-05-07-35-35-618.jpg"/></button>
+<button class="gallery-item mural" data-gallery-id="seed-098" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de murales de Harold Lezcano, imagen 26" loading="lazy" src="https://i.postimg.cc/mDBtfZMY/Picsart-25-01-13-14-50-15-800.jpg"/></button>
+<button class="gallery-item abstracto" data-gallery-id="seed-099" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de abstractos de Harold Lezcano, imagen 1" loading="lazy" src="https://i.postimg.cc/vmLZzRjh/20200302-235543.jpg"/></button>
+<button class="gallery-item abstracto" data-gallery-id="seed-100" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de abstractos de Harold Lezcano, imagen 2" loading="lazy" src="https://i.postimg.cc/3wCxBM6m/20250327-112357.jpg"/></button>
+<button class="gallery-item abstracto" data-gallery-id="seed-101" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de abstractos de Harold Lezcano, imagen 3" loading="lazy" src="https://i.postimg.cc/8CBzH836/20250331-132943.jpg"/></button>
+<button class="gallery-item abstracto" data-gallery-id="seed-102" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de abstractos de Harold Lezcano, imagen 4" loading="lazy" src="https://i.postimg.cc/JhczqwgJ/20250722-093733.jpg"/></button>
+<button class="gallery-item abstracto" data-gallery-id="seed-103" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de abstractos de Harold Lezcano, imagen 5" loading="lazy" src="https://i.postimg.cc/QMkdbLPg/IMG-20200329-WA0014(1).jpg"/></button>
+<button class="gallery-item abstracto" data-gallery-id="seed-104" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de abstractos de Harold Lezcano, imagen 6" loading="lazy" src="https://i.postimg.cc/tgt450fn/IMG-20250430-WA0011.jpg"/></button>
+<button class="gallery-item abstracto" data-gallery-id="seed-105" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de abstractos de Harold Lezcano, imagen 7" loading="lazy" src="https://i.postimg.cc/7LMZVvcX/Pics-Art-06-05-11-45-20.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-106" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 1" loading="lazy" src="https://i.postimg.cc/jqGCthzK/2014-06-05-21-19-50.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-107" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 2" loading="lazy" src="https://i.postimg.cc/SQXjBPzb/20140705-193329.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-108" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 3" loading="lazy" src="https://i.postimg.cc/FF21Nxjv/20140718-095757-1.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-109" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 4" loading="lazy" src="https://i.postimg.cc/1Rg4kdN5/20201002-204415.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-110" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 5" loading="lazy" src="https://i.postimg.cc/rz6B3sRc/20201012-160628.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-111" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 6" loading="lazy" src="https://i.postimg.cc/5jchTyYh/20201205-135002.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-112" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 7" loading="lazy" src="https://i.postimg.cc/NLh3SF2w/20210514-205527.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-113" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 8" loading="lazy" src="https://i.postimg.cc/BtWrkbPW/20210514-230041.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-114" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 9" loading="lazy" src="https://i.postimg.cc/SRz0gCsw/2024-08-14-08-41-Office-Lens.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-115" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 10" loading="lazy" src="https://i.postimg.cc/D0bVxLZ9/2024-11-01-21-13-Office-Lens-(1).jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-116" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 11" loading="lazy" src="https://i.postimg.cc/SQXjBPY1/20240209-031653.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-117" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 12" loading="lazy" src="https://i.postimg.cc/44KnD0Hw/20240318-123409.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-118" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 13" loading="lazy" src="https://i.postimg.cc/14xk2XVw/20240402-010548.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-119" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 14" loading="lazy" src="https://i.postimg.cc/QVL2wCKN/20240423-183609.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-120" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 15" loading="lazy" src="https://i.postimg.cc/Z0kG2nvJ/20240423-183959.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-121" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 16" loading="lazy" src="https://i.postimg.cc/Jtwfv0HX/20240912-204637.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-122" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 17" loading="lazy" src="https://i.postimg.cc/zvRmxKvz/20241030-012850.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-123" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 18" loading="lazy" src="https://i.postimg.cc/gr9CQjL3/20250725-180543.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-124" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 19" loading="lazy" src="https://i.postimg.cc/0jJgVDQH/20251002-024451.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-125" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 20" loading="lazy" src="https://i.postimg.cc/0jJgVDQF/20251004-070952.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-126" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 21" loading="lazy" src="https://i.postimg.cc/sxZFT7XN/20251011-032913.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-127" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 22" loading="lazy" src="https://i.postimg.cc/VvbyKn6h/20251018-084154.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-128" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 23" loading="lazy" src="https://i.postimg.cc/w3KCZMR1/20251214-223150.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-129" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 24" loading="lazy" src="https://i.postimg.cc/0rgTFjKm/20251214-223217.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-130" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 25" loading="lazy" src="https://i.postimg.cc/mZchvnFg/299398-415744478475035-1923656891-n.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-131" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 26" loading="lazy" src="https://i.postimg.cc/y6JWMG3t/68cf10ead9a424e580e6149f1538ff76-4.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-132" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 27" loading="lazy" src="https://i.postimg.cc/bYGd75S6/7331fa07b09e2732ed86eeafc2dfd5cc-3.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-133" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 28" loading="lazy" src="https://i.postimg.cc/y6JWMGS6/ABCD0009.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-134" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 29" loading="lazy" src="https://i.postimg.cc/wxt3CrRG/ddad59136edffd4d1a66860ad985cf68-5.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-135" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 30" loading="lazy" src="https://i.postimg.cc/7PCbFRTD/f0fe3fc9-16eb-4452-9a4f-f459d924ae4d.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-136" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 31" loading="lazy" src="https://i.postimg.cc/h4JhkYQ3/f53ff4d1b9c77f350fe2b993f73af101-2.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-137" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 32" loading="lazy" src="https://i.postimg.cc/dQ7DbfTY/FB-20150807-23-57-15-Saved-Picture.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-138" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 33" loading="lazy" src="https://i.postimg.cc/WpDtByJN/FB-20150807-23-58-26-Saved-Picture.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-139" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 34" loading="lazy" src="https://i.postimg.cc/44KnD0HM/FB-IMG-1510705337005.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-140" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 35" loading="lazy" src="https://i.postimg.cc/FF21NxjN/IMG-20170224-WA0017.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-141" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 36" loading="lazy" src="https://i.postimg.cc/gcwrC7Lg/IMG-20240125-WA0004.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-142" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 37" loading="lazy" src="https://i.postimg.cc/sfB1kLGw/IMG-20240308-WA0080.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-143" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 38" loading="lazy" src="https://i.postimg.cc/dDMbp3Zq/IMG-20240418-WA0066.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-144" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 39" loading="lazy" src="https://i.postimg.cc/prnNszT3/IMG-20240813-WA0045.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-145" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 40" loading="lazy" src="https://i.postimg.cc/rst6fxs6/IMG-20241030-WA0044.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-146" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 41" loading="lazy" src="https://i.postimg.cc/yWqMtx3g/IMG-20251214-WA0006.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-147" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 42" loading="lazy" src="https://i.postimg.cc/s1FkqxGg/IMG-20251219-WA0079.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-148" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 43" loading="lazy" src="https://i.postimg.cc/qgfPSq6r/Picsart-24-02-21-07-48-23-974(1).jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-149" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 44" loading="lazy" src="https://i.postimg.cc/WpDtByqy/Screenshot-20230224-121331-Instagram.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-150" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 45" loading="lazy" src="https://i.postimg.cc/7bvFdhJ1/Screenshot-20240325-131015-Instagram.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-151" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 46" loading="lazy" src="https://i.postimg.cc/BtWrkbPT/Screenshot-20240325-131056-Instagram.jpg"/></button>
+<button class="gallery-item otros" data-gallery-id="seed-152" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 47" loading="lazy" src="https://i.postimg.cc/rydzBHRj/Screenshot-20240325-131113-Instagram.jpg"/></button>
+</div>
+<div style="text-align:center; color:#888; font-size:10px; margin-top:5px; font-style:italic; letter-spacing: 1px;">← Desliza hacia los lados para hojear →</div>
+</div>
+</div>
+<div class="tab-content" id="tab-curso">
+<div class="course-header-info">
+<h2 data-setting="tituloCursos">DIBUJO Y PINTURA</h2>
+<p data-setting="programaCurso" style="font-size: 13px; color: #d4af37;"><strong>Harold Lezcano</strong> | Programa 12 Meses</p>
+<hr style="border:0; border-bottom:1px solid rgba(255,255,255,0.1); margin:15px 0;"/>
+<p style="font-size: 12px; font-weight: 300;"><span data-setting="horarioCurso">Viernes 18:00 a 20:00 hs.</span> (Matrícula única: <span data-price="matricula">150.000</span> Gs.)<br/><span data-setting="direccionCurso">📍 Las Residentas 460, Fernando de la Mora, Paraguay.</span> <button class="btn-mapa" id="mapa-curso" type="button">Ver Mapa</button><br/><br/><i data-setting="flexibilidadCurso">Flexibilidad total de horario y recuperación.</i></p>
+</div>
+<div class="course-card" style="border-left-color: #d4af37;">
+<h3>🎯 Inversión y Modalidades</h3>
+<ul>
+<li><b style="color:#d4af37;">Mensualidad:</b> <span data-price="mensualidad">400.000</span> Gs. (Incluye 4 clases al mes, de 2 horas cada una). Opción ideal para un aprendizaje constante y guiado.</li>
+<li><b style="color:#d4af37;">Clase Suelta:</b> <span data-price="claseSuelta">120.000</span> Gs. (Ideal si buscás perfeccionar una técnica específica o tenés horarios muy variables).</li>
+</ul>
+</div>
+<div class="course-card" style="border-left-color: #eee;">
+<h3 style="color: #eee;">Kit Básico de Inicio (Módulo 1)</h3>
+<ul>
+<li data-setting="kit-1">Cartulinas de dibujo (Canson A4 o A3).</li>
+<li data-setting="kit-2">Set de lápices de grafito (HB, 2B, 4B y 6B).</li>
+<li data-setting="kit-3">Esfumino para sombreado.</li>
+<li data-setting="kit-4">Goma de borrar blanca y goma maleable.</li>
+<li data-setting="kit-5">Sacapuntas/Cúter y Regla de 30 cm.</li>
+</ul>
+<div class="shop-info">
+                📍 <b>¿Dónde comprar materiales?</b> Contactá directo por WhatsApp:<br/>
+<div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+<a class="wa-btn" href="https://wa.me/595985100502" rel="noopener noreferrer" target="_blank"><i class="fab fa-whatsapp"></i> Maita Papelería</a>
+<a class="wa-btn" href="https://wa.me/595982524215" rel="noopener noreferrer" target="_blank"><i class="fab fa-whatsapp"></i> Librería Arq-Tec</a>
+<a class="wa-btn" href="https://wa.me/595976946281" rel="noopener noreferrer" target="_blank"><i class="fab fa-whatsapp"></i> Jara Gill Artes</a>
+</div>
+</div>
+</div>
+<div class="form-card">
+<h3 class="card-title">Módulo 1: Fundamentos y Claroscuro</h3>
+<ul style="padding-left: 18px; margin: 0; color: #bbb; font-size: 12px; line-height: 1.5;"><li data-setting="modulo-1">Dibujo base, encaje y proporciones.</li><li data-setting="modulo-2">Luz, sombra y volumen (Claroscuro).</li><li data-setting="modulo-3">Bodegones y naturaleza muerta.</li></ul>
+</div>
+<div class="form-card">
+<h3 class="card-title">Módulo 2: Teoría y Acuarela</h3>
+<ul style="padding-left: 18px; margin: 0; color: #bbb; font-size: 12px; line-height: 1.5;"><li data-setting="modulo-4">Teoría del color, círculo cromático y mezclas.</li><li data-setting="modulo-5">Transparencias y técnicas húmedas.</li></ul>
+</div>
+<div class="form-card">
+<h3 class="card-title">Módulo 3: Acrílico y Proporciones</h3>
+<ul style="padding-left: 18px; margin: 0; color: #bbb; font-size: 12px; line-height: 1.5;"><li data-setting="modulo-6">Acrílico: Pinceladas y atmósferas.</li><li data-setting="modulo-7">Anatomía y retrato básico.</li></ul>
+</div>
+<div class="form-card">
+<h3 class="card-title">Módulo 4: Óleo y Maestría</h3>
+<ul style="padding-left: 18px; margin: 0; color: #bbb; font-size: 12px; line-height: 1.5;"><li data-setting="modulo-8">Introducción al óleo y veladuras clásicas.</li><li data-setting="modulo-9">Proyecto Final tutelado.</li></ul>
+</div>
+<div class="form-card" style="margin-top: 10px;">
+<h3 class="card-title" style="justify-content: center; border:none;"><i class="fas fa-user-plus"></i> Formulario de Inscripción</h3>
+<label for="c_nom">Nombre y apellido</label><input aria-describedby="error-c_nom" id="c_nom" placeholder="Nombre y Apellido" required=""/><div aria-live="polite" class="field-error" id="error-c_nom"></div>
+<label for="c_edad">Edad (mínimo 8 años)</label><input aria-describedby="error-c_edad" id="c_edad" max="120" min="8" placeholder="Edad (Mín. 8 años)" required="" step="1" type="number"/><div aria-live="polite" class="field-error" id="error-c_edad"></div>
+<label for="c_niv">Nivel de experiencia</label><select aria-describedby="error-c_niv" class="" id="c_niv" onchange="mostrarInfo('c_niv')">
+<option disabled="" selected="" value="">Seleccioná tu nivel...</option>
+<option value="Nivel inicial">Nivel inicial</option>
+<option value="Nivel medio">Nivel medio</option>
+<option value="Nivel avanzado">Nivel avanzado</option>
+<option value="Nivel pro">Nivel pro</option>
+</select><div aria-live="polite" class="field-error" id="error-c_niv"></div>
+<div class="info-text" id="info-c_niv"></div>
+<label for="c_pag">Pago de matrícula</label><select aria-describedby="error-c_pag" class="" id="c_pag">
+<option data-matricula-label="true" disabled="" selected="" value="">Pago de Matrícula (150.000 Gs.)...</option>
+<option value="Abonar ahora">Abonar matrícula ahora</option>
+<option value="En clase">Abonar en primera clase</option>
+</select><div aria-live="polite" class="field-error" id="error-c_pag"></div>
+<button class="btn-confirmar btn-block" onclick="enviarInscripcion()">Enviar Inscripción</button>
+</div>
+</div>
+<section aria-labelledby="contacto-titulo" class="contact-section" id="contacto"><h2 id="contacto-titulo">Contacto del estudio</h2><p data-setting="contacto">Harold Lezcano · Las Residentas 460, Fernando de la Mora, Paraguay.</p><p><a href="https://wa.me/595972173847" rel="noopener noreferrer" target="_blank">Consultar por WhatsApp</a> · <a href="#cursos">Conocer los cursos</a></p><p data-setting="condiciones">Podés consultar sin completar el cotizador. Los presupuestos son estimados y se confirman personalmente. Al continuar por WhatsApp, se preparará un mensaje con los datos que completaste; revisalo antes de enviarlo. No se confirma una reserva ni se realiza un cobro desde esta página.</p><a class="admin-link" href="admin.html">Administrar</a></section></div>
+<div class="sticky-footer" id="sticky-footer">
+<div class="footer-left">
+<div class="price-box-header">
+<div aria-live="polite" id="precioFinal">0</div>
+<label for="moneda">Moneda orientativa</label><select aria-describedby="error-moneda" class="moneda-selector" id="moneda" onchange="calcular()" style="">
+<option value="PYG">Gs (Paraguay)</option>
+<option value="USD">USD (EE.UU.)</option>
+<option value="EUR">EUR (Europa)</option>
+<option value="BRL">R$ (Brasil)</option>
+</select><div aria-live="polite" class="field-error" id="error-moneda"></div>
+</div>
+<span class="nota">*Sin IVA. Envío aparte. 1 revisión de boceto incluida.</span>
+<div id="desglose"></div><div id="tasa-info"></div></div>
+<button class="btn-confirmar" id="enviar-obra" onclick="enviarObra()">Consultar por WhatsApp</button>
+</div>
+<div aria-label="Visor de obras de Harold Lezcano" aria-modal="true" class="modal" hidden="" id="imageModal" role="dialog">
+<button aria-label="Cerrar visor" class="close-modal" onclick="closeModal()" type="button">×</button>
+<button aria-label="Obra anterior" class="nav-modal prev-modal" onclick="changeImg(-1)" type="button">❮</button>
+<img alt="Obra de Harold Lezcano" id="modalImg"/>
+<button aria-label="Obra siguiente" class="nav-modal next-modal" onclick="changeImg(1)" type="button">❯</button>
+</div>
+<!-- LÓGICA FINANCIERA Y CONVERSIÓN EN VIVO -->
+<script src="estudio-datos.js"></script><script src="cotizador.js"></script>
+<script src="interfaz.js"></script>
+<script src="mejoras.js"></script><script src="estudio.js"></script></body>
+</html>
+

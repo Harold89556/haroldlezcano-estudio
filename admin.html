@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es-PY"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="robots" content="noindex,nofollow"/><title>Administración | Harold Lezcano</title><link rel="stylesheet" href="style.css"/><link rel="icon" href="icono-192.png"/></head>
+<body class="admin-body"><div class="page-background"></div><main class="container admin-container">
+<header class="header"><h1>HAROLD LEZCANO</h1><p>Administración del estudio</p><a class="admin-link" href="index.html">Volver al sitio</a></header>
+<p id="admin-status" role="status" aria-live="polite">Preparando acceso seguro…</p>
+<section id="login-panel" class="form-card"><h2>Acceso del administrador</h2><p>Este panel es solo para el estudio; no es un registro para clientes.</p>
+<form id="login-form"><label for="admin-email">Correo</label><input id="admin-email" name="email" type="email" autocomplete="username" value="henro89@gmail.com" required/>
+<label for="admin-password">Contraseña</label><input id="admin-password" name="password" type="password" autocomplete="current-password" required minlength="6"/>
+<button class="btn-confirmar btn-block" type="submit" id="login-button">Ingresar</button></form>
+<button type="button" id="reset-password" class="admin-secondary">Recuperar contraseña</button>
+<p>Se requiere el correo de administración verificado. La cuenta se habilita previamente en Firebase; desde aquí no se crean usuarios.</p></section>
+<section id="verification-panel" class="form-card" hidden><h2>Verificá tu correo</h2><p>Para editar, confirmá la dirección henro89@gmail.com. Luego volvé a ingresar.</p><button id="verify-email" type="button" class="admin-secondary">Enviar enlace de verificación</button><button id="refresh-user" type="button" class="admin-secondary">Ya verifiqué mi correo</button></section>
+<button id="logout" type="button" class="admin-secondary" hidden>Cerrar sesión</button>
+<div id="admin-workspace" hidden>
+<nav class="admin-nav" aria-label="Secciones de administración"><a href="#galeria-admin">Galería</a><a href="#categorias-admin">Categorías</a><a href="#precios-admin">Precios</a><a href="#sitio-admin">Textos y contacto</a></nav>
+<section id="galeria-admin" class="form-card"><h2>Galería</h2><p>Se conservan las 152 imágenes originales. Podés cambiar su categoría, texto, orden o portada. Ocultar una original no borra el archivo de Postimg.</p>
+<form id="gallery-upload-form"><h3>Agregar fotos</h3><label for="gallery-files">Imágenes (hasta 10 por carga, 8 MB cada una)</label><input type="file" id="gallery-files" accept="image/*" multiple required/>
+<label for="upload-category">Categoría</label><select id="upload-category" required></select><label for="upload-caption">Texto breve opcional (se aplica a las fotos seleccionadas)</label><input id="upload-caption" maxlength="240" placeholder="Dejá vacío si no querés agregar texto"/>
+<button type="submit" class="btn-confirmar btn-block">Subir a la galería</button><p id="gallery-upload-status" role="status"></p></form>
+<details id="pending-files-panel" hidden><summary>Archivos pendientes de limpieza</summary><p>Estos archivos se subieron, pero no se pudieron guardar o borrar completamente. Solo se muestran los pendientes de este navegador.</p><div id="pending-files"></div></details>
+<label for="gallery-filter">Filtrar categoría</label><select id="gallery-filter"><option value="">Todas las categorías</option></select>
+<p id="gallery-count"></p><div id="gallery-admin-items" class="admin-gallery"></div></section>
+<section id="categorias-admin" class="form-card"><h2>Categorías</h2><p>El nombre puede cambiar sin mover las fotos. El identificador se mantiene para conservar los enlaces.</p><div id="category-list"></div>
+<form id="category-form"><label for="category-name">Nueva categoría</label><input id="category-name" maxlength="80" required/><button type="submit" class="admin-secondary">Crear categoría</button></form></section>
+<section id="precios-admin" class="form-card"><h2>Precios y cotización</h2><p>Importes en guaraníes. Los factores son multiplicadores internos (1 mantiene el valor). No se muestran porcentajes en las opciones del cotizador. Murales sigue siempre «A consultar».</p><p>La matriz incluye óleo y carbonilla, personas extra y todos los marcos. En escultura: máximo entre el mínimo y (fijo + altura × precio por cm), redondeado al importe indicado. No incluye fundición.</p>
+<form id="prices-form"><div id="price-fields"></div><button class="btn-confirmar btn-block" type="submit">Guardar precios</button><p id="prices-status" role="status"></p></form>
+<button id="reset-prices" type="button" class="admin-secondary">Cargar valores originales en el formulario</button><p>El restablecimiento no se publica hasta pulsar Guardar precios.</p></section>
+<section id="sitio-admin" class="form-card"><h2>Textos y contacto</h2><p>Se edita el contenido existente. Los textos se muestran sin HTML.</p><form id="site-form"><label for="site-whatsapp">WhatsApp del estudio (código de país, sin +)</label><input id="site-whatsapp" inputmode="numeric" pattern="[0-9]{8,15}" required/>
+<label for="site-map">Enlace del mapa del curso</label><input id="site-map" type="url" required/><div id="site-text-fields"></div><button type="submit" class="btn-confirmar btn-block">Guardar textos y contacto</button><p id="site-status" role="status"></p></form></section>
+</div><script src="estudio-datos.js"></script><script type="module" src="admin.js"></script></main></body></html>
