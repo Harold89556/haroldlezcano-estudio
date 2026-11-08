@@ -394,7 +394,7 @@ body.visor-abierto { overflow:hidden; }
 :root { --nav-h: 64px; --nav-safe: env(safe-area-inset-bottom, 0px); }
 .app-shell { max-width: 720px; margin: 0 auto; padding-bottom: calc(var(--nav-h) + var(--nav-safe) + 32px) !important; }
 body[data-pantalla="cotizacion"] .app-shell { padding-bottom: calc(var(--nav-h) + var(--nav-safe) + 340px) !important; }
-#tab-inicio.active, #tab-galeria.active, #tab-cotizacion.active, #tab-curso.active { min-height: calc(100vh - var(--nav-h) - var(--nav-safe)); }
+#tab-inicio.active, #tab-cotizacion.active, #tab-curso.active { min-height: calc(100vh - var(--nav-h) - var(--nav-safe)); }
 .bottom-nav { position: fixed !important; top: auto !important; left: 50%; bottom: 0; transform: translateX(-50%); width: 100%; max-width: 720px; margin: 0 !important; z-index: 1100;
   display: flex; gap: 0; justify-content: space-around; padding: 6px 6px calc(6px + var(--nav-safe)); border-radius: 18px 18px 0 0;
   background: rgba(12,12,12,0.94); border: 1px solid rgba(212,175,55,0.18); border-bottom: 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.7); }
@@ -447,3 +447,8 @@ body.editor-abierto .admin-bottom-nav, body:has(#admin-workspace[hidden]) .admin
 #modalImg[data-rot="90"], #modalImg[data-rot="270"] { max-width: 88vh; max-height: 100vw; }
 .gallery-item, .album-book { overflow: hidden; }
 .admin-container .admin-screen[hidden], .admin-container [hidden] { display: none !important; }
+
+/* Inicio: foto del artista arriba y galería dentro de la pantalla. */
+.artista-foto { display: block; width: 100%; max-width: 420px; height: auto; aspect-ratio: 1; margin: 0 auto 18px; border-radius: 18px; border: 1px solid rgba(212,175,55,.35); box-shadow: 0 12px 30px rgba(0,0,0,.6); object-fit: cover; }
+.inicio-galeria { margin-top: 28px; scroll-margin-top: 12px; }
+.inicio-galeria > h2 { color: #d4af37; text-align: center; letter-spacing: 2px; font-size: 20px; margin: 0 0 14px; }

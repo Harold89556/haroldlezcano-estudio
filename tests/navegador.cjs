@@ -106,14 +106,15 @@ let base;
   await page.click('.tab-btn[data-tab="cotizacion"]');assert.equal(new URL(page.url()).hash,'#cotizacion');
   await page.selectOption('#estilo','Realista');await page.selectOption('#tecnica','Oleo');await page.selectOption('#tema','Retrato');await page.selectOption('#tamano_predefinido','30x40');
   await page.waitForTimeout(800);const foot=await page.locator('#sticky-footer').boundingBox();assert.ok(foot.y+foot.height<=nav.y+1,JSON.stringify([foot,nav]));
-  await page.click('.tab-btn[data-tab="galeria"]');assert.equal(await page.locator('#sticky-footer').isVisible(),false);
+  await page.click('.tab-btn[data-tab="inicio"]');assert.equal(await page.locator('#sticky-footer').isVisible(),false);assert.equal(await page.locator('.bottom-nav .tab-btn').count(),3);assert.equal(await page.locator('#tab-inicio img.artista-foto').isVisible(),true);assert.ok((await page.locator('#tab-inicio img.artista-foto').boundingBox()).width>=300);assert.equal(await page.locator('#tab-inicio #vista-albumes').isVisible(),true);
+  await page.goto(base+'/index.html#galeria/retrato/2');await page.waitForSelector('#imageModal:not([hidden])');assert.equal(await page.locator('.tab-btn.active').getAttribute('data-tab'),'inicio');await page.keyboard.press('Escape');
   await page.goto(base+'/index.html#inicio');assert.equal(await page.locator('.tab-btn.active').getAttribute('data-tab'),'inicio');
   await page.goto(base+'/index.html#cursos');assert.equal(await page.locator('.tab-btn.active').getAttribute('data-tab'),'curso');
   await page.screenshot({path:'/workspace/harold-app-cursos.png'});await context.close();
  });
  await test('Mezcla pública preserva semilla, agrega categoría y trata textos como texto',async()=>{
   const {page,context}=await session({config:{categorias:{items:[{id:'nuevo',name:'Categoría de prueba'}]}},gallery:[{id:'nueva',url:'https://example.com/foto.png',category:'nuevo',order:180,caption:'<img src=x onerror=alert(1)>',cover:true,hidden:false},{id:'seed-001',url:'https://example.com/original.png',category:'retrato',caption:'',order:0,cover:false,hidden:true}]});
-  await page.goto(base+'/index.html');await page.waitForSelector('[data-album="nuevo"]',{state:'attached'});assert.equal(await page.locator('#mainGallery .gallery-item').count(),152);assert.equal(await page.locator('[data-gallery-id="seed-002"]').count(),1);assert.equal(await page.locator('.gallery-caption img').count(),0);await page.click('.tab-btn:nth-child(2)');await page.click('[data-album="nuevo"]');assert.equal(await page.textContent('#titulo-album-abierto'),'Categoría de prueba');await context.close();
+  await page.goto(base+'/index.html');await page.waitForSelector('[data-album="nuevo"]',{state:'attached'});assert.equal(await page.locator('#mainGallery .gallery-item').count(),152);assert.equal(await page.locator('[data-gallery-id="seed-002"]').count(),1);assert.equal(await page.locator('.gallery-caption img').count(),0);await page.click('[data-album="nuevo"]');assert.equal(await page.textContent('#titulo-album-abierto'),'Categoría de prueba');await context.close();
  });
  await test('Administrador requiere cuenta verificada',async()=>{
   for(const user of [{email:'other@example.com',emailVerified:true},{email:'henro89@gmail.com',emailVerified:false}]){

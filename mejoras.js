@@ -30,13 +30,13 @@ function setRoute(hash,reemplazar=false){if(window.restaurandoRuta)return;if(loc
 const nombresAlbum={retrato:'Retratos',paisaje:'Paisajes',escultura:'Esculturas',mural:'Murales',abstracto:'Abstractos',otros:'Otros'};
 function restaurarRuta(){
  window.restaurandoRuta=true;
- const [ruta,album,foto]=location.hash.slice(1).split('/');const tab=ruta==='cursos'?'curso':ruta==='galeria'?'galeria':ruta==='cotizacion'?'cotizacion':'inicio';
+ const [ruta,album,foto]=location.hash.slice(1).split('/');const tab=ruta==='cursos'?'curso':ruta==='cotizacion'?'cotizacion':'inicio';
  if(typeof modal!=='undefined'){modal.style.display='none';modal.hidden=true;}
- switchTab(tab,{currentTarget:document.querySelector('.tab-btn[data-tab="'+tab+'"]')});
- if(tab==='galeria'){
-  if(nombresAlbum[album]){openAlbum(album,nombresAlbum[album]);document.querySelectorAll('.gallery-item').forEach(i=>i.classList.toggle('show',i.classList.contains(album)));if(foto){const imgs=document.querySelectorAll('.gallery-item.show img');const n=Number(foto);if(Number.isInteger(n)&&n>=1&&n<=imgs.length)openModal(imgs[n-1].src);}}
+ switchTab(ruta==='galeria'&&!album?'galeria':tab,{currentTarget:document.querySelector('.tab-btn[data-tab="'+tab+'"]')});
+ if(ruta==='galeria'){
+  if(nombresAlbum[album]){openAlbum(album,nombresAlbum[album]);document.querySelectorAll('.gallery-item').forEach(i=>i.classList.toggle('show',i.classList.contains(album)));if(foto){const imgs=document.querySelectorAll('.gallery-item.show img');const n=Number(foto);if(Number.isInteger(n)&&n>=1&&n<=imgs.length)openModal(imgs[n-1].src);}document.getElementById('galeria-inicio')?.scrollIntoView?.({block:'start'});}
   else{document.getElementById('vista-albumes').style.display='grid';document.getElementById('vista-hojas').style.display='none';}
- }
+ } else if(tab==='inicio'){document.getElementById('vista-albumes').style.display='grid';document.getElementById('vista-hojas').style.display='none';}
  window.restaurandoRuta=false;
  if(ruta==='contacto')document.getElementById('contacto').scrollIntoView?.();
  actualizarTabsARIA();

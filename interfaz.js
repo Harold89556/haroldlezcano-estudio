@@ -134,6 +134,8 @@
 
     const scrollPorPantalla = {};
     function switchTab(t, e) {
+        // La galería vive dentro de Inicio: 'galeria' abre Inicio y lleva a la galería.
+        const irAGaleria = t === 'galeria';
         if (!document.getElementById('tab-'+t)) t = 'inicio';
         const anterior = document.querySelector('.tab-content.active');
         if (anterior && anterior.id !== 'tab-'+t) scrollPorPantalla[anterior.id] = window.scrollY || 0;
@@ -145,7 +147,8 @@
         if (bioCurso && !bioCurso.dataset.listo) { if(window.sitioActual?.textos?.introduccionCurso) bioCurso.textContent=window.sitioActual.textos.introduccionCurso; else bioCurso.innerHTML = textBioCurso; bioCurso.dataset.listo='1'; }
         if (anterior && anterior.id !== 'tab-'+t) { if (!/jsdom/.test(navigator.userAgent)) window.scrollTo(0, scrollPorPantalla['tab-'+t] || 0); }
         calcular();
-        if (!window.restaurandoRuta) setRoute('#'+(t==='curso'?'cursos':t));
+        if (irAGaleria) { const g = document.getElementById('galeria-inicio'); if (g && g.scrollIntoView && !/jsdom/.test(navigator.userAgent)) requestAnimationFrame(() => g.scrollIntoView({block:'start'})); }
+        if (!window.restaurandoRuta) setRoute(irAGaleria ? '#galeria' : '#'+(t==='curso'?'cursos':t));
     }
 
     function step(id, a) { let i=document.getElementById(id); let v=parseInt(i.value)+a; if(v<0)v=0; i.value=v; calcular(); }
