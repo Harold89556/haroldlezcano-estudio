@@ -141,7 +141,7 @@
    const cover=items.find(item=>item.cover)||items[0];
    const button=document.createElement('button');button.type='button';button.className='album-book';button.dataset.album=cat.id;
    button.addEventListener('click',()=>openAlbum(cat.id,cat.name));
-   if (cover) { const img=document.createElement('img');img.src=cover.url;img.alt=cat.name;img.className='album-cover-img';img.loading='lazy';button.append(img); }
+   if (cover) { const img=document.createElement('img');img.src=cover.url;img.alt=cat.name;img.className='album-cover-img';img.loading='lazy';window.EstudioRecorte?.aplicar(img,cover.edit);button.append(img); }
    else { const empty=document.createElement('div');empty.className='album-cover-img album-cover-empty';empty.setAttribute('aria-hidden','true');empty.innerHTML='<i class="fas fa-images"></i>';button.append(empty); }
    const title=document.createElement('div');title.className='album-title';title.textContent=cat.name;
    const count=document.createElement('span');count.className='album-count';count.textContent=items.length+(items.length===1?' foto':' fotos');button.append(title,count);albumGrid.append(button);
@@ -149,7 +149,7 @@
   const main=$('mainGallery');main.replaceChildren();
   for (const item of visible) {
    const button=document.createElement('button');button.type='button';button.className='gallery-item '+item.category;button.dataset.galleryId=item.id;
-   const img=document.createElement('img');img.src=item.url;img.alt=item.caption || item.alt || 'Obra de Harold Lezcano';img.loading='lazy';button.append(img);
+   const img=document.createElement('img');img.src=item.url;img.alt=item.caption || item.alt || 'Obra de Harold Lezcano';img.loading='lazy';window.EstudioRecorte?.aplicar(img,item.edit);button.append(img);
    if (item.caption) { const caption=document.createElement('span');caption.className='gallery-caption';caption.textContent=item.caption;button.append(caption); }
    button.addEventListener('click',()=>openModal(img.src));main.append(button);
   }

@@ -38,7 +38,7 @@ async function session(settings={}){
    if(url.pathname==='/firebase-client.js')return route.fulfill({contentType:'text/javascript',body:mock});
    return route.continue();
   }
-  if(route.request().resourceType()==='image')return route.fulfill({contentType:'image/png',body:png});
+  if(route.request().resourceType()==='image')return route.fulfill({contentType:'image/png',body:png,headers:url.hostname==='example.com'?{'Access-Control-Allow-Origin':'*'}:{}});
   return route.abort();
  });
  await context.addInitScript(value=>{
@@ -125,18 +125,71 @@ let base;
   assert.deepEqual(await page.evaluate(()=>window.__mock.storageLogin),{email:'henro89@gmail.com',passwordPresent:true});
   assert.equal(await page.inputValue('#admin-password'),'');
   assert.equal(await page.locator('.admin-image-card').count(),152);
-  await page.locator('details').evaluateAll(items=>items.forEach(i=>i.open=true));await page.fill('#price-matriz-30x40-realista','900000');await page.locator('#prices-form button[type=submit]').click();await page.waitForFunction(()=>window.__mock.config.precios?.matriz['30x40'].realista===900000);
-  await page.fill('#category-name','Taller de prueba');await page.locator('#category-form button').click();await page.waitForFunction(()=>window.__mock.config.categorias?.items.some(i=>i.name==='Taller de prueba'));
-  await page.selectOption('#upload-category','taller-de-prueba');await page.setInputFiles('#gallery-files',photo('nueva.png'));await page.locator('#gallery-upload-form button[type=submit]').click();await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.storagePath?.startsWith('galeria/')));
+  await page.click('.admin-bottom-nav [data-screen=precios-admin]');await page.locator('details').evaluateAll(items=>items.forEach(i=>i.open=true));await page.fill('#price-matriz-30x40-realista','900000');await page.locator('#prices-form button[type=submit]').click();await page.waitForFunction(()=>window.__mock.config.precios?.matriz['30x40'].realista===900000);
+  await page.click('.admin-bottom-nav [data-screen=categorias-admin]');await page.fill('#category-name','Taller de prueba');await page.locator('#category-form button').click();await page.waitForFunction(()=>window.__mock.config.categorias?.items.some(i=>i.name==='Taller de prueba'));
+  await page.click('.admin-bottom-nav [data-screen=galeria-admin]');await page.selectOption('#upload-category','taller-de-prueba');await page.setInputFiles('#gallery-files',photo('nueva.png'));await page.locator('#gallery-upload-form button[type=submit]').click();await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.storagePath?.startsWith('galeria/')));
   assert.equal(await page.locator('.admin-image-card').count(),153);
   const first=page.locator('.admin-image-card').first();await first.locator('input[id^=caption]').fill('Texto ingresado en prueba');await first.locator('input[id^=hidden]').check();await first.locator('button[type=submit]').click();await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.id==='seed-001'&&i.hidden&&i.caption==='Texto ingresado en prueba'));
-  const second=page.locator('form.admin-image-card:has(#caption-seed-002)');await second.locator('input[type=file]').setInputFiles(photo('reemplazo.png'));await second.getByRole('button',{name:'Cambiar imagen'}).click();await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.id==='seed-002'&&i.storagePath==='galeria/seed-002/reemplazo.png'&&i.url.includes('example.com')));
-  const third=page.locator('form.admin-image-card:has(#caption-seed-003)');await third.getByRole('button',{name:'Quitar de la galería'}).click();await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.id==='seed-003'&&i.hidden));
+  const second=page.locator('form.admin-image-card:has(#caption-seed-002)');
+  await second.getByRole('button',{name:'Editar foto'}).click();await page.waitForSelector('#photo-editor .editor-canvas');await page.waitForFunction(()=>!document.querySelector('#photo-editor .editor-save').disabled);
+  const handle=await page.locator('.editor-se').boundingBox();const wrap=await page.locator('.editor-wrap').boundingBox();
+  await page.mouse.move(handle.x+14,handle.y+14);await page.mouse.down();await page.mouse.move(handle.x+14-wrap.width/2,handle.y+14-wrap.height/2,{steps:4});await page.mouse.up();
+  await page.locator('.editor-btn',{hasText:'Girar a la derecha'}).click();await page.locator('.editor-save').click();
+  // La foto local del catálogo es exportable por canvas: se sube el recorte como archivo nuevo.
+  await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.id==='seed-002'&&/^galeria\/seed-002\/.+-editada\.(webp|jpg)$/.test(i.storagePath)&&!i.edit));
+  assert.equal(await page.locator('#photo-editor').count(),0);
+  const third=page.locator('form.admin-image-card:has(#caption-seed-003)');await third.getByRole('button',{name:'Eliminar'}).click();await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.id==='seed-003'&&i.hidden));
+  assert.equal(await third.locator('.admin-badge').textContent(),'Eliminada de la galería');assert.equal(await third.getByRole('button',{name:'Volver a mostrar'}).count(),1);
   assert.equal(await page.evaluate(()=>window.__mock.deleted.length),0);
-  const nueva=page.locator('.admin-image-card').last();const oldPath=await page.evaluate(()=>window.__mock.gallery.find(i=>!/^(seed|ig)-/.test(i.id)).storagePath);await nueva.locator('input[type=file]').setInputFiles(photo('cambio.png'));await nueva.getByRole('button',{name:'Cambiar imagen'}).click();await page.waitForFunction(p=>window.__mock.deleted.includes(p),oldPath);
-  await page.fill('#site-whatsapp','595971000000');await page.fill('#text-subtitulo','Texto local de prueba');await page.locator('#site-form button[type=submit]').click();await page.waitForFunction(()=>window.__mock.config.sitio?.whatsapp==='595971000000');
-  const last=page.locator('.admin-image-card').last();await last.locator('button.admin-danger').click();await page.waitForFunction(()=>window.__mock.deleted.length===2);assert.equal(await page.locator('.admin-image-card').count(),152);
+  const nueva=page.locator('.admin-image-card').last();const oldPath=await page.evaluate(()=>window.__mock.gallery.find(i=>!/^(seed|ig)-/.test(i.id)).storagePath);
+  await nueva.getByRole('button',{name:'Editar foto'}).click();await page.waitForSelector('#editor-file',{state:'attached'});await page.setInputFiles('#editor-file',photo('cambio.png'));
+  await page.waitForFunction(()=>!document.querySelector('#photo-editor .editor-save').disabled);await page.locator('.editor-save').click();
+  await page.waitForFunction(p=>window.__mock.deleted.includes(p),oldPath);
+  const changed=await page.evaluate(()=>window.__mock.gallery.find(i=>!/^(seed|ig)-/.test(i.id)));assert.match(changed.storagePath,/^galeria\/[^/]+\/cambio-editada\.(webp|jpg)$/);assert.equal(changed.edit,undefined);
+  const nueva2=page.locator('.admin-image-card').last();await nueva2.getByRole('button',{name:'Editar foto'}).click();await page.waitForFunction(()=>document.querySelector('#photo-editor .editor-save')&&!document.querySelector('#photo-editor .editor-save').disabled);
+  await page.locator('.editor-btn',{hasText:'Girar a la izquierda'}).click();await page.locator('.editor-save').click();await page.waitForFunction(p=>window.__mock.deleted.includes(p),changed.storagePath);
+  assert.equal(await page.evaluate(()=>window.__mock.uploads.length),4);
+  await page.click('.admin-bottom-nav [data-screen=sitio-admin]');await page.fill('#site-whatsapp','595971000000');await page.fill('#text-subtitulo','Texto local de prueba');await page.locator('#site-form button[type=submit]').click();await page.waitForFunction(()=>window.__mock.config.sitio?.whatsapp==='595971000000');
+  await page.click('.admin-bottom-nav [data-screen=galeria-admin]');const last=page.locator('.admin-image-card').last();await last.getByRole('button',{name:'Eliminar'}).click();await page.waitForFunction(()=>window.__mock.deleted.length===3);assert.equal(await page.locator('.admin-image-card').count(),152);
   await page.screenshot({path:'/workspace/harold-admin-desktop.png',fullPage:false});assert.deepEqual(errors,[]);await page.click('#logout');await page.waitForFunction(()=>window.__mock.storageSignedOut&&!document.getElementById('login-panel').hidden);await context.close();
+ });
+ await test('Administrador móvil: menú inferior con cuatro secciones, hash y botones visibles',async()=>{
+  const {page,context,errors}=await session();await page.setViewportSize({width:390,height:844});await page.goto(base+'/admin.html#precios-admin');
+  assert.equal(await page.locator('.admin-bottom-nav').isVisible(),false);
+  await page.fill('#admin-password','clave-simulada-local');await page.click('#login-button');await page.waitForSelector('#admin-workspace:not([hidden])');
+  const tabs=page.locator('.admin-bottom-nav .tab-btn');assert.equal(await tabs.count(),4);assert.deepEqual(await tabs.allTextContents(),['Galería','Álbumes','Precios','Textos']);
+  const nav=await page.locator('.admin-bottom-nav').boundingBox();assert.ok(Math.abs(nav.y+nav.height-844)<2);
+  for(const t of await tabs.all()){const b=await t.boundingBox();assert.ok(b.height>=44&&b.width>=44);}
+  assert.equal(await page.locator('.admin-bottom-nav .active').getAttribute('data-screen'),'precios-admin');assert.equal(await page.locator('#galeria-admin').isVisible(),false);
+  await tabs.nth(0).click();await page.waitForFunction(()=>document.getElementById('precios-admin').hidden);assert.equal(new URL(page.url()).hash,'#galeria-admin');assert.equal(await page.locator('#precios-admin').isVisible(),false);
+  const card=page.locator('form.admin-image-card:has(#caption-seed-001)');assert.equal(await card.getByRole('button',{name:'Editar foto'}).isVisible(),true);assert.equal(await card.getByRole('button',{name:'Eliminar'}).isVisible(),true);
+  await page.evaluate(()=>window.scrollTo(0,2500));const y=await page.evaluate(()=>scrollY);await tabs.nth(1).click();await page.waitForFunction(()=>document.getElementById('galeria-admin').hidden);await tabs.nth(0).click();await page.waitForFunction(()=>!document.getElementById('galeria-admin').hidden);await page.waitForTimeout(150);assert.equal(await page.evaluate(()=>scrollY),y);
+  await page.goto(base+'/admin.html#sitio-admin');await page.waitForSelector('#admin-workspace:not([hidden])');
+  await page.locator('#site-form button[type=submit]').scrollIntoViewIfNeeded();await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
+  const btn=await page.locator('#site-form button[type=submit]').boundingBox();const nav2=await page.locator('.admin-bottom-nav').boundingBox();assert.ok(btn.y+btn.height<=nav2.y,JSON.stringify([btn,nav2]));
+  await page.goto(base+'/admin.html#galeria-admin');await page.waitForSelector('#admin-workspace:not([hidden])');await page.locator('form.admin-image-card:has(#caption-seed-001)').getByRole('button',{name:'Editar foto'}).click();
+  await page.waitForSelector('#photo-editor .editor-canvas');assert.equal(await page.locator('.admin-bottom-nav').isVisible(),false);await page.screenshot({path:'/workspace/harold-admin-editor.png'});
+  await page.locator('.editor-cancel').click();assert.equal(await page.locator('#photo-editor').count(),0);
+  assert.deepEqual(errors,[]);await page.screenshot({path:'/workspace/harold-admin-mobile-nav.png'});await context.close();
+ });
+ await test('Foto externa sin CORS: el recorte se guarda como ajuste y se ve en el admin',async()=>{
+  const {page,context,errors}=await session({gallery:[{id:'seed-001',url:'https://i.postimg.cc/x/original.png',category:'retrato',caption:'',alt:'',order:0,cover:false,hidden:false,storagePath:''}]});
+  // Playwright sirve las imágenes interceptadas con CORS; se simula el canvas "tainted" de un host externo real.
+  await page.addInitScript(()=>{const err=()=>new DOMException('Tainted canvas','SecurityError');const gid=CanvasRenderingContext2D.prototype.getImageData;CanvasRenderingContext2D.prototype.getImageData=function(...a){if(window.__taint)throw err();return gid.apply(this,a);};const tb=HTMLCanvasElement.prototype.toBlob;HTMLCanvasElement.prototype.toBlob=function(...a){if(window.__taint)throw err();return tb.apply(this,a);};window.__taint=true;});
+  await page.goto(base+'/admin.html');await page.fill('#admin-password','clave-simulada-local');await page.click('#login-button');await page.waitForSelector('#admin-workspace:not([hidden])');
+  const card=page.locator('form.admin-image-card:has(#caption-seed-001)');await card.getByRole('button',{name:'Editar foto'}).click();
+  await page.waitForFunction(()=>document.querySelector('.editor-status')?.textContent.includes('ajuste de vista'));
+  const handle=await page.locator('.editor-se').boundingBox();const wrap=await page.locator('.editor-wrap').boundingBox();
+  await page.mouse.move(handle.x+14,handle.y+14);await page.mouse.down();await page.mouse.move(handle.x+14-wrap.width/2,handle.y+14-wrap.height/2,{steps:4});await page.mouse.up();
+  await page.locator('.editor-btn',{hasText:'Girar a la derecha'}).click();await page.locator('.editor-save').click();
+  await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.id==='seed-001'&&i.edit&&i.edit.r===90&&i.edit.w<60&&i.url.includes('postimg')));
+  assert.equal(await page.evaluate(()=>window.__mock.uploads.length),0);
+  assert.ok(await page.locator('form.admin-image-card:has(#caption-seed-001) img').getAttribute('data-edit'));assert.deepEqual(errors,[]);await context.close();
+ });
+ await test('Recorte guardado como ajuste se aplica en la galería pública y el visor',async()=>{
+  const {page,context}=await session({gallery:[{id:'seed-001',url:'https://i.postimg.cc/x/original.png',category:'retrato',caption:'',alt:'',order:0,cover:false,hidden:false,storagePath:'',edit:{x:10,y:10,w:50,h:60,r:90}}]});
+  await page.goto(base+'/index.html');await page.waitForFunction(()=>document.querySelector('[data-gallery-id="seed-001"] img')?.dataset.edit);
+  assert.equal(await page.locator('[data-gallery-id="seed-001"] img').evaluate(i=>i.style.rotate),'90deg');await context.close();
  });
  await test('Fallo del login de fotos cierra Firebase y conserva el panel bloqueado',async()=>{
   const {page,context}=await session({failStorageLogin:true});await page.goto(base+'/admin.html');await page.fill('#admin-password','clave-simulada-local');await page.click('#login-button');

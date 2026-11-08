@@ -8,7 +8,7 @@ service cloud.firestore {
   }
   function galleryValid(d) {
    return d.keys().hasAll(['url','category','caption','alt','order','cover','hidden','storagePath'])
-    && d.keys().hasOnly(['url','category','caption','alt','order','cover','hidden','storagePath'])
+    && d.keys().hasOnly(['url','category','caption','alt','order','cover','hidden','storagePath','edit'])
     && d.url is string && d.url.size() <= 2048 && d.url.matches('https://.*')
     && d.category is string && d.category.matches('[a-z][a-z0-9-]{0,39}')
     && d.caption is string && d.caption.size() <= 240
@@ -16,7 +16,14 @@ service cloud.firestore {
     && d.order is int && d.order >= 0 && d.order <= 1000000
     && d.cover is bool && d.hidden is bool
     && d.storagePath is string && d.storagePath.size() <= 300
-    && (d.storagePath == '' || d.storagePath.matches('galeria/.*'));
+    && (d.storagePath == '' || d.storagePath.matches('galeria/.*'))
+    && (!('edit' in d) || editValid(d.edit));
+  }
+  function editValid(e) {
+   return e is map && e.keys().hasAll(['x','y','w','h','r']) && e.keys().hasOnly(['x','y','w','h','r'])
+    && e.x is number && e.y is number && e.w is number && e.h is number
+    && e.x >= 0 && e.y >= 0 && e.w >= 1 && e.h >= 1 && e.x + e.w <= 100.01 && e.y + e.h <= 100.01
+    && e.r in [0, 90, 180, 270];
   }
   match /galeria/{id} {
    allow read: if true;

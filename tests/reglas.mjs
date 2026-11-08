@@ -20,6 +20,9 @@ try {
  await succeeds(setDoc(doc(admin.firestore(),'galeria/test'),picture));
  await succeeds(getDoc(doc(anonymous.firestore(),'galeria/test')));
  await fails(setDoc(doc(admin.firestore(),'galeria/test'),{...picture,order:'bad'}));
+ await succeeds(setDoc(doc(admin.firestore(),'galeria/test'),{...picture,edit:{x:10,y:5.5,w:80,h:90,r:90}}));
+ await fails(setDoc(doc(admin.firestore(),'galeria/test'),{...picture,edit:{x:10,y:5,w:95,h:90,r:45}}));
+ await succeeds(setDoc(doc(admin.firestore(),'galeria/test'),picture));
  await succeeds(setDoc(doc(admin.firestore(),'config/precios'),defaults.precios));
  await succeeds(setDoc(doc(admin.firestore(),'config/sitio'),defaults.sitio));
  await succeeds(setDoc(doc(admin.firestore(),'config/categorias'),{items:defaults.categorias}));

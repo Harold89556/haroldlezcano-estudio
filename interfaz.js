@@ -549,6 +549,7 @@
         const imgs = fotosAlbum();
         modalImg.src = currentImages[currentIndex];
         modalImg.alt = imgs[currentIndex]?.alt || 'Obra de Harold Lezcano';
+        if (window.EstudioRecorte) window.EstudioRecorte.copiar(imgs[currentIndex], modalImg);
         const contador = document.getElementById('modalCounter');
         if (contador) contador.textContent = (currentIndex + 1) + ' / ' + currentImages.length;
         if (currentImages.length > 1) { const pre = new Image(); pre.src = currentImages[(currentIndex + 1) % currentImages.length]; const pre2 = new Image(); pre2.src = currentImages[(currentIndex - 1 + currentImages.length) % currentImages.length]; }

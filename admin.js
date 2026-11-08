@@ -1,4 +1,5 @@
 import * as api from './firebase-client.js';
+import { abrirEditor } from './admin-editor.js';
 const $ = id => document.getElementById(id);
 const D = window.EstudioDatos;
 const defaults = window.ESTUDIO_DEFAULTS;
@@ -36,7 +37,7 @@ function renderPending() {
  }
 }
 function galleryRecord(item) {
- return { url:item.url, category:item.category, caption:item.caption || '', alt:item.alt || '', order:Number(item.order), cover:Boolean(item.cover), hidden:Boolean(item.hidden), storagePath:item.storagePath || '' };
+ return { url:item.url, category:item.category, caption:item.caption || '', alt:item.alt || '', order:Number(item.order), cover:Boolean(item.cover), hidden:Boolean(item.hidden), storagePath:item.storagePath || '', ...(window.EstudioRecorte.valido(item.edit)?{edit:{x:item.edit.x,y:item.edit.y,w:item.edit.w,h:item.edit.h,r:item.edit.r}}:{}) };
 }
 async function persistItem(item) {
  const edits = [];
@@ -87,46 +88,48 @@ function renderGallery() {
   const save=document.createElement('button');save.type='submit';save.className='admin-secondary';save.textContent='Guardar cambios';
   const note=document.createElement('p');note.className='admin-card-status';note.setAttribute('role','status');
   const original=item.id.startsWith('seed-')||item.id.startsWith('ig-');
-  const replace=document.createElement('input');replace.id='replace-'+item.id;replace.type='file';replace.accept='image/jpeg,image/png,image/webp,image/gif,image/avif';
-  const replaceBtn=document.createElement('button');replaceBtn.type='button';replaceBtn.className='admin-secondary';replaceBtn.textContent='Cambiar imagen';
-  replaceBtn.onclick=()=>action(card,async()=>{
-   const file=replace.files[0];if(!file) throw Error('Elegí primero la nueva imagen.');
-   if(!/^image\/(jpeg|png|webp|gif|avif)$/i.test(file.type)) throw Error('Formato no compatible. Usá JPG, PNG, WEBP, GIF o AVIF.');
-   if(!file.size||file.size>8*1024*1024) throw Error('La imagen supera 8 MB.');
-   const previous=item.storagePath||'';let path='galeria/'+item.id+'/'+api.safeName(file.name);if(path===previous)path='galeria/'+item.id+'/'+Date.now().toString(36)+'-'+api.safeName(file.name);
-   setPending(path,true);
-   const url=await api.uploadImage(file,path,p=>{note.textContent='Subiendo: '+p+'%';});
-   await persistItem({...item,url,storagePath:path});setPending(path,false);
-   if(previous && previous!==path && previous.startsWith('galeria/')) {
-    try { await api.deleteStorageFile(previous); } catch { setPending(previous,true); }
+  if(item.hidden) card.classList.add('admin-card-hidden');
+  window.EstudioRecorte.aplicar(img,item.edit);
+  const thumb=document.createElement('div');thumb.className='admin-thumb';thumb.append(img);
+  if(item.hidden){const badge=document.createElement('span');badge.className='admin-badge';badge.textContent='Eliminada de la galería';thumb.append(badge);}
+  const actions=document.createElement('div');actions.className='admin-photo-actions';
+  const editBtn=document.createElement('button');editBtn.type='button';editBtn.className='admin-edit';editBtn.innerHTML='<i class="fas fa-crop-simple" aria-hidden="true"></i> ';editBtn.append('Editar foto');
+  editBtn.onclick=()=>abrirEditor({url:item.url,edit:item.edit,title:item.caption||'',onSave:async(result,progress)=>{
+   if(result.file){
+    const file=result.file;const previous=item.storagePath||'';
+    let path='galeria/'+item.id+'/'+api.safeName(file.name);if(path===previous)path='galeria/'+item.id+'/'+Date.now().toString(36)+'-'+api.safeName(file.name);
+    setPending(path,true);
+    const url=await api.uploadImage(file,path,p=>progress('Subiendo: '+p+'%'));
+    await persistItem({...item,url,storagePath:path,edit:null});setPending(path,false);
+    if(previous && previous!==path && previous.startsWith('galeria/')) { try { await api.deleteStorageFile(previous); } catch { setPending(previous,true); } }
+    say('Foto editada y guardada.');
+   } else {
+    await persistItem({...item,edit:result.edit});say('Recorte guardado. La foto original no se modifica; el sitio la muestra recortada.');
    }
-   renderGallery();say('Imagen cambiada.');
+  }}).then(saved=>{if(saved)renderGallery();});
+  const remove=document.createElement('button');remove.type='button';remove.className='admin-danger';
+  remove.innerHTML='<i class="fas '+(original&&item.hidden?'fa-eye':'fa-trash')+'" aria-hidden="true"></i> ';remove.append(original&&item.hidden?'Volver a mostrar':'Eliminar');
+  remove.onclick=()=>action(card,async()=>{
+   if(original){
+    if(!item.hidden && !confirm('¿Eliminar esta foto de la galería? Dejará de verse en el sitio.')) return;
+    await persistItem({...item,hidden:!item.hidden});renderGallery();say(item.hidden?'Foto visible otra vez en el sitio.':'Foto eliminada de la galería. Podés volver a mostrarla desde acá.');
+    return;
+   }
+   if(!confirm('¿Eliminar definitivamente esta foto de la galería y su archivo?')) return;
+   try { await api.deleteGalleryItem(item); }
+   catch(error) {
+    if(error.galleryRemoved) { if(item.storagePath) setPending(item.storagePath,true);gallery=gallery.filter(i=>i.id!==item.id);renderGallery(); }
+    throw error;
+   }
+   gallery=gallery.filter(i=>i.id!==item.id);renderGallery();say('Foto eliminada.');
   },text=>{note.textContent=text;});
-  card.append(img,makeLabel('Álbum',cat),cat,makeLabel('Texto opcional',caption),caption,makeLabel('Orden (menor primero)',order),order,makeLabel('Portada del álbum',cover),cover,makeLabel(original?'Quitada de la galería (oculta)':'Oculta en el sitio',hidden),hidden,save,makeLabel('Nueva imagen (JPG, PNG, WEBP, GIF o AVIF, máx. 8 MB)',replace),replace,replaceBtn,note);
-  if(original) {
-   const quitar=document.createElement('button');quitar.type='button';quitar.className='admin-danger';quitar.textContent=item.hidden?'Volver a mostrar en la galería':'Quitar de la galería';
-   quitar.onclick=()=>action(card,async()=>{
-    if(!item.hidden && !confirm('¿Quitar esta foto de la galería pública? La original se oculta, no se borra.')) return;
-    await persistItem({...item,hidden:!item.hidden});renderGallery();say(item.hidden?'Foto visible otra vez.':'Foto quitada de la galería.');
-   });card.append(quitar);
-  }
+  actions.append(editBtn,remove);
+  card.append(thumb,actions,makeLabel('Álbum',cat),cat,makeLabel('Texto opcional',caption),caption,makeLabel('Orden (menor primero)',order),order,makeLabel('Portada del álbum',cover),cover,makeLabel('Oculta en el sitio',hidden),hidden,save,note);
   card.onsubmit=e=>{e.preventDefault();action(card,async()=>{
    const n=Number(order.value);if(!Number.isInteger(n)||n<0||n>1000000) throw Error('Usá un orden entero entre 0 y 1.000.000.');
    await persistItem({...item,category:cat.value,caption:caption.value.trim(),order:n,cover:cover.checked,hidden:hidden.checked});
    renderGallery();say('Foto actualizada.');
   },text=>{note.textContent=text;});};
-  if(!item.id.startsWith('seed-') && !item.id.startsWith('ig-')) {
-   const remove=document.createElement('button');remove.type='button';remove.className='admin-danger';remove.textContent='Eliminar foto';
-   remove.onclick=()=>action(card,async()=>{
-    if(!confirm('¿Eliminar definitivamente esta foto de la galería y su archivo?')) return;
-    try { await api.deleteGalleryItem(item); }
-    catch(error) {
-     if(error.galleryRemoved) { if(item.storagePath) setPending(item.storagePath,true);gallery=gallery.filter(i=>i.id!==item.id);renderGallery(); }
-     throw error;
-    }
-    gallery=gallery.filter(i=>i.id!==item.id);renderGallery();say('Foto eliminada.');
-   });card.append(remove);
-  }
   $('gallery-admin-items').append(card);
  }
 }
@@ -218,6 +221,19 @@ $('refresh-user').onclick=async()=>{
  }catch(error){say(api.explainError(error));}
 };
 $('gallery-filter').onchange=renderGallery;
+// Pantallas tipo app: una sección por vez, menú inferior y scroll recordado por pantalla.
+const SCREENS={'galeria-admin':'galeria-admin',galeria:'galeria-admin','categorias-admin':'categorias-admin',albumes:'categorias-admin','precios-admin':'precios-admin',precios:'precios-admin','sitio-admin':'sitio-admin',textos:'sitio-admin',sitio:'sitio-admin'};
+const scrolls={};let currentScreen='';
+function showScreen(id){
+ const next=SCREENS[id]||'galeria-admin';
+ if(currentScreen) scrolls[currentScreen]=window.scrollY;
+ for(const sec of document.querySelectorAll('.admin-screen')) sec.hidden=sec.id!==next;
+ for(const a of document.querySelectorAll('.admin-bottom-nav .tab-btn')){const on=a.dataset.screen===next;a.classList.toggle('active',on);if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');}
+ const changed=currentScreen!==next;currentScreen=next;document.body.dataset.pantalla=next;
+ if(changed) requestAnimationFrame(()=>window.scrollTo(0,scrolls[next]||0));
+}
+window.addEventListener('hashchange',()=>showScreen(location.hash.slice(1)));
+showScreen(location.hash.slice(1));
 $('gallery-upload-form').onsubmit=e=>{e.preventDefault();if(uploading) return;const form=e.currentTarget;
  action(form,async()=>{
   const files=[...$('gallery-files').files];if(!files.length||files.length>10) throw Error('Elegí entre 1 y 10 imágenes por carga.');files.forEach(api.checkImage);

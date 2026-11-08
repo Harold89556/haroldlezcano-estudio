@@ -358,8 +358,6 @@ button:disabled { opacity: .55; cursor: wait; }
 .admin-container label { display: block; font-size: 12px; margin: 14px 0 8px; }
 .admin-container .btn-confirmar { margin-top: 18px; }
 .admin-container .admin-secondary { margin-top: 10px; margin-right: 6px; }
-.admin-nav { display: flex; gap: 10px; flex-wrap: wrap; margin: 25px 0; }
-.admin-nav a { color: #e5ca72; padding: 10px 14px; border: 1px solid #746333; border-radius: 7px; text-decoration: none; font-size: 13px; }
 .admin-gallery { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 18px; margin-top: 20px; }
 .admin-image-card { min-width: 0; border: 1px solid #444; border-radius: 12px; padding: 15px; background: #181818; }
 .admin-image-card > img { width: 100%; height: 190px; object-fit: contain; border-radius: 8px; }
@@ -410,3 +408,42 @@ body[data-pantalla="cotizacion"] .app-shell { padding-bottom: calc(var(--nav-h) 
 #tab-inicio .contact-section { margin-top: 24px; }
 @media (min-width: 768px) { #tab-cotizacion.active, #tab-curso.active { display: block; } #tab-curso .course-card { width: 100%; } .sticky-footer { max-width: 696px; padding: 14px 24px; } }
 .album-cover-empty { display:flex !important; align-items:center; justify-content:center; color:#4a4430; font-size:34px; background:#101010 !important; }
+
+/* Administrador como app: pantallas independientes y menú fijo abajo. */
+.admin-container { max-width: 720px; padding-bottom: calc(var(--nav-h) + var(--nav-safe) + 40px) !important; }
+.admin-container .header { position: relative; }
+.admin-logout { position: absolute; top: 0; right: 0; margin: 0 !important; }
+.admin-bottom-nav .tab-btn { text-decoration: none; }
+.admin-container .admin-screen { scroll-margin-bottom: calc(var(--nav-h) + var(--nav-safe) + 20px); }
+.admin-gallery { grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); }
+.admin-thumb { position: relative; height: 190px; border-radius: 8px; overflow: hidden; background: #0e0e0e; display: flex; align-items: center; justify-content: center; }
+.admin-thumb > img { width: 100%; height: 100%; object-fit: contain; }
+.admin-badge { position: absolute; left: 8px; top: 8px; background: #5a1f1f; color: #ffd6d6; border: 1px solid #ad6a6a; border-radius: 6px; padding: 4px 8px; font-size: 11px; }
+.admin-card-hidden .admin-thumb > img { opacity: .45; }
+.admin-photo-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.admin-photo-actions button { min-height: 46px; margin: 0 !important; font: inherit; font-size: 13px; border-radius: 9px; cursor: pointer; }
+.admin-edit { border: 1px solid #d4af37; background: rgba(212,175,55,.15); color: #f0d77f; }
+.admin-container input, .admin-container select, .admin-container textarea, .admin-container button { scroll-margin-bottom: calc(var(--nav-h) + var(--nav-safe) + 20px); }
+/* Editor de fotos a pantalla completa. */
+body.editor-abierto { overflow: hidden; }
+body.editor-abierto .admin-bottom-nav, body:has(#admin-workspace[hidden]) .admin-bottom-nav { display: none; }
+.photo-editor { position: fixed; inset: 0; z-index: 20000; background: #0b0b0b; color: #eee; display: flex; flex-direction: column; padding: calc(10px + env(safe-area-inset-top,0px)) 12px calc(10px + var(--nav-safe)); box-sizing: border-box; }
+.editor-head h2 { color: #d4af37; font-size: 18px; margin: 0; }
+.editor-head p, .editor-status { color: #bbb; font-size: 12px; margin: 4px 0; min-height: 1em; }
+.editor-stage { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none; }
+.editor-wrap { position: relative; }
+.editor-canvas { display: block; }
+.editor-frame { position: absolute; box-sizing: border-box; border: 2px solid #d4af37; box-shadow: 0 0 0 9999px rgba(0,0,0,.55); cursor: move; touch-action: none; }
+.editor-handle { position: absolute; width: 28px; height: 28px; background: #d4af37; border-radius: 50%; border: 3px solid #0b0b0b; touch-action: none; }
+.editor-nw { left: -15px; top: -15px; cursor: nwse-resize; } .editor-ne { right: -15px; top: -15px; cursor: nesw-resize; }
+.editor-sw { left: -15px; bottom: -15px; cursor: nesw-resize; } .editor-se { right: -15px; bottom: -15px; cursor: nwse-resize; }
+.editor-tools, .editor-actions { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-top: 8px; }
+.editor-actions { grid-template-columns: 1fr 1fr; }
+.editor-btn { min-height: 52px; min-width: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; background: #1c1c1c; color: #ddd; border: 1px solid #3a3a3a; border-radius: 10px; font: inherit; font-size: 11px; cursor: pointer; }
+.editor-btn i { font-size: 17px; color: #d4af37; }
+.editor-save { background: #d4af37; color: #111; border-color: #d4af37; font-size: 14px; } .editor-save i { color: #111; }
+.editor-cancel { font-size: 14px; }
+/* Recorte guardado como ajuste de vista: el visor ajusta el tamaño si la foto está girada. */
+#modalImg[data-rot="90"], #modalImg[data-rot="270"] { max-width: 88vh; max-height: 100vw; }
+.gallery-item, .album-book { overflow: hidden; }
+.admin-container .admin-screen[hidden], .admin-container [hidden] { display: none !important; }

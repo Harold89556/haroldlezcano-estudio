@@ -1,5 +1,5 @@
 /* Sin caché de HTML principal, JavaScript ni tarifas: la cotización requiere red. */
-const CACHE='hl-estaticos-v3';
+const CACHE='hl-estaticos-v4';
 const SAFE=['/not_found.html','/style.css','/icono-192.png','/icono-512.png','/icono-maskable.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>Promise.allSettled(SAFE.map(url=>cache.add(url)))).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
