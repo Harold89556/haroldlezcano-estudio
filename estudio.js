@@ -33,7 +33,7 @@
   return text + '\n📸 Te envío ' + (references.length === 1 ? 'la foto de referencia' : 'las ' + references.length + ' fotos de referencia') + ' en este chat.\n';
  }
  function whatsappUrl(message) {
-  return 'https://wa.me/' + window.sitioActual.whatsapp + '?text=' + encodeURIComponent(message);
+  return 'https://wa.me/' + (window.sitioActual?.whatsapp || '595972173847') + '?text=' + encodeURIComponent(message);
  }
  function revealWhatsApp(url, allowShare) {
   $('whatsapp-continuar').href = url;
@@ -90,33 +90,13 @@
   const text = prepararMensajeObra();if (!text) return;
   const message = withPhotoNote(text);
   const url = whatsappUrl(message);
-  if (!references.length) {
-   revealWhatsApp(url, false);
-   status('Revisá el mensaje en WhatsApp antes de enviarlo.');
-   window.open(url,'_blank','noopener,noreferrer');
-   return;
-  }
-  const files = referenceFiles();
-  const sharable = canSharePhotos(files, message);
-  if (sharable) {
-   try {
-    await navigator.share({ files, text: message });
-    revealWhatsApp(url, true);
-    status('Revisá el mensaje en WhatsApp antes de enviarlo. Si no se adjuntaron las fotos, usá «Compartir fotos» o el enlace de abajo.');
-    return;
-   } catch (error) {
-    if (error && error.name === 'AbortError') {
-     revealWhatsApp(url, true);
-     status('No se envió. Si cancelaste, podés compartir las fotos de nuevo o abrir el chat de WhatsApp.');
-     return;
-    }
-   }
-  }
+  // Siempre abrir directo el chat del artista con el pedido escrito; compartir fotos queda como paso secundario.
+  const sharable = references.length ? canSharePhotos(referenceFiles(), message) : false;
   revealWhatsApp(url, sharable);
-  status(sharable
-   ? 'Se abre WhatsApp con el pedido. Si las fotos no se adjuntaron, usá «Compartir fotos».'
-   : 'Se abre WhatsApp con el pedido. En esta computadora el chat no puede adjuntar las fotos: envialas en el mismo chat después de abrir el mensaje.');
   window.open(url,'_blank','noopener,noreferrer');
+  status(!references.length ? 'Revisá el mensaje en WhatsApp antes de enviarlo.' : sharable
+   ? 'Se abrió el chat de WhatsApp con el pedido. Después usá «Compartir fotos por WhatsApp» para mandar las imágenes al mismo chat.'
+   : 'Se abrió el chat de WhatsApp con el pedido. Enviá las fotos en ese mismo chat.');
  };
  shareBtn.addEventListener('click', async () => {
   if (uploading || !references.length) return;
@@ -141,8 +121,8 @@
   for (const el of document.querySelectorAll('[data-setting]')) {
    const value=window.sitioActual.textos[el.dataset.setting];if (typeof value==='string') el.textContent=value;
   }
-  const tab=document.getElementById('tab-curso').classList.contains('active');
-  $('bioText').textContent=window.sitioActual.textos[tab?'introduccionCurso':'biografia'];
+  $('bioText').textContent=window.sitioActual.textos.biografia;
+  if($('bioCurso')){$('bioCurso').textContent=window.sitioActual.textos.introduccionCurso;$('bioCurso').dataset.listo='1';}
   for (const a of document.querySelectorAll('a[href^="https://wa.me/595972173847"]')) a.href='https://wa.me/'+window.sitioActual.whatsapp;
  }
  function applyCoursePrices() {
@@ -162,8 +142,9 @@
    const button=document.createElement('button');button.type='button';button.className='album-book';button.dataset.album=cat.id;
    button.addEventListener('click',()=>openAlbum(cat.id,cat.name));
    if (cover) { const img=document.createElement('img');img.src=cover.url;img.alt=cat.name;img.className='album-cover-img';img.loading='lazy';button.append(img); }
+   else { const empty=document.createElement('div');empty.className='album-cover-img album-cover-empty';empty.setAttribute('aria-hidden','true');empty.innerHTML='<i class="fas fa-images"></i>';button.append(empty); }
    const title=document.createElement('div');title.className='album-title';title.textContent=cat.name;
-   const count=document.createElement('span');count.className='album-count';count.textContent=items.length+' fotos';button.append(title,count);albumGrid.append(button);
+   const count=document.createElement('span');count.className='album-count';count.textContent=items.length+(items.length===1?' foto':' fotos');button.append(title,count);albumGrid.append(button);
   }
   const main=$('mainGallery');main.replaceChildren();
   for (const item of visible) {

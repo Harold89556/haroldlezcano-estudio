@@ -41,6 +41,22 @@ function claveEstandar(d){
  const keys=valor('tecnica')==='Carbonilla'?['15x21','21x30','30x42','42x59']:['Circular','Hexagonal'].includes(d.forma)?['30x30','50x50','70x70','100x100']:['30x40','40x50','50x70','70x100','100x120'];
  return keys.find(key=>{let [w,h]=key.split('x').map(Number);return (Math.abs(d.ancho-w)<0.00001&&Math.abs(d.alto-h)<0.00001)||(Math.abs(d.ancho-h)<0.00001&&Math.abs(d.alto-w)<0.00001);});
 }
+function familiaClaves(d){return valor('tecnica')==='Carbonilla'?['15x21','21x30','30x42','42x59']:['Circular','Hexagonal'].includes(d.forma)?['30x30','50x50','70x70','100x100']:['30x40','40x50','50x70','70x100','100x120'];}
+function interpolarImporte(area,filas,leer,principal){
+ const pts=filas.map(f=>({a:f.area,v:Number(leer(f.cfg))})).filter(p=>Number.isFinite(p.v));if(!pts.length)return 0;if(pts.length===1)return Math.round(pts[0].v*area/pts[0].a/1000)*1000;
+ let i=pts.findIndex(p=>p.a>=area);if(i<=0)i=1;if(i<0||i>=pts.length)i=pts.length-1;
+ const p0=pts[i-1],p1=pts[i];let v=p0.v+(area-p0.a)/(p1.a-p0.a)*(p1.v-p0.v);
+ if(area<pts[0].a){const prop=pts[0].v*area/pts[0].a;v=Math.max(v,prop,principal?Math.min(100000,pts[0].v):0);}
+ return Math.max(0,Math.round(v/1000)*1000);
+}
+function configPorArea(d){
+ const area=d.ancho*d.alto;const filas=familiaClaves(d).map(k=>{const [w,h]=k.split('x').map(Number);return {area:w*h,cfg:MATRIZ_PRECIOS[k]};}).filter(f=>f.cfg).sort((a,b)=>a.area-b.area);
+ if(!filas.length)return null;const c={};
+ for(const key of ['realista','hiper','espatulado','boceto','base'])if(filas.some(f=>f.cfg[key]!=null))c[key]=interpolarImporte(area,filas,cfg=>cfg[key],true);
+ c.extraPersona=interpolarImporte(area,filas,cfg=>cfg.extraPersona,false);
+ c.marcos={};for(const m of Object.keys(filas[0].cfg.marcos||{}))c.marcos[m]=interpolarImporte(area,filas,cfg=>cfg.marcos?.[m],false);
+ return c;
+}
 function presupuesto(){
  const est=valor('estilo'),te=valor('tecnica');const t=['Mural','Escultura','Restauracion'].includes(est)?est:valor('tema');
  let base=0,extras=0,marco=0,fondo=0,andamio=0,dim=null;
@@ -56,11 +72,8 @@ function presupuesto(){
   const rest=valor('tipo_restauracion');if(!rest)return null;base=rest==='Digital'?AJUSTES.restauracionDigital:rest==='Digital Compleja'?AJUSTES.restauracionDigitalCompleja:0;
  }else{
   if(!te)return null;dim=obtenerDimensiones();if(!dim.valida)return null;
-  let config=MATRIZ_PRECIOS[claveEstandar(dim)];
-  if(!config){
-   const b=Math.max(t==='Retrato'?AJUSTES.personalizadoMinRetrato:AJUSTES.personalizadoMinOtros,dim.ancho*dim.alto*(t==='Retrato'?AJUSTES.personalizadoCm2Retrato:AJUSTES.personalizadoCm2Otros));
-   config={espatulado:Math.round(b*AJUSTES.personalizadoEspatulado),realista:Math.round(b),hiper:Math.round(b*AJUSTES.personalizadoHiper),boceto:Math.round(b*AJUSTES.personalizadoBoceto),extraPersona:AJUSTES.personalizadoExtraPersona,marcos:AJUSTES.personalizadoMarcos};
-  }
+  let config=MATRIZ_PRECIOS[claveEstandar(dim)]||configPorArea(dim);
+  if(!config)return null;
   if(te==='Carbonilla'){base=config.base ?? AJUSTES.carbonillaRespaldo;if(valor('color_lapiz')==='A color')base=Math.round(base*AJUSTES.carbonillaColor);}
   else{
    base=config[est==='Hiperrealista'?'hiper':est==='Espatulado'?'espatulado':est==='Bocetado'?'boceto':'realista'];

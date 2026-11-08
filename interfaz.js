@@ -132,19 +132,18 @@
         }
     }
 
+    const scrollPorPantalla = {};
     function switchTab(t, e) {
+        if (!document.getElementById('tab-'+t)) t = 'inicio';
+        const anterior = document.querySelector('.tab-content.active');
+        if (anterior && anterior.id !== 'tab-'+t) scrollPorPantalla[anterior.id] = window.scrollY || 0;
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('tab-'+t).classList.add('active'); e.currentTarget.classList.add('active');
-        
-        let bio = document.getElementById('bioText');
-        if(t === 'curso') {
-            bio.style.opacity = 0;
-            setTimeout(() => { if(window.sitioActual?.textos?.introduccionCurso) bio.textContent=window.sitioActual.textos.introduccionCurso; else bio.innerHTML = textBioCurso; bio.style.opacity = 1; }, 150);
-        } else {
-            bio.style.opacity = 0;
-            setTimeout(() => { if(window.sitioActual?.textos?.biografia) bio.textContent=window.sitioActual.textos.biografia; else bio.innerHTML = textBioOriginal; bio.style.opacity = 1; }, 150);
-        }
+        document.querySelectorAll('.tab-btn').forEach(b => { const on = b.dataset.tab === t; b.classList.toggle('active', on); if (on) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
+        document.getElementById('tab-'+t).classList.add('active');
+        document.body.dataset.pantalla = t;
+        const bioCurso = document.getElementById('bioCurso');
+        if (bioCurso && !bioCurso.dataset.listo) { if(window.sitioActual?.textos?.introduccionCurso) bioCurso.textContent=window.sitioActual.textos.introduccionCurso; else bioCurso.innerHTML = textBioCurso; bioCurso.dataset.listo='1'; }
+        if (anterior && anterior.id !== 'tab-'+t) { if (!/jsdom/.test(navigator.userAgent)) window.scrollTo(0, scrollPorPantalla['tab-'+t] || 0); }
         calcular();
         if (!window.restaurandoRuta) setRoute('#'+(t==='curso'?'cursos':t));
     }

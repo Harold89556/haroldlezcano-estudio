@@ -52,7 +52,7 @@ async function persistItem(item) {
 }
 function fillCategorySelect(select, includeAll = false) {
  const previous=select.value;select.replaceChildren();
- if(includeAll) select.add(new Option('Todas las categorías',''));
+ if(includeAll) select.add(new Option('Todos los álbumes',''));
  for(const c of categories) select.add(new Option(c.name,c.id));
  if([...select.options].some(o=>o.value===previous)) select.value=previous;
 }
@@ -64,17 +64,17 @@ function renderCategories() {
   const input=document.createElement('input');input.id='category-'+c.id;input.value=c.name;input.maxLength=80;input.required=true;
   const small=document.createElement('small');small.textContent='Identificador: '+c.id;
   const save=document.createElement('button');save.className='admin-secondary';save.type='submit';save.textContent='Guardar nombre';
-  form.append(makeLabel('Nombre de categoría',input),input,small,save);
+  form.append(makeLabel('Nombre del álbum',input),input,small,save);
   form.onsubmit=e=>{e.preventDefault();action(form,async()=>{
    const next=D.validateCategories(categories.map(item=>item.id===c.id?{...item,name:input.value}:item));
-   await api.saveConfig('categorias',{items:next});categories=next;renderCategories();renderGallery();say('Nombre de categoría guardado.');
+   await api.saveConfig('categorias',{items:next});categories=next;renderCategories();renderGallery();say('Nombre del álbum guardado.');
   });};$('category-list').append(form);
  }
 }
 function renderGallery() {
  const filter=$('gallery-filter').value;
  const items=gallery.filter(item=>!filter || item.category===filter).sort((a,b)=>a.order-b.order);
- $('gallery-count').textContent=items.length+' fotos'+(filter?' en esta categoría':' en total');
+ $('gallery-count').textContent=items.length+' fotos'+(filter?' en este álbum':' en total');
  $('gallery-admin-items').replaceChildren();
  for(const item of items) {
   const card=document.createElement('form');card.className='admin-image-card';
@@ -86,7 +86,30 @@ function renderGallery() {
   const hidden=document.createElement('input');hidden.id='hidden-'+item.id;hidden.type='checkbox';hidden.checked=item.hidden;
   const save=document.createElement('button');save.type='submit';save.className='admin-secondary';save.textContent='Guardar cambios';
   const note=document.createElement('p');note.className='admin-card-status';note.setAttribute('role','status');
-  card.append(img,makeLabel('Categoría',cat),cat,makeLabel('Texto opcional',caption),caption,makeLabel('Orden (menor primero)',order),order,makeLabel('Portada de la categoría',cover),cover,makeLabel('Ocultar del sitio',hidden),hidden,save,note);
+  const original=item.id.startsWith('seed-')||item.id.startsWith('ig-');
+  const replace=document.createElement('input');replace.id='replace-'+item.id;replace.type='file';replace.accept='image/jpeg,image/png,image/webp,image/gif,image/avif';
+  const replaceBtn=document.createElement('button');replaceBtn.type='button';replaceBtn.className='admin-secondary';replaceBtn.textContent='Cambiar imagen';
+  replaceBtn.onclick=()=>action(card,async()=>{
+   const file=replace.files[0];if(!file) throw Error('Elegí primero la nueva imagen.');
+   if(!/^image\/(jpeg|png|webp|gif|avif)$/i.test(file.type)) throw Error('Formato no compatible. Usá JPG, PNG, WEBP, GIF o AVIF.');
+   if(!file.size||file.size>8*1024*1024) throw Error('La imagen supera 8 MB.');
+   const previous=item.storagePath||'';let path='galeria/'+item.id+'/'+api.safeName(file.name);if(path===previous)path='galeria/'+item.id+'/'+Date.now().toString(36)+'-'+api.safeName(file.name);
+   setPending(path,true);
+   const url=await api.uploadImage(file,path,p=>{note.textContent='Subiendo: '+p+'%';});
+   await persistItem({...item,url,storagePath:path});setPending(path,false);
+   if(previous && previous!==path && previous.startsWith('galeria/')) {
+    try { await api.deleteStorageFile(previous); } catch { setPending(previous,true); }
+   }
+   renderGallery();say('Imagen cambiada.');
+  },text=>{note.textContent=text;});
+  card.append(img,makeLabel('Álbum',cat),cat,makeLabel('Texto opcional',caption),caption,makeLabel('Orden (menor primero)',order),order,makeLabel('Portada del álbum',cover),cover,makeLabel(original?'Quitada de la galería (oculta)':'Oculta en el sitio',hidden),hidden,save,makeLabel('Nueva imagen (JPG, PNG, WEBP, GIF o AVIF, máx. 8 MB)',replace),replace,replaceBtn,note);
+  if(original) {
+   const quitar=document.createElement('button');quitar.type='button';quitar.className='admin-danger';quitar.textContent=item.hidden?'Volver a mostrar en la galería':'Quitar de la galería';
+   quitar.onclick=()=>action(card,async()=>{
+    if(!item.hidden && !confirm('¿Quitar esta foto de la galería pública? La original se oculta, no se borra.')) return;
+    await persistItem({...item,hidden:!item.hidden});renderGallery();say(item.hidden?'Foto visible otra vez.':'Foto quitada de la galería.');
+   });card.append(quitar);
+  }
   card.onsubmit=e=>{e.preventDefault();action(card,async()=>{
    const n=Number(order.value);if(!Number.isInteger(n)||n<0||n>1000000) throw Error('Usá un orden entero entre 0 y 1.000.000.');
    await persistItem({...item,category:cat.value,caption:caption.value.trim(),order:n,cover:cover.checked,hidden:hidden.checked});
@@ -125,11 +148,11 @@ function renderPrices() {
    if(typeof value==='object') {
     const details=document.createElement('details');details.className='admin-price-group';details.open=path.length===0;
     const summary=document.createElement('summary');summary.textContent=numericLabels[key] || (/^\d+x\d+$/.test(key) ? key.replace('x',' × ')+' cm' : key);
-    details.append(summary);walk(value,details,next);parent.append(details);
+    details.append(summary);if(key.startsWith('personalizado'))details.hidden=true;walk(value,details,next);parent.append(details);
    } else {
     const row=document.createElement('div');row.className='admin-number-row';
     const input=document.createElement('input');input.id='price-'+next.join('-').replaceAll(' ','-');input.type='number';input.min='0';input.max='1000000000000';input.step='any';input.required=true;input.value=String(value);input.dataset.path=JSON.stringify(next);
-    row.append(makeLabel(numericLabels[key] || key,input),input);parent.append(row);
+    row.append(makeLabel(numericLabels[key] || key,input),input);if(key.startsWith('personalizado'))row.hidden=true;parent.append(row);
    }
   }
  }
@@ -216,9 +239,9 @@ $('gallery-upload-form').onsubmit=e=>{e.preventDefault();if(uploading) return;co
 $('category-form').onsubmit=e=>{e.preventDefault();const form=e.currentTarget;action(form,async()=>{
  const name=$('category-name').value.trim();if(!name) throw Error('Escribí un nombre.');
  let id=name.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,32);
- if(!/^[a-z]/.test(id)) id=('categoria-'+id).slice(0,40);
+ if(!/^[a-z]/.test(id)) id=('album-'+id).slice(0,40);
  if(categories.some(c=>c.id===id)) id=id.slice(0,30)+'-'+api.newId().slice(0,6);
- const next=D.validateCategories([...categories,{id,name}]);await api.saveConfig('categorias',{items:next});categories=next;$('category-name').value='';renderCategories();renderGallery();say('Categoría creada.');
+ const next=D.validateCategories([...categories,{id,name}]);await api.saveConfig('categorias',{items:next});categories=next;$('category-name').value='';renderCategories();renderGallery();say('Álbum creado. Ya aparece en la galería pública.');
 });};
 $('prices-form').onsubmit=e=>{e.preventDefault();const form=e.currentTarget;action(form,async()=>{
  const next=D.clone(prices);

@@ -391,3 +391,22 @@ button:disabled { opacity: .55; cursor: wait; }
 .modal.zoomed #modalImg { cursor:grab; }
 .modal-counter { position:absolute; top:24px; left:20px; color:#ddd; font-size:13px; letter-spacing:1px; z-index:10001; }
 body.visor-abierto { overflow:hidden; }
+
+/* App móvil: pantallas independientes y menú fijo abajo (también en escritorio, centrado). */
+:root { --nav-h: 64px; --nav-safe: env(safe-area-inset-bottom, 0px); }
+.app-shell { max-width: 720px; margin: 0 auto; padding-bottom: calc(var(--nav-h) + var(--nav-safe) + 32px) !important; }
+body[data-pantalla="cotizacion"] .app-shell { padding-bottom: calc(var(--nav-h) + var(--nav-safe) + 340px) !important; }
+#tab-inicio.active, #tab-galeria.active, #tab-cotizacion.active, #tab-curso.active { min-height: calc(100vh - var(--nav-h) - var(--nav-safe)); }
+.bottom-nav { position: fixed !important; top: auto !important; left: 50%; bottom: 0; transform: translateX(-50%); width: 100%; max-width: 720px; margin: 0 !important; z-index: 1100;
+  display: flex; gap: 0; justify-content: space-around; padding: 6px 6px calc(6px + var(--nav-safe)); border-radius: 18px 18px 0 0;
+  background: rgba(12,12,12,0.94); border: 1px solid rgba(212,175,55,0.18); border-bottom: 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.7); }
+.bottom-nav .tab-btn { flex: 1 1 0; min-height: 52px; min-width: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  padding: 6px 2px; border-radius: 12px; border: 1px solid transparent; font-size: 11px; letter-spacing: 0.3px; text-transform: none; color: #a8a8a8; transform: none !important; }
+.bottom-nav .tab-btn i { font-size: 19px; }
+.bottom-nav .tab-btn.active { color: #d4af37; background: rgba(212,175,55,0.12); border-color: rgba(212,175,55,0.3); }
+.sticky-footer { bottom: calc(var(--nav-h) + var(--nav-safe) + 10px) !important; z-index: 1050; max-width: 696px; }
+.modal { z-index: 10000 !important; }
+#bioCurso { margin-bottom: 20px; }
+#tab-inicio .contact-section { margin-top: 24px; }
+@media (min-width: 768px) { #tab-cotizacion.active, #tab-curso.active { display: block; } #tab-curso .course-card { width: 100%; } .sticky-footer { max-width: 696px; padding: 14px 24px; } }
+.album-cover-empty { display:flex !important; align-items:center; justify-content:center; color:#4a4430; font-size:34px; background:#101010 !important; }

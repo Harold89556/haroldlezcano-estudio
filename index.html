@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>Harold Lezcano | Estudio de Arte</title>
 <link href="manifest.json" rel="manifest"/>
 <meta content="#121212" name="theme-color"/>
@@ -16,7 +16,8 @@
 <link href="style.css" rel="stylesheet"/><meta content="Obras de arte por encargo, galería y cursos de dibujo y pintura con Harold Lezcano en Fernando de la Mora, Paraguay." name="description"/><meta content="https://harold-lezcano-estudio.web.app/" property="og:url"/><link href="https://harold-lezcano-estudio.web.app/" rel="canonical"/><link href="icono-192.png" rel="icon" type="image/png"/></head>
 <body>
 <div class="page-background"></div>
-<div class="container">
+<div class="container app-shell">
+<div class="tab-content active" id="tab-inicio">
 <div class="header">
 <h1>HAROLD LEZCANO</h1>
 <p data-setting="subtitulo">Artista Plástico | Maestro de Arte</p>
@@ -30,12 +31,9 @@
 <div class="bio-section" id="bioText">
         Nací en Asunción en 1989, bendecido con un don artístico heredado de <strong>mi madre</strong> y forjado con la disciplina, la perseverancia y la visión para aprovechar cada oportunidad que me inculcó <strong>mi padre</strong>. Tuve el honor de perfeccionar este legado durante <strong>más de 20 años</strong> junto al gran Maestro <strong>Prof. Manuel Viedma</strong>. Hoy, fusiono esa pasión innata y trabajo duro con una técnica de élite para dar vida a obras exclusivas que transforman espacios.
     </div>
-<div class="tab-container">
-<button class="tab-btn active" onclick="switchTab('cotizacion', event)">Cotización</button>
-<button class="tab-btn" onclick="switchTab('galeria', event)">Galería</button>
-<button class="tab-btn" onclick="switchTab('curso', event)">Cursos</button>
+<section aria-labelledby="contacto-titulo" class="contact-section" id="contacto"><h2 id="contacto-titulo">Contacto del estudio</h2><p data-setting="contacto">Harold Lezcano · Las Residentas 460, Fernando de la Mora, Paraguay.</p><p><a href="https://wa.me/595972173847" rel="noopener noreferrer" target="_blank">Consultar por WhatsApp</a> · <a href="#cursos">Conocer los cursos</a></p><p data-setting="condiciones">Podés consultar sin completar el cotizador. Los presupuestos son estimados y se confirman personalmente. Al continuar por WhatsApp, se preparará un mensaje con los datos que completaste; revisalo antes de enviarlo. No se confirma una reserva ni se realiza un cobro desde esta página.</p><a class="admin-link" href="admin.html">Administrar</a></section>
 </div>
-<div class="tab-content active" id="tab-cotizacion">
+<div class="tab-content" id="tab-cotizacion">
 <div class="form-card" id="card-especificaciones">
 <h3 class="card-title"><i class="fas fa-paint-brush"></i> 1. Especificaciones de la Obra</h3>
 <div id="step-estilo">
@@ -133,6 +131,7 @@
 <div id="c_ancho" style="width:50%"><label for="ancho_cm" id="l_ancho" style="margin:0">Ancho (cm)</label><input aria-describedby="error-ancho_cm" id="ancho_cm" max="500" min="0.1" oninput="calcular()" step="any" type="number" value="50"/><div aria-live="polite" class="field-error" id="error-ancho_cm"></div></div>
 <div id="c_alto" style="width:50%"><label for="alto_cm" id="l_alto" style="margin:0">Alto (cm)</label><input aria-describedby="error-alto_cm" id="alto_cm" max="500" min="0.1" oninput="calcular()" step="any" type="number" value="70"/><div aria-live="polite" class="field-error" id="error-alto_cm"></div></div>
 </div>
+<p class="info-text" id="nota-personalizado" style="display:block;margin-top:10px">El precio se calcula según el área, en proporción a los tamaños de la tabla.</p>
 </div>
 <div id="step-enmarcado">
 <hr style="border: 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 20px 0 15px 0;"/>
@@ -434,6 +433,7 @@
 </div>
 </div>
 <div class="tab-content" id="tab-curso">
+<div class="bio-section" id="bioCurso"></div>
 <div class="course-header-info">
 <h2 data-setting="tituloCursos">DIBUJO Y PINTURA</h2>
 <p data-setting="programaCurso" style="font-size: 13px; color: #d4af37;"><strong>Harold Lezcano</strong> | Programa 12 Meses</p>
@@ -501,7 +501,13 @@
 <button class="btn-confirmar btn-block" onclick="enviarInscripcion()">Enviar Inscripción</button>
 </div>
 </div>
-<section aria-labelledby="contacto-titulo" class="contact-section" id="contacto"><h2 id="contacto-titulo">Contacto del estudio</h2><p data-setting="contacto">Harold Lezcano · Las Residentas 460, Fernando de la Mora, Paraguay.</p><p><a href="https://wa.me/595972173847" rel="noopener noreferrer" target="_blank">Consultar por WhatsApp</a> · <a href="#cursos">Conocer los cursos</a></p><p data-setting="condiciones">Podés consultar sin completar el cotizador. Los presupuestos son estimados y se confirman personalmente. Al continuar por WhatsApp, se preparará un mensaje con los datos que completaste; revisalo antes de enviarlo. No se confirma una reserva ni se realiza un cobro desde esta página.</p><a class="admin-link" href="admin.html">Administrar</a></section></div>
+</div>
+<nav aria-label="Secciones" class="tab-container bottom-nav">
+<button class="tab-btn active" data-tab="inicio" onclick="switchTab('inicio', event)" type="button"><i aria-hidden="true" class="fas fa-house"></i><span>Inicio</span></button>
+<button class="tab-btn" data-tab="galeria" onclick="switchTab('galeria', event)" type="button"><i aria-hidden="true" class="fas fa-images"></i><span>Galería</span></button>
+<button class="tab-btn" data-tab="cotizacion" onclick="switchTab('cotizacion', event)" type="button"><i aria-hidden="true" class="fas fa-calculator"></i><span>Cotizar</span></button>
+<button class="tab-btn" data-tab="curso" onclick="switchTab('curso', event)" type="button"><i aria-hidden="true" class="fas fa-palette"></i><span>Cursos</span></button>
+</nav>
 <div class="sticky-footer" id="sticky-footer">
 <div class="footer-left">
 <div class="price-box-header">

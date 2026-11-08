@@ -30,9 +30,9 @@ function setRoute(hash,reemplazar=false){if(window.restaurandoRuta)return;if(loc
 const nombresAlbum={retrato:'Retratos',paisaje:'Paisajes',escultura:'Esculturas',mural:'Murales',abstracto:'Abstractos',otros:'Otros'};
 function restaurarRuta(){
  window.restaurandoRuta=true;
- const [ruta,album,foto]=location.hash.slice(1).split('/');const tab=ruta==='cursos'?'curso':ruta==='galeria'?'galeria':'cotizacion';
+ const [ruta,album,foto]=location.hash.slice(1).split('/');const tab=ruta==='cursos'?'curso':ruta==='galeria'?'galeria':ruta==='cotizacion'?'cotizacion':'inicio';
  if(typeof modal!=='undefined'){modal.style.display='none';modal.hidden=true;}
- const buttons=document.querySelectorAll('.tab-btn');const index={cotizacion:0,galeria:1,curso:2}[tab];switchTab(tab,{currentTarget:buttons[index]});
+ switchTab(tab,{currentTarget:document.querySelector('.tab-btn[data-tab="'+tab+'"]')});
  if(tab==='galeria'){
   if(nombresAlbum[album]){openAlbum(album,nombresAlbum[album]);document.querySelectorAll('.gallery-item').forEach(i=>i.classList.toggle('show',i.classList.contains(album)));if(foto){const imgs=document.querySelectorAll('.gallery-item.show img');const n=Number(foto);if(Number.isInteger(n)&&n>=1&&n<=imgs.length)openModal(imgs[n-1].src);}}
   else{document.getElementById('vista-albumes').style.display='grid';document.getElementById('vista-hojas').style.display='none';}
@@ -47,9 +47,9 @@ switchTab=function(t,e){switchOriginal(t,e);actualizarTabsARIA();};
 const onloadOriginal=window.onload;
 window.onload=function(){
  onloadOriginal();
- document.querySelectorAll('.tab-btn').forEach((btn,i)=>{const key=['cotizacion','galeria','curso'][i];btn.id='pestana-'+key;btn.setAttribute('role','tab');btn.setAttribute('aria-controls','tab-'+key);document.getElementById('tab-'+key).setAttribute('role','tabpanel');document.getElementById('tab-'+key).setAttribute('aria-labelledby',btn.id);});
+ document.querySelectorAll('.tab-btn').forEach(btn=>{const key=btn.dataset.tab;btn.id='pestana-'+key;btn.setAttribute('role','tab');btn.setAttribute('aria-controls','tab-'+key);document.getElementById('tab-'+key).setAttribute('role','tabpanel');document.getElementById('tab-'+key).setAttribute('aria-labelledby',btn.id);});
  document.querySelector('.tab-container').setAttribute('role','tablist');
- document.querySelector('.tab-container').addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const tabs=Array.from(document.querySelectorAll('.tab-btn'));let n=tabs.indexOf(document.activeElement);n=e.key==='Home'?0:e.key==='End'?2:(n+(e.key==='ArrowRight'?1:-1)+3)%3;tabs[n].focus();tabs[n].click();});
+ document.querySelector('.tab-container').addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const tabs=Array.from(document.querySelectorAll('.tab-btn'));let n=tabs.indexOf(document.activeElement);const L=tabs.length;n=e.key==='Home'?0:e.key==='End'?L-1:(n+(e.key==='ArrowRight'?1:-1)+L)%L;tabs[n].focus();tabs[n].click();});
  document.addEventListener('keydown',e=>{
   if(modal.hidden||modal.style.display==='none')return;
   if(e.key==='Escape'){e.preventDefault();closeModal();}

@@ -50,7 +50,7 @@ async function session(settings={}){
  return {context,page,errors};
 }
 async function quote(page){
- await page.goto(base+'/index.html');
+ await page.goto(base+'/index.html#cotizacion');
  await page.selectOption('#estilo','Realista');await page.selectOption('#tecnica','Oleo');await page.selectOption('#tema','Retrato');await page.selectOption('#tamano_predefinido','30x40');await page.fill('#envio_nombre','Prueba local');await page.selectOption('#fotos_referencia','No, necesito asesoramiento');
 }
 const photo=(name='foto.png',size)=>({name,mimeType:'image/png',buffer:size?Buffer.alloc(size):png});
@@ -81,7 +81,7 @@ let base;
   assert.equal(await page.locator('#whatsapp-continuar').isVisible(),true);
   assert.equal(await page.locator('#referencias-compartir').isHidden(),true);await context.close();
  });
- await test('En el celular comparte las fotos sin abrir un chat vacío',async()=>{
+ await test('En el celular abre directo el chat del artista y deja compartir fotos como paso secundario',async()=>{
   const {page,context}=await session();
   await page.addInitScript(()=>{
    window.__shared=[];
@@ -89,25 +89,27 @@ let base;
    navigator.share=async data=>{window.__shared.push({files:[...data.files].map(f=>f.name),text:data.text});};
   });
   await quote(page);await page.setInputFiles('#referencias_archivos',[photo('guía.png'),photo('otra.png')]);await page.click('#enviar-obra');
-  await page.waitForFunction(()=>window.__shared&&window.__shared.length===1);
-  assert.deepEqual(await page.evaluate(()=>window.__opened),[]);
+  await page.waitForFunction(()=>window.__opened.length===1);
+  const link=await page.evaluate(()=>window.__opened[0]);assert.match(link,/^https:\/\/wa\.me\/595972173847\?text=/);
+  const text=new URL(link).searchParams.get('text');assert.match(text,/700.000/);assert.match(text,/fotos de referencia/);
+  assert.deepEqual(await page.evaluate(()=>window.__shared),[]);
   assert.equal(await page.evaluate(()=>window.__mock.uploads.length),0);
-  const shared=await page.evaluate(()=>window.__shared[0]);
-  assert.deepEqual(shared.files,['referencia-1.png','referencia-2.png']);
-  assert.match(shared.text,/700.000/);assert.match(shared.text,/fotos de referencia/);
-  assert.equal(await page.locator('#referencias-compartir').isVisible(),true);await context.close();
+  assert.equal(await page.locator('#referencias-compartir').isVisible(),true);
+  await page.click('#referencias-compartir');await page.waitForFunction(()=>window.__shared.length===1);
+  assert.deepEqual(await page.evaluate(()=>window.__shared[0].files),['referencia-1.png','referencia-2.png']);await context.close();
  });
- await test('Si se cancela el compartir no se abre WhatsApp sin las fotos',async()=>{
-  const {page,context}=await session();
-  await page.addInitScript(()=>{
-   navigator.canShare=()=>true;
-   navigator.share=async()=>{const error=new Error('Share canceled');error.name='AbortError';throw error;};
-  });
-  await quote(page);await page.setInputFiles('#referencias_archivos',photo());await page.click('#enviar-obra');
-  await page.waitForFunction(()=>/cancelaste|No se envió/.test(document.getElementById('referencias-estado').textContent));
-  assert.deepEqual(await page.evaluate(()=>window.__opened),[]);
-  assert.equal(await page.locator('.upload-preview').count(),1);
-  assert.equal(await page.locator('#enviar-obra').isEnabled(),true);await context.close();
+ await test('Inicio, menú inferior y hashes',async()=>{
+  const {page,context}=await session();await page.setViewportSize({width:390,height:844});await page.goto(base+'/index.html');
+  assert.equal(await page.locator('#tab-inicio').isVisible(),true);assert.equal(await page.locator('#tab-cotizacion').isVisible(),false);
+  const nav=await page.locator('.bottom-nav').boundingBox();assert.ok(Math.abs(nav.y+nav.height-844)<2);
+  for(const b of await page.locator('.bottom-nav .tab-btn').all()){const box=await b.boundingBox();assert.ok(box.height>=44&&box.width>=44);}
+  await page.click('.tab-btn[data-tab="cotizacion"]');assert.equal(new URL(page.url()).hash,'#cotizacion');
+  await page.selectOption('#estilo','Realista');await page.selectOption('#tecnica','Oleo');await page.selectOption('#tema','Retrato');await page.selectOption('#tamano_predefinido','30x40');
+  await page.waitForTimeout(800);const foot=await page.locator('#sticky-footer').boundingBox();assert.ok(foot.y+foot.height<=nav.y+1,JSON.stringify([foot,nav]));
+  await page.click('.tab-btn[data-tab="galeria"]');assert.equal(await page.locator('#sticky-footer').isVisible(),false);
+  await page.goto(base+'/index.html#inicio');assert.equal(await page.locator('.tab-btn.active').getAttribute('data-tab'),'inicio');
+  await page.goto(base+'/index.html#cursos');assert.equal(await page.locator('.tab-btn.active').getAttribute('data-tab'),'curso');
+  await page.screenshot({path:'/workspace/harold-app-cursos.png'});await context.close();
  });
  await test('Mezcla pública preserva semilla, agrega categoría y trata textos como texto',async()=>{
   const {page,context}=await session({config:{categorias:{items:[{id:'nuevo',name:'Categoría de prueba'}]}},gallery:[{id:'nueva',url:'https://example.com/foto.png',category:'nuevo',order:180,caption:'<img src=x onerror=alert(1)>',cover:true,hidden:false},{id:'seed-001',url:'https://example.com/original.png',category:'retrato',caption:'',order:0,cover:false,hidden:true}]});
@@ -128,8 +130,12 @@ let base;
   await page.selectOption('#upload-category','taller-de-prueba');await page.setInputFiles('#gallery-files',photo('nueva.png'));await page.locator('#gallery-upload-form button[type=submit]').click();await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.storagePath?.startsWith('galeria/')));
   assert.equal(await page.locator('.admin-image-card').count(),153);
   const first=page.locator('.admin-image-card').first();await first.locator('input[id^=caption]').fill('Texto ingresado en prueba');await first.locator('input[id^=hidden]').check();await first.locator('button[type=submit]').click();await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.id==='seed-001'&&i.hidden&&i.caption==='Texto ingresado en prueba'));
+  const second=page.locator('form.admin-image-card:has(#caption-seed-002)');await second.locator('input[type=file]').setInputFiles(photo('reemplazo.png'));await second.getByRole('button',{name:'Cambiar imagen'}).click();await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.id==='seed-002'&&i.storagePath==='galeria/seed-002/reemplazo.png'&&i.url.includes('example.com')));
+  const third=page.locator('form.admin-image-card:has(#caption-seed-003)');await third.getByRole('button',{name:'Quitar de la galería'}).click();await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.id==='seed-003'&&i.hidden));
+  assert.equal(await page.evaluate(()=>window.__mock.deleted.length),0);
+  const nueva=page.locator('.admin-image-card').last();const oldPath=await page.evaluate(()=>window.__mock.gallery.find(i=>!/^(seed|ig)-/.test(i.id)).storagePath);await nueva.locator('input[type=file]').setInputFiles(photo('cambio.png'));await nueva.getByRole('button',{name:'Cambiar imagen'}).click();await page.waitForFunction(p=>window.__mock.deleted.includes(p),oldPath);
   await page.fill('#site-whatsapp','595971000000');await page.fill('#text-subtitulo','Texto local de prueba');await page.locator('#site-form button[type=submit]').click();await page.waitForFunction(()=>window.__mock.config.sitio?.whatsapp==='595971000000');
-  const last=page.locator('.admin-image-card').last();await last.locator('button.admin-danger').click();await page.waitForFunction(()=>window.__mock.deleted.length===1);assert.equal(await page.locator('.admin-image-card').count(),152);
+  const last=page.locator('.admin-image-card').last();await last.locator('button.admin-danger').click();await page.waitForFunction(()=>window.__mock.deleted.length===2);assert.equal(await page.locator('.admin-image-card').count(),152);
   await page.screenshot({path:'/workspace/harold-admin-desktop.png',fullPage:false});assert.deepEqual(errors,[]);await page.click('#logout');await page.waitForFunction(()=>window.__mock.storageSignedOut&&!document.getElementById('login-panel').hidden);await context.close();
  });
  await test('Fallo del login de fotos cierra Firebase y conserva el panel bloqueado',async()=>{
