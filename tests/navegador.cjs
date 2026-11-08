@@ -1,6 +1,7 @@
 const { chromium }=require('@playwright/test');
 const assert=require('node:assert/strict'),http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const root=path.resolve(__dirname,'..');
+const vmContext={window:{}};require('node:vm').runInNewContext(fs.readFileSync(path.join(root,'estudio-datos.js'),'utf8'),vmContext);const sitioBase=JSON.parse(JSON.stringify(vmContext.window.ESTUDIO_DEFAULTS.sitio));
 const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jV3sAAAAASUVORK5CYII=','base64');
 const server=http.createServer((req,res)=>{
  const filename=path.resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));
@@ -24,7 +25,7 @@ export async function readConfig(name){if(state.offline)throw Error('Offline');r
 export async function readGallery(){if(state.offline)throw Error('Offline');return state.gallery;}
 export async function saveConfig(name,value){state.config[name]=value;state.saved.push({name,value});}
 export async function saveGalleryBatch(items){for(const item of items){state.gallery=state.gallery.filter(i=>i.id!==item.id);state.gallery.push(item);}state.saved.push({items});}
-export async function uploadImage(file,path,progress){state.uploadAttempts++;if(state.failUpload||state.failAt===state.uploadAttempts)throw Error('Carga de prueba fallida');progress(100);const url='https://example.com/'+encodeURIComponent(path);state.uploads.push({name:file.name,path,url});return url;}
+export async function uploadImage(file,path,progress){state.uploadAttempts++;if(state.failUpload||state.failAt===state.uploadAttempts)throw Error('Carga de prueba fallida');progress(100);const url='https://example.com/'+encodeURIComponent(path);state.uploads.push({name:file.name,type:file.type,size:file.size,path,url});return url;}
 export async function deleteGalleryItem(item){state.gallery=state.gallery.filter(i=>i.id!==item.id);state.deleted.push(item.id);}
 export async function deleteStorageFile(path){state.deleted.push(path);}
 `;
@@ -191,6 +192,29 @@ let base;
   const {page,context}=await session({gallery:[{id:'seed-001',url:'https://i.postimg.cc/x/original.png',category:'retrato',caption:'',alt:'',order:0,cover:false,hidden:false,storagePath:'',edit:{x:10,y:10,w:50,h:60,r:90}}]});
   await page.goto(base+'/index.html');await page.waitForFunction(()=>document.querySelector('[data-gallery-id="seed-001"] img')?.dataset.edit);
   assert.equal(await page.locator('[data-gallery-id="seed-001"] img').evaluate(i=>i.style.rotate),'90deg');await context.close();
+ });
+ await test('Foto de Inicio: editor, Quitar fondo (simulado), guardado en sitio/ y config',async()=>{
+  const {page,context,errors}=await session({config:{sitio:{...sitioBase,fotoArtista:'https://example.com/sitio/artista-viejo.png',fotoArtistaPath:'sitio/artista-viejo.png'}}});
+  await page.addInitScript(()=>{window.__quitarFondoMock=async src=>{window.__fondoQuitado=(window.__fondoQuitado||0)+1;const c=document.createElement('canvas');c.width=src.width;c.height=src.height;const x=c.getContext('2d');x.drawImage(src,0,0);x.clearRect(0,0,Math.ceil(c.width/2),c.height);return c;};});
+  await page.setViewportSize({width:390,height:844});await page.goto(base+'/admin.html#sitio-admin');await page.fill('#admin-password','clave-simulada-local');await page.click('#login-button');await page.waitForSelector('#admin-workspace:not([hidden])');
+  assert.equal(await page.locator('#foto-inicio-admin h2').textContent(),'Foto de Inicio');assert.equal(await page.getAttribute('#foto-inicio-preview','src'),'https://example.com/sitio/artista-viejo.png');
+  await page.click('#foto-inicio-editar');await page.waitForFunction(()=>document.querySelector('#photo-editor .editor-save')&&!document.querySelector('#photo-editor .editor-save').disabled);
+  await page.locator('.editor-btn',{hasText:'Quitar fondo'}).click();await page.waitForFunction(()=>document.querySelector('.editor-status').textContent.includes('Fondo quitado'));
+  assert.equal(await page.evaluate(()=>window.__fondoQuitado),1);
+  await page.locator('.editor-btn',{hasText:'Girar a la derecha'}).click();await page.locator('.editor-save').click();
+  await page.waitForFunction(()=>window.__mock.config.sitio.fotoArtistaPath!=='sitio/artista-viejo.png'&&window.__mock.deleted.length>0);
+  const st=await page.evaluate(()=>JSON.parse(JSON.stringify({uploads:window.__mock.uploads,config:window.__mock.config,deleted:window.__mock.deleted})));const up=st.uploads[st.uploads.length-1];
+  assert.match(up.path,/^sitio\/artista-[a-z0-9]+\.(png|webp)$/);assert.match(up.type,/^image\/(png|webp)$/);assert.equal(st.config.sitio.fotoArtista,up.url);
+  assert.ok(st.deleted.includes('sitio/artista-viejo.png'));assert.equal(st.config.sitio.whatsapp,sitioBase.whatsapp);
+  assert.equal(await page.getAttribute('#foto-inicio-preview','src'),up.url);
+  await page.locator('#site-form button[type=submit]').click();await page.waitForFunction(u=>window.__mock.saved.filter(s=>s.name==='sitio').length===2&&window.__mock.config.sitio.fotoArtista===u,up.url);
+  assert.deepEqual(errors,[]);await context.close();
+ });
+ await test('Sitio público usa la foto de Inicio guardada y, sin ella, artista.jpg',async()=>{
+  let {page,context}=await session({config:{sitio:{...sitioBase,fotoArtista:'https://example.com/sitio/artista-nueva.png',fotoArtistaPath:'sitio/artista-nueva.png'}}});
+  await page.goto(base+'/index.html');await page.waitForFunction(()=>document.querySelector('img.artista-foto').src.includes('artista-nueva.png'));
+  assert.equal(await page.getAttribute('img.artista-foto','alt'),'Harold Lezcano, artista plástico');assert.equal(await page.locator('img.artista-foto.artista-foto-propia').count(),1);await context.close();
+  ({page,context}=await session());await page.goto(base+'/index.html');await page.waitForTimeout(300);assert.match(await page.getAttribute('img.artista-foto','src'),/^artista\.jpg$/);await context.close();
  });
  await test('Fallo del login de fotos cierra Firebase y conserva el panel bloqueado',async()=>{
   const {page,context}=await session({failStorageLogin:true});await page.goto(base+'/admin.html');await page.fill('#admin-password','clave-simulada-local');await page.click('#login-button');

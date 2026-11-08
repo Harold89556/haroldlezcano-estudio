@@ -122,6 +122,7 @@
    const value=window.sitioActual.textos[el.dataset.setting];if (typeof value==='string') el.textContent=value;
   }
   $('bioText').textContent=window.sitioActual.textos.biografia;
+  const foto=document.querySelector('img.artista-foto');if(foto&&window.sitioActual.fotoArtista){foto.src=window.sitioActual.fotoArtista;foto.classList.add('artista-foto-propia');}
   if($('bioCurso')){$('bioCurso').textContent=window.sitioActual.textos.introduccionCurso;$('bioCurso').dataset.listo='1';}
   for (const a of document.querySelectorAll('a[href^="https://wa.me/595972173847"]')) a.href='https://wa.me/'+window.sitioActual.whatsapp;
  }

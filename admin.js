@@ -13,7 +13,7 @@ let readGeneration = 0;
 let uploading = false;
 let signingIn = false;
 let savedPending=[];try { savedPending=JSON.parse(localStorage.getItem('hl-pending-gallery') || '[]'); }catch{}
-const pending = new Set(Array.isArray(savedPending)?savedPending.filter(p=>typeof p==='string'&&p.startsWith('galeria/')):[]);
+const pending = new Set(Array.isArray(savedPending)?savedPending.filter(p=>typeof p==='string'&&(p.startsWith('galeria/')||p.startsWith('sitio/'))):[]);
 const say = text => { $('admin-status').textContent = text; };
 function busy(form, value) { for(const control of form.querySelectorAll('input,select,textarea,button')) control.disabled=value; }
 async function action(form, callback, output = say) {
@@ -162,6 +162,7 @@ function renderPrices() {
  walk(prices,root);
 }
 function renderSite() {
+ $('foto-inicio-preview').src=site.fotoArtista||'artista.jpg';
  $('site-whatsapp').value=site.whatsapp;$('site-map').value=site.mapaCurso;
  $('site-text-fields').replaceChildren();
  for(const [key,value] of Object.entries(site.textos)) {
@@ -267,8 +268,19 @@ $('prices-form').onsubmit=e=>{e.preventDefault();const form=e.currentTarget;acti
  const validated=D.validatePrices(next);await api.saveConfig('precios',validated);prices=validated;$('prices-status').textContent='Precios guardados. El cotizador los lee al abrir o recargar la página.';
 },text=>{$('prices-status').textContent=text;});};
 $('reset-prices').onclick=()=>{if(confirm('¿Cargar los precios originales en el formulario sin publicar todavía?')){prices=D.clone(defaults.precios);renderPrices();$('prices-status').textContent='Valores originales cargados. Falta guardar para publicar.';}};
+$('foto-inicio-editar').onclick=()=>{const out=t=>{$('foto-inicio-status').textContent=t;};
+ abrirEditor({url:new URL(site.fotoArtista||'artista.jpg',location.href).href,title:'Foto de Inicio.',soloArchivo:true,onSave:async({file},progress)=>{
+  const previous=site.fotoArtistaPath||'';const ext=(file.name.split('.').pop()||'png').toLowerCase();
+  const path='sitio/artista-'+Date.now().toString(36)+'.'+ext;
+  setPending(path,true);
+  const url=await api.uploadImage(file,path,p=>progress('Subiendo: '+p+'%'));
+  const next=D.validateSite({...site,fotoArtista:url,fotoArtistaPath:path});await api.saveConfig('sitio',next);site=next;setPending(path,false);
+  if(previous&&previous!==path&&previous.startsWith('sitio/')){try{await api.deleteStorageFile(previous);}catch{setPending(previous,true);}}
+  $('foto-inicio-preview').src=url;out('Foto de Inicio guardada. Ya se ve en el sitio.');
+ }}).catch(e=>out(api.explainError(e)));
+};
 $('site-form').onsubmit=e=>{e.preventDefault();const form=e.currentTarget;action(form,async()=>{
- const next={whatsapp:$('site-whatsapp').value.trim(),mapaCurso:$('site-map').value.trim(),textos:{}};
+ const next={fotoArtista:site.fotoArtista,fotoArtistaPath:site.fotoArtistaPath,whatsapp:$('site-whatsapp').value.trim(),mapaCurso:$('site-map').value.trim(),textos:{}};
  for(const input of form.querySelectorAll('[data-text-key]')) next.textos[input.dataset.textKey]=input.value;
  const validated=D.validateSite(next);await api.saveConfig('sitio',validated);site=validated;$('site-status').textContent='Textos y contacto guardados.';
 },text=>{$('site-status').textContent=text;});};

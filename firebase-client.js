@@ -87,7 +87,7 @@ export async function signOutStorage() {
  if(error) throw error;
 }
 function checkStoragePath(path) {
- if(typeof path!=='string' || !path.startsWith('galeria/') || path.split('/').some(part=>!part || part==='.' || part==='..')) throw Error('Ruta no permitida.');
+ if(typeof path!=='string' || !(path.startsWith('galeria/') || /^sitio\/[A-Za-z0-9._-]+$/.test(path)) || path.split('/').some(part=>!part || part==='.' || part==='..')) throw Error('Ruta no permitida.');
 }
 async function adminStorage() {
  const {auth}=await getServices();

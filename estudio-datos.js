@@ -372,7 +372,17 @@ window.EstudioDatos = (() => {
    if (typeof value.textos?.[key] !== 'string' || value.textos[key].length > 6000) throw Error('Texto inválido: ' + key);
    textos[key] = value.textos[key];
   }
-  return { whatsapp:value.whatsapp, mapaCurso:map.href, textos };
+  const out = { whatsapp:value.whatsapp, mapaCurso:map.href, textos };
+  // Foto de Inicio opcional: URL https pública y ruta del archivo en sitio/ para poder reemplazarlo.
+  if (value.fotoArtista) {
+   let foto;
+   try { foto = new URL(value.fotoArtista); } catch { throw Error('La foto de Inicio no tiene un enlace válido.'); }
+   if (foto.protocol !== 'https:' || foto.href.length > 2048) throw Error('La foto de Inicio debe ser un enlace https.');
+   const path = typeof value.fotoArtistaPath === 'string' ? value.fotoArtistaPath : '';
+   if (path && (path.length > 300 || !/^sitio\/[A-Za-z0-9._-]+$/.test(path))) throw Error('Ruta de la foto de Inicio inválida.');
+   out.fotoArtista = foto.href; out.fotoArtistaPath = path;
+  }
+  return out;
  }
  function validateCategories(items) {
   if (!Array.isArray(items) || items.length < 1 || items.length > 50) throw Error('Usá entre 1 y 50 categorías.');
