@@ -1,6 +1,42 @@
 'use strict';
 window.ESTUDIO_FONDO_DEFAULT = 'https://i.postimg.cc/NMk5wJ1T/Picsart-26-04-28-08-03-58-251.jpg';
 window.ESTUDIO_FONDO_OPACIDAD_DEFAULT = 0.45;
+window.ESTUDIO_GUIAS_DEFAULT = { items: {
+  "estilo:Realista": { url: "https://i.postimg.cc/KjmcV060/1715876237156.jpg", text: "Parecido natural, como una foto bien pintada.", kind: "foto" },
+  "estilo:Hiperrealista": { url: "https://i.postimg.cc/prPV7sww/20190823-174532.jpg", text: "Detalle extremo: piel, tela y brillos casi fotográficos.", kind: "foto" },
+  "estilo:Espatulado": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Crect%20x%3D%2240%22%20y%3D%2230%22%20width%3D%22240%22%20height%3D%22140%22%20rx%3D%228%22%20fill%3D%22%232a2418%22%20stroke%3D%22%23d4af37%22/%3E%3Cpath%20d%3D%22M60%20150%20L110%2070%20L150%20120%20L200%2050%20L260%20140%22%20fill%3D%22none%22%20stroke%3D%22%23c9a227%22%20stroke-width%3D%2218%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E", text: "Pintura con espátula: textura y relieves visibles.", kind: "diagrama" },
+  "estilo:Bocetado": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Crect%20x%3D%2250%22%20y%3D%2225%22%20width%3D%22220%22%20height%3D%22150%22%20fill%3D%22%23f3efe6%22/%3E%3Cpath%20d%3D%22M90%20140%20C110%2060%20150%2060%20170%20100%20C190%2060%20230%2070%20240%20140%22%20fill%3D%22none%22%20stroke%3D%22%23333%22%20stroke-width%3D%223%22/%3E%3Ccircle%20cx%3D%22145%22%20cy%3D%2285%22%20r%3D%2218%22%20fill%3D%22none%22%20stroke%3D%22%23333%22%20stroke-width%3D%222%22/%3E%3C/svg%3E", text: "Aspecto de boceto o dibujo, más suelto y ligero.", kind: "diagrama" },
+  "estilo:Mural": { url: "https://i.postimg.cc/ZqrCMv9Z/1460758244301.jpg", text: "Obra grande pintada directo sobre la pared.", kind: "foto" },
+  "estilo:Escultura": { url: "https://i.postimg.cc/BZ5BKtMG/20210622-155256.jpg", text: "Pieza modelada a mano en tres dimensiones.", kind: "foto" },
+  "estilo:Restauracion": { url: "https://i.postimg.cc/NLh3SF2w/20210514-205527.jpg", text: "Recuperar o mejorar una foto u obra dañada.", kind: "foto" },
+  "tecnica:Oleo": { url: "https://i.postimg.cc/N0VppVrZ/2012-10-03-061.jpg", text: "Óleo: colores profundos y acabado duradero.", kind: "foto" },
+  "tecnica:Acrilico": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Crect%20x%3D%2240%22%20y%3D%2230%22%20width%3D%22240%22%20height%3D%22140%22%20rx%3D%226%22%20fill%3D%22%23203040%22/%3E%3Ccircle%20cx%3D%22110%22%20cy%3D%2290%22%20r%3D%2235%22%20fill%3D%22%23e85d4c%22/%3E%3Ccircle%20cx%3D%22170%22%20cy%3D%22110%22%20r%3D%2240%22%20fill%3D%22%233aa6d8%22%20opacity%3D%22.9%22/%3E%3Ccircle%20cx%3D%22210%22%20cy%3D%2280%22%20r%3D%2230%22%20fill%3D%22%23f0c14b%22/%3E%3C/svg%3E", text: "Acrílico: colores vivos y secado más rápido.", kind: "diagrama" },
+  "tecnica:Carbonilla": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Crect%20x%3D%2250%22%20y%3D%2225%22%20width%3D%22220%22%20height%3D%22150%22%20fill%3D%22%23ececec%22/%3E%3Cellipse%20cx%3D%22160%22%20cy%3D%2295%22%20rx%3D%2255%22%20ry%3D%2265%22%20fill%3D%22%23777%22/%3E%3Cellipse%20cx%3D%22160%22%20cy%3D%2290%22%20rx%3D%2240%22%20ry%3D%2248%22%20fill%3D%22%23bbb%22/%3E%3Crect%20x%3D%22130%22%20y%3D%22140%22%20width%3D%2260%22%20height%3D%2225%22%20fill%3D%22%23999%22/%3E%3C/svg%3E", text: "Lápiz o carbonilla: dibujo en blanco y negro o a color.", kind: "diagrama" },
+  "tema:Retrato": { url: "https://i.postimg.cc/KjmcV060/1715876237156.jpg", text: "Persona, pareja o animal como protagonistas.", kind: "foto" },
+  "tema:Paisaje": { url: "https://i.postimg.cc/N0VppVrZ/2012-10-03-061.jpg", text: "Naturaleza, cielo, río o vista exterior.", kind: "foto" },
+  "tema:Bodegon": { url: "https://i.postimg.cc/NLh3SF2w/20210514-205527.jpg", text: "Objetos o flores, naturaleza muerta.", kind: "foto" },
+  "tema:Abstracto": { url: "https://i.postimg.cc/vmLZzRjh/20200302-235543.jpg", text: "Formas y colores libres, no una escena literal.", kind: "foto" },
+  "fondo:simple": { url: "https://i.postimg.cc/KzS87GJg/1464351820687.jpg", text: "Fondo liso o suave, sin escena detrás.", kind: "foto" },
+  "fondo:detallado": { url: "https://i.postimg.cc/wv8j5q0y/20130106-161233.jpg", text: "Paisaje, arquitectura u otros detalles detrás.", kind: "foto" },
+  "forma_lienzo:Estandar": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Crect%20x%3D%2270%22%20y%3D%2240%22%20width%3D%22180%22%20height%3D%22120%22%20fill%3D%22none%22%20stroke%3D%22%23d4af37%22%20stroke-width%3D%224%22/%3E%3C/svg%3E", text: "Cuadrado o rectangular, el formato más habitual.", kind: "diagrama" },
+  "forma_lienzo:Circular": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Ccircle%20cx%3D%22160%22%20cy%3D%22100%22%20r%3D%2270%22%20fill%3D%22none%22%20stroke%3D%22%23d4af37%22%20stroke-width%3D%224%22/%3E%3C/svg%3E", text: "Lienzo redondo.", kind: "diagrama" },
+  "forma_lienzo:Ovalado": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Cellipse%20cx%3D%22160%22%20cy%3D%22100%22%20rx%3D%2280%22%20ry%3D%2255%22%20fill%3D%22none%22%20stroke%3D%22%23d4af37%22%20stroke-width%3D%224%22/%3E%3C/svg%3E", text: "Lienzo ovalado.", kind: "diagrama" },
+  "forma_lienzo:Hexagonal": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Cpolygon%20points%3D%22160%2C30%20230%2C65%20230%2C135%20160%2C170%2090%2C135%2090%2C65%22%20fill%3D%22none%22%20stroke%3D%22%23d4af37%22%20stroke-width%3D%224%22/%3E%3C/svg%3E", text: "Lienzo de seis lados.", kind: "diagrama" },
+  "enmarcado:SinMarco": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Crect%20x%3D%2270%22%20y%3D%2240%22%20width%3D%22180%22%20height%3D%22120%22%20fill%3D%22%23333%22%20stroke%3D%22%23888%22%20stroke-width%3D%222%22/%3E%3Ctext%20x%3D%22160%22%20y%3D%22108%22%20text-anchor%3D%22middle%22%20fill%3D%22%23aaa%22%20font-size%3D%2214%22%20font-family%3D%22sans-serif%22%3ESin%20marco%3C/text%3E%3C/svg%3E", text: "Sin marco; bordes listos para colgar.", kind: "diagrama" },
+  "enmarcado:Estandar": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Crect%20x%3D%2255%22%20y%3D%2230%22%20width%3D%22210%22%20height%3D%22140%22%20fill%3D%22%235a4630%22%20stroke%3D%22%23d4af37%22%20stroke-width%3D%223%22/%3E%3Crect%20x%3D%2275%22%20y%3D%2248%22%20width%3D%22170%22%20height%3D%22104%22%20fill%3D%22%23222%22/%3E%3C/svg%3E", text: "Marco simple y discreto.", kind: "diagrama" },
+  "enmarcado:Cajon": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Crect%20x%3D%2260%22%20y%3D%2235%22%20width%3D%22200%22%20height%3D%22130%22%20fill%3D%22%233a2f22%22%20stroke%3D%22%23c9a227%22%20stroke-width%3D%2210%22/%3E%3Crect%20x%3D%2280%22%20y%3D%2255%22%20width%3D%22160%22%20height%3D%2290%22%20fill%3D%22%231c1c1c%22/%3E%3C/svg%3E", text: "Marco tipo cajón, con profundidad.", kind: "diagrama" },
+  "enmarcado:Clasico": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Crect%20x%3D%2250%22%20y%3D%2228%22%20width%3D%22220%22%20height%3D%22144%22%20fill%3D%22%238a6a2f%22%20stroke%3D%22%23f0d77f%22%20stroke-width%3D%226%22/%3E%3Crect%20x%3D%2272%22%20y%3D%2248%22%20width%3D%22176%22%20height%3D%22104%22%20fill%3D%22%231a1a1a%22/%3E%3C/svg%3E", text: "Marco clásico, más ornamentado.", kind: "diagrama" },
+  "enmarcado:SemiRelieve": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Crect%20x%3D%2252%22%20y%3D%2230%22%20width%3D%22216%22%20height%3D%22140%22%20fill%3D%22%236b542e%22%20stroke%3D%22%23e5ca72%22%20stroke-width%3D%228%22/%3E%3Crect%20x%3D%2278%22%20y%3D%2252%22%20width%3D%22164%22%20height%3D%2296%22%20fill%3D%22%23111%22/%3E%3C/svg%3E", text: "Marco con relieve suave.", kind: "diagrama" },
+  "enmarcado:GruesoRelieves": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Crect%20x%3D%2240%22%20y%3D%2222%22%20width%3D%22240%22%20height%3D%22156%22%20fill%3D%22%237a5c28%22%20stroke%3D%22%23f5e6a8%22%20stroke-width%3D%2212%22/%3E%3Crect%20x%3D%2278%22%20y%3D%2252%22%20width%3D%22164%22%20height%3D%2296%22%20fill%3D%22%23111%22/%3E%3C/svg%3E", text: "Marco grueso con relieves marcados.", kind: "diagrama" },
+  "tipo_escultura:Busto": { url: "https://i.postimg.cc/BZ5BKtMG/20210622-155256.jpg", text: "Cabeza y parte superior del torso.", kind: "foto" },
+  "tipo_escultura:Medio cuerpo": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Cellipse%20cx%3D%22160%22%20cy%3D%2255%22%20rx%3D%2228%22%20ry%3D%2232%22%20fill%3D%22%23b0b0b0%22/%3E%3Cpath%20d%3D%22M120%2090%20L200%2090%20L210%20170%20L110%20170%20Z%22%20fill%3D%22%239a9a9a%22/%3E%3C/svg%3E", text: "De la cabeza hasta la cintura.", kind: "diagrama" },
+  "tipo_escultura:Figura completa": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Cellipse%20cx%3D%22160%22%20cy%3D%2240%22%20rx%3D%2218%22%20ry%3D%2222%22%20fill%3D%22%23b0b0b0%22/%3E%3Cpath%20d%3D%22M140%2060%20L180%2060%20L185%20110%20L200%20175%20L170%20175%20L160%20120%20L150%20175%20L120%20175%20L135%20110%20Z%22%20fill%3D%22%239a9a9a%22/%3E%3C/svg%3E", text: "Figura de cuerpo entero.", kind: "diagrama" },
+  "tipo_escultura:Relieve": { url: "https://i.postimg.cc/0jCGRHb9/20221112-141730.jpg", text: "Formas que sobresalen de un fondo plano.", kind: "foto" },
+  "sujetos:1": { url: "https://i.postimg.cc/KjmcV060/1715876237156.jpg", text: "Una sola persona (ya incluida en el precio base).", kind: "foto" },
+  "sujetos:2": { url: "https://i.postimg.cc/KzS87GJg/1464351820687.jpg", text: "Dos personas: se suma 1 sujeto extra.", kind: "foto" },
+  "sujetos:mascota": { url: "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20200%22%20width%3D%22320%22%20height%3D%22200%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231a1a1a%22/%3E%3Cellipse%20cx%3D%22200%22%20cy%3D%22130%22%20rx%3D%2255%22%20ry%3D%2235%22%20fill%3D%22%238b6914%22/%3E%3Ccircle%20cx%3D%22150%22%20cy%3D%22100%22%20r%3D%2228%22%20fill%3D%22%238b6914%22/%3E%3Ccircle%20cx%3D%22140%22%20cy%3D%2292%22%20r%3D%224%22%20fill%3D%22%23222%22/%3E%3Cpath%20d%3D%22M80%20160%20L110%2090%20L130%20160%20Z%22%20fill%3D%22%23666%22/%3E%3Ccircle%20cx%3D%22110%22%20cy%3D%2270%22%20r%3D%2218%22%20fill%3D%22%23888%22/%3E%3C/svg%3E", text: "Sumá una mascota junto a la persona.", kind: "diagrama" },
+} };
+
 window.ESTUDIO_DEFAULTS = {
   "precios": {
     "matriz": {
@@ -420,5 +456,33 @@ window.EstudioDatos = (() => {
   }
   return [...map.values()].sort((a,b) => (a.order - b.order) || a.id.localeCompare(b.id));
  }
- return { clone, validatePrices, validateSite, validateCategories, mergeGallery };
+
+ function validateGuias(value) {
+  const base = window.ESTUDIO_GUIAS_DEFAULT?.items || {};
+  if (!value || typeof value !== 'object' || typeof value.items !== 'object') throw Error('Guías inválidas.');
+  const items = {};
+  for (const key of Object.keys(base)) {
+   const src = value.items[key];
+   if (!src) continue;
+   if (typeof src !== 'object') throw Error('Guía inválida: ' + key);
+   const out = {};
+   if (src.url) {
+    if (typeof src.url !== 'string' || src.url.length > 12000) throw Error('Imagen de guía demasiado larga: ' + key);
+    if (!(src.url.startsWith('https://') || src.url.startsWith('data:image/svg+xml'))) throw Error('La imagen de guía debe ser https o un diagrama SVG.');
+    out.url = src.url;
+   }
+   if (typeof src.text === 'string') {
+    if (src.text.length > 160) throw Error('Texto de guía demasiado largo: ' + key);
+    out.text = src.text.trim();
+   }
+   if (typeof src.storagePath === 'string') {
+    if (src.storagePath && (src.storagePath.length > 300 || !/^sitio\/[A-Za-z0-9._-]+$/.test(src.storagePath))) throw Error('Ruta de guía inválida.');
+    out.storagePath = src.storagePath;
+   }
+   if (src.kind === 'foto' || src.kind === 'diagrama') out.kind = src.kind;
+   if (Object.keys(out).length) items[key] = out;
+  }
+  return { items };
+ }
+ return { clone, validatePrices, validateSite, validateCategories, mergeGallery, validateGuias };
 })();

@@ -172,9 +172,63 @@ function renderFondo(){
  $('fondo-opacidad-valor').textContent=Math.round(op*100)+' %';
  $('fondo-quitar').hidden=!(site.fondoImagen||site.fondoImagenPath);
 }
+
+let guias = { items: {} };
+const GUIA_LABELS = {
+ 'estilo:Realista':'Estilo · Realista','estilo:Hiperrealista':'Estilo · Hiperrealista','estilo:Espatulado':'Estilo · Espatulado','estilo:Bocetado':'Estilo · Bocetado','estilo:Mural':'Estilo · Mural','estilo:Escultura':'Estilo · Escultura','estilo:Restauracion':'Estilo · Restauración',
+ 'tecnica:Oleo':'Técnica · Óleo','tecnica:Acrilico':'Técnica · Acrílico','tecnica:Carbonilla':'Técnica · Carbonilla',
+ 'tema:Retrato':'Tema · Retrato','tema:Paisaje':'Tema · Paisaje','tema:Bodegon':'Tema · Bodegón','tema:Abstracto':'Tema · Abstracto',
+ 'fondo:simple':'Fondo · Simple','fondo:detallado':'Fondo · Detallado',
+ 'forma_lienzo:Estandar':'Forma · Rectangular','forma_lienzo:Circular':'Forma · Circular','forma_lienzo:Ovalado':'Forma · Ovalado','forma_lienzo:Hexagonal':'Forma · Hexagonal',
+ 'enmarcado:SinMarco':'Marco · Sin marco','enmarcado:Estandar':'Marco · Estándar','enmarcado:Cajon':'Marco · Cajón','enmarcado:Clasico':'Marco · Clásico','enmarcado:SemiRelieve':'Marco · Semi relieve','enmarcado:GruesoRelieves':'Marco · Grueso',
+ 'tipo_escultura:Busto':'Escultura · Busto','tipo_escultura:Medio cuerpo':'Escultura · Medio cuerpo','tipo_escultura:Figura completa':'Escultura · Figura completa','tipo_escultura:Relieve':'Escultura · Relieve',
+ 'sujetos:1':'Sujetos · 1 persona','sujetos:2':'Sujetos · 2 personas','sujetos:mascota':'Sujetos · Con mascota'
+};
+function guiaItem(key){
+ const base=(window.ESTUDIO_GUIAS_DEFAULT.items||{})[key]||{};
+ const over=(guias.items||{})[key]||{};
+ return { url: over.url||base.url||'', text: over.text||base.text||'', kind: over.kind||base.kind||'foto', storagePath: over.storagePath||'' };
+}
+function renderGuias(){
+ const root=$('guias-list'); if(!root) return; root.replaceChildren();
+ for(const key of Object.keys(window.ESTUDIO_GUIAS_DEFAULT.items||{})){
+  const g=guiaItem(key);
+  const row=document.createElement('div'); row.className='admin-guia-row';
+  const img=document.createElement('img'); img.src=g.url; img.alt=''; img.loading='lazy';
+  const body=document.createElement('div');
+  const title=document.createElement('strong'); title.textContent=GUIA_LABELS[key]||key;
+  const text=document.createElement('input'); text.id='guia-text-'+key.replace(/[^a-z0-9]+/gi,'-'); text.maxLength=160; text.value=g.text; text.placeholder='Texto breve';
+  const actions=document.createElement('div'); actions.className='admin-fondo-actions';
+  const edit=document.createElement('button'); edit.type='button'; edit.className='admin-edit'; edit.textContent='Cambiar imagen';
+  const save=document.createElement('button'); save.type='button'; save.className='admin-secondary'; save.textContent='Guardar texto';
+  edit.onclick=()=>abrirEditor({url:g.url.startsWith('data:')?g.url:new URL(g.url,location.href).href,title:GUIA_LABELS[key]||key,soloArchivo:true,onSave:async({file},progress)=>{
+   const previous=g.storagePath||''; const ext=(file.name.split('.').pop()||'webp').toLowerCase();
+   const path='sitio/guia-'+key.replace(/[^a-z0-9]+/gi,'-').slice(0,40)+'-'+Date.now().toString(36)+'.'+ext;
+   setPending(path,true);
+   const url=await api.uploadImage(file,path,p=>progress('Subiendo: '+p+'%'));
+   const nextItems={...(guias.items||{}), [key]:{...(guias.items||{})[key], url, storagePath:path, text:text.value.trim(), kind:'foto'}};
+   const validated=D.validateGuias({items:nextItems}); await api.saveConfig('guias',validated); guias=validated; setPending(path,false);
+   if(previous&&previous!==path&&previous.startsWith('sitio/')){try{await api.deleteStorageFile(previous);}catch{setPending(previous,true);}}
+   renderGuias(); $('guias-status').textContent='Imagen de guía guardada.';
+  }}).catch(e=>$('guias-status').textContent=api.explainError(e));
+  save.onclick=()=>action(row,async()=>{
+   const base=(window.ESTUDIO_GUIAS_DEFAULT.items||{})[key]||{};
+   const prev=(guias.items||{})[key]||{};
+   const entry={...prev, text:text.value.trim()};
+   if(prev.url) entry.url=prev.url; if(prev.storagePath) entry.storagePath=prev.storagePath; if(prev.kind) entry.kind=prev.kind;
+   // No guardar de nuevo la imagen por defecto (sobre todo diagramas SVG largos).
+   if(entry.text===base.text) delete entry.text;
+   const nextItems={...(guias.items||{})}; if(Object.keys(entry).length) nextItems[key]=entry; else delete nextItems[key];
+   const validated=D.validateGuias({items:nextItems}); await api.saveConfig('guias',validated); guias=validated; $('guias-status').textContent='Texto de guía guardado.';
+  },t=>$('guias-status').textContent=t);
+  actions.append(edit,save); body.append(title,text,actions); row.append(img,body); root.append(row);
+ }
+}
+
 function renderSite() {
  $('foto-inicio-preview').src=site.fotoArtista||'artista.jpg';
  renderFondo();
+ renderGuias();
  $('site-whatsapp').value=site.whatsapp;$('site-map').value=site.mapaCurso;
  $('site-text-fields').replaceChildren();
  for(const [key,value] of Object.entries(site.textos)) {
@@ -197,10 +251,10 @@ async function loadWorkspace() {
   } catch { /* Si no carga el catálogo de Instagram, se editan solo las 152 originales. */ }
   // Si falla una lectura, no habilitar un formulario con valores por defecto que
   // pudiera sobrescribir una configuración existente por accidente.
-  const [p,s,c,remote]=await Promise.all([api.readConfig('precios'),api.readConfig('sitio'),api.readConfig('categorias'),api.readGallery()]);
+  const [p,s,c,g,remote]=await Promise.all([api.readConfig('precios'),api.readConfig('sitio'),api.readConfig('categorias'),api.readConfig('guias'),api.readGallery()]);
   if(generation!==readGeneration || !api.isAdmin(services.auth.currentUser)) return;
   prices=p?D.validatePrices(p):D.clone(defaults.precios);site=s?D.validateSite(s):D.clone(defaults.sitio);
-  categories=c?D.validateCategories(c.items):D.clone(defaults.categorias);gallery=D.mergeGallery(seed,remote);
+  categories=c?D.validateCategories(c.items):D.clone(defaults.categorias);guias=g?D.validateGuias(g):{items:{}};gallery=D.mergeGallery(seed,remote);
   renderCategories();renderGallery();renderPrices();renderSite();renderPending();$('admin-workspace').hidden=false;
   say('Sesión de administración activa. Los cambios se publican al guardar.');
  } catch(error) {say('No se habilitó la edición: '+api.explainError(error)+' Recargá la página cuando estén disponibles Firestore y sus reglas.');}

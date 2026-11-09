@@ -123,6 +123,7 @@ function calcular(){
  document.getElementById('tasa-info').textContent=(valor('moneda')||'PYG')==='PYG'?'':tasaEstado;
  const info=document.getElementById('info-cuotas');if(info)info.textContent=result.digital?'Contado al aprobar la muestra.':result.evaluar?'Condiciones a definir tras la evaluación.':result.cuotas?'Hasta '+AJUSTES.cuotasCantidad+' cuotas con tarjeta.':'Seña inicial y saldo contra entrega aprobada.';
  foot.style.display='flex';
+ if(window.CotizadorVisual){try{CotizadorVisual.updateEscala();CotizadorVisual.updateEscalaEscultura();CotizadorVisual.renderFondo();CotizadorVisual.renderSujetos();}catch(e){}}
 }
 async function leerTasas(url){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),6000);try{const r=await fetch(url,{signal:controller.signal});if(!r.ok)throw Error('Sin respuesta válida');return await r.json();}finally{clearTimeout(timer);}}
 async function actualizarTasasCambio(){

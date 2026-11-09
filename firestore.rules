@@ -55,6 +55,15 @@ service cloud.firestore {
     && request.resource.data.textos is map && request.resource.data.textos.size() <= 60;
    allow delete: if admin();
   }
+
+  match /config/guias {
+   allow read: if true;
+   allow create, update: if admin()
+    && request.resource.data.keys().hasOnly(['items'])
+    && request.resource.data.items is map
+    && request.resource.data.items.size() <= 80;
+   allow delete: if admin();
+  }
   match /config/categorias {
    allow read: if true;
    allow create, update: if admin()

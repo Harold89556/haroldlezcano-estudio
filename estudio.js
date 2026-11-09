@@ -249,6 +249,7 @@
     api.readConfig('precios').then(config=>{if(config) aplicarPrecios(data.validatePrices(config));applyCoursePrices();}),
     api.readConfig('sitio').then(config=>{if(config) applySite(config);}),
     api.readConfig('categorias').then(config=>{if(config) categories=data.validateCategories(config.items);}),
+    api.readConfig('guias').then(config=>{if(config){window.guiasActual=data.validateGuias(config);if(window.CotizadorVisual)CotizadorVisual.refreshAll();}}),
     api.readGallery().then(items=>{gallery=data.mergeGallery(seed,items);})
    ]);
    renderGallery();

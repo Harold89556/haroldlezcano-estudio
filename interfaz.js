@@ -688,3 +688,25 @@
         // Al iniciar la página, verificar estado (estará oculto)
         calcular();
     };
+
+(function(){
+  function hook(name){
+    if (typeof window[name] !== 'function') return;
+    const orig = window[name];
+    window[name] = function(){
+      const r = orig.apply(this, arguments);
+      if (window.CotizadorVisual) {
+        try {
+          if (name === 'handleTamanoChange' || name === 'setUnidad' || name === 'onFormaChange') CotizadorVisual.updateEscala();
+          else if (name === 'onTipoEsculturaChange' || name === 'stepEsc') CotizadorVisual.updateEscalaEscultura();
+          else CotizadorVisual.refreshAll();
+        } catch (e) {}
+      }
+      return r;
+    };
+  }
+  ['onEstiloChange','onTecnicaChange','onTemaChange','onFormaChange','onTipoEsculturaChange','handleTamanoChange','setUnidad','step','stepEsc','updateUI'].forEach(hook);
+  const ready = () => { if (window.CotizadorVisual) CotizadorVisual.refreshAll(); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(ready, 0));
+  else setTimeout(ready, 0);
+})();
