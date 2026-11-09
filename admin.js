@@ -141,7 +141,7 @@ const numericLabels = {
  restauracionDigital:'Restauración digital simple',restauracionDigitalCompleja:'Restauración digital compleja',
  personalizadoMinRetrato:'Personalizado: mínimo retrato',personalizadoMinOtros:'Personalizado: mínimo otros temas',personalizadoCm2Retrato:'Personalizado: guaraníes por cm² (retrato)',personalizadoCm2Otros:'Personalizado: guaraníes por cm² (otros)',
  personalizadoEspatulado:'Personalizado: factor espatulado',personalizadoHiper:'Personalizado: factor hiperrealista',personalizadoBoceto:'Personalizado: factor bocetado',personalizadoExtraPersona:'Personalizado: persona extra',personalizadoMarcos:'Personalizado: marcos',
- carbonillaRespaldo:'Carbonilla: base de respaldo',carbonillaColor:'Factor carbonilla a color',acrilico:'Factor acrílico',circular:'Factor circular',ovalado:'Factor ovalado',mascota:'Factor mascota respecto a persona extra',fondo:'Factor de fondo complejo sobre base',cuotasMinimo:'Monto mínimo para tarjeta',tarjeta:'Factor recargo tarjeta',iva:'Factor IVA',senaDivisor:'Divisor para seña',cuotasCantidad:'Cantidad de cuotas',cambioUSD:'Respaldo: guaraníes por USD',cambioEUR:'Respaldo: EUR por USD',cambioBRL:'Respaldo: BRL por USD',matricula:'Matrícula',mensualidad:'Mensualidad',claseSuelta:'Clase suelta'
+ carbonillaRespaldo:'Carbonilla: base de respaldo',carbonillaColor:'Factor carbonilla a color',acrilico:'Factor acrílico',circular:'Factor circular',ovalado:'Factor ovalado',mascota:'Factor mascota respecto a persona extra',fondo:'Factor de fondo complejo sobre base',cuotasMinimo:'Monto mínimo para tarjeta',tarjeta:'Factor recargo tarjeta',iva:'Factor IVA (no se usa: los precios ya incluyen IVA)',senaDivisor:'Divisor para seña',cuotasCantidad:'Cantidad de cuotas',cambioUSD:'Respaldo: guaraníes por USD',cambioEUR:'Respaldo: EUR por USD',cambioBRL:'Respaldo: BRL por USD',matricula:'Matrícula',mensualidad:'Mensualidad',claseSuelta:'Clase suelta'
 };
 function renderPrices() {
  const root=$('price-fields');root.replaceChildren();
@@ -155,7 +155,7 @@ function renderPrices() {
    } else {
     const row=document.createElement('div');row.className='admin-number-row';
     const input=document.createElement('input');input.id='price-'+next.join('-').replaceAll(' ','-');input.type='number';input.min='0';input.max='1000000000000';input.step='any';input.required=true;input.value=String(value);input.dataset.path=JSON.stringify(next);
-    row.append(makeLabel(numericLabels[key] || key,input),input);if(key.startsWith('personalizado'))row.hidden=true;parent.append(row);
+    row.append(makeLabel(numericLabels[key] || key,input),input);if(key.startsWith('personalizado')||key==='iva')row.hidden=true;parent.append(row);
    }
   }
  }

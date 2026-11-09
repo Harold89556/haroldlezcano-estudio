@@ -62,7 +62,7 @@ let base;
  browser=await chromium.launch({headless:true,args:['--no-sandbox']});
  await test('Cotizador sin Firebase: base 700.000 y 152 fotos',async()=>{
   const {page,context,errors}=await session({offline:true});await quote(page);
-  assert.equal(await page.textContent('#precioFinal'),'700.000 ₲');assert.equal(await page.locator('#mainGallery .gallery-item').count(),152);assert.deepEqual(errors,[]);await context.close();
+  assert.equal(await page.textContent('#precioFinal'),'700.000 ₲');assert.match(await page.textContent('.nota'),/IVA incluido/);assert.ok(!/Base:|IVA:|Seña:/.test(await page.textContent('#desglose')));await page.check('#factura');await page.waitForFunction(()=>document.getElementById('precioFinal').textContent==='700.000 ₲');assert.match(await page.textContent('.nota'),/IVA incluido/);assert.equal(await page.locator('#mainGallery .gallery-item').count(),152);assert.deepEqual(errors,[]);await context.close();
  });
  await test('Picker: vistas previas, quitar, tamaño y asesoramiento',async()=>{
   const {page,context}=await session();await quote(page);await page.setInputFiles('#referencias_archivos',[photo('uno.png'),photo('dos.png')]);
@@ -85,7 +85,7 @@ let base;
   assert.match(state.uploads[1].path,/^pedidos\/[0-9a-f-]{36}\/2\.(webp|jpg)$/);
   const link=await page.evaluate(()=>window.__opened.find(u=>String(u).includes('wa.me')));
   const text=new URL(link).searchParams.get('text');
-  assert.match(text,/Foto(s)? de referencia/);assert.match(text,/700.000/);
+  assert.match(text,/Foto(s)? de referencia/);assert.match(text,/700\.000 ₲ \(IVA incluido\)/);assert.ok(!/Base:|Seña:|IVA:/.test(text));
   assert.match(text,/https:\/\/example\.com\/referencias\/pedidos\//);
   assert.equal((text.match(/https:\/\/example\.com\/referencias\/pedidos\//g)||[]).length,2);
   assert.ok(!/Te envío/.test(text));

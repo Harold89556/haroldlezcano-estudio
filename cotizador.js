@@ -89,8 +89,9 @@ function presupuesto(){
  }
  const sub=base+extras+marco+fondo+andamio;
  const cuotas=valor('cuotas')==='3'&&sub>=AJUSTES.cuotasMinimo&&t!=='Restauracion';
- const recargo=cuotas?sub*AJUSTES.tarjeta:0;const iva=marcado('factura')?(sub+recargo)*AJUSTES.iva:0;
- return {t,dim,base,extras,marco,fondo,andamio,sub,recargo,iva,total:sub+recargo+iva,cuotas,digital:esRestauracionDigital(),evaluar:t==='Restauracion'&&valor('tipo_restauracion')==='Fisica',consultar:false};
+ // Los precios de la matriz ya incluyen IVA. La factura solo pide datos fiscales; no suma nada.
+ const recargo=cuotas?sub*AJUSTES.tarjeta:0;
+ return {t,dim,base,extras,marco,fondo,andamio,sub,recargo,iva:0,total:sub+recargo,cuotas,digital:esRestauracionDigital(),evaluar:t==='Restauracion'&&valor('tipo_restauracion')==='Fisica',consultar:false};
 }
 function dinero(n){const m=valor('moneda')||'PYG';return m==='PYG'?Math.round(n).toLocaleString('es-PY')+' ₲':(n*cotizaciones[m]).toFixed(2)+' '+m;}
 function calcular(){
@@ -105,20 +106,20 @@ function calcular(){
  if(result.consultar){
   document.getElementById('precioFinal').textContent='A consultar';
   document.getElementById('desglose').textContent='El mural se cotiza de forma personalizada según la pared, el acceso y el nivel de detalle.';
-  document.querySelector('.nota').textContent='Envío aparte. Presupuesto sujeto a confirmación.';
+  document.querySelector('.nota').textContent='IVA incluido. Envío aparte.';
   document.getElementById('tasa-info').textContent='';
   const infoM=document.getElementById('info-cuotas');if(infoM)infoM.textContent='Las condiciones se acuerdan al consultar.';
   foot.style.display='flex';
   return;
  }
  document.getElementById('precioFinal').textContent=result.evaluar?'A evaluar':dinero(result.total);
- const parts=['Base: '+dinero(result.base)];
- if(result.extras)parts.push('Sujetos extra: '+dinero(result.extras));if(result.fondo)parts.push('Fondo: '+dinero(result.fondo));if(result.marco)parts.push('Marco: '+dinero(result.marco));if(result.andamio)parts.push('Andamios: '+dinero(result.andamio));if(result.recargo)parts.push('Recargo tarjeta: '+dinero(result.recargo));
- if(marcado('factura'))parts.push('IVA: '+dinero(result.iva));
- if(!result.evaluar)parts.push('Total: '+dinero(result.total));
- if(!result.evaluar)parts.push(result.digital?'Contado al aprobar la muestra.':result.cuotas?AJUSTES.cuotasCantidad+' cuotas de '+dinero(result.total/AJUSTES.cuotasCantidad):'Seña: '+dinero(result.total/AJUSTES.senaDivisor));
- document.getElementById('desglose').textContent=result.evaluar?'Evaluación directa en taller para presupuesto formal.':parts.join(' · ');
- document.querySelector('.nota').textContent=(marcado('factura')?'IVA incluido. ':'Sin IVA. ')+'Envío aparte. 1 revisión de boceto incluida. Presupuesto sujeto a confirmación.';
+ // Un solo precio final; sin Base/IVA/Seña ni otros importes debajo.
+ let detalle='';
+ if(result.evaluar) detalle='Evaluación directa en taller para presupuesto formal.';
+ else if(result.digital) detalle='Contado al aprobar la muestra.';
+ else if(result.cuotas) detalle='Hasta '+AJUSTES.cuotasCantidad+' cuotas con tarjeta.';
+ document.getElementById('desglose').textContent=detalle;
+ document.querySelector('.nota').textContent='IVA incluido. Envío aparte.';
  document.getElementById('tasa-info').textContent=(valor('moneda')||'PYG')==='PYG'?'':tasaEstado;
  const info=document.getElementById('info-cuotas');if(info)info.textContent=result.digital?'Contado al aprobar la muestra.':result.evaluar?'Condiciones a definir tras la evaluación.':result.cuotas?'Hasta '+AJUSTES.cuotasCantidad+' cuotas con tarjeta.':'Seña inicial y saldo contra entrega aprobada.';
  foot.style.display='flex';

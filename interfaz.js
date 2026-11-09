@@ -478,8 +478,8 @@
         if (t === 'Mural' || (typeof ultimoPresupuesto !== 'undefined' && ultimoPresupuesto && ultimoPresupuesto.consultar)) {
             texto += "\n💰 *INVERSIÓN ESTIMADA:* A consultar según la pared, el acceso y el detalle.\n";
         } else {
-            let precio = document.getElementById('precioFinal').textContent + '\n' + document.getElementById('desglose').textContent + '\n' + document.querySelector('.nota').textContent;
-            texto += "\n💰 *INVERSIÓN ESTIMADA:* " + precio + "\n";
+            const precioFinal = document.getElementById('precioFinal').textContent;
+            texto += "\n💰 *INVERSIÓN ESTIMADA:* " + precioFinal + " (IVA incluido)\n";
         }
         texto += "✨ *Garantía:* 1 revisión y aprobación previa de boceto fotográfico.\n";
         
