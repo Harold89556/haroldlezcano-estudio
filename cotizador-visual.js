@@ -211,7 +211,7 @@
       personW = personWcm * scale;
     }
     const ground = H - bottomPad;
-    const personX = Math.max(sidePad + personW / 2 + 4, sidePad + 72);
+    const personX = Math.max(sidePad + personW / 2 + 4, sidePad + 78);
     const artX = personX + personW / 2 + gap;
     const artY = ground - artH;
     const labelY = Math.min(H - 8, ground + 18);
