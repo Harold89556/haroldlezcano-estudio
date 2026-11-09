@@ -176,17 +176,46 @@
     return el;
   }
 
-  function personPath(x, groundY, scale) {
+  function personPath(x, groundY, scale, labelY) {
     // Silueta adulta ~170 cm: cabeza + torso + piernas. scale = px per cm.
     const h = PERSONA_CM * scale;
     const head = 18 * scale;
     const cx = x;
     const top = groundY - h;
+    const ly = labelY == null ? groundY + 16 : labelY;
     return [
       `<ellipse cx="${cx}" cy="${top + head * 0.55}" rx="${head * 0.42}" ry="${head * 0.5}" fill="#c8c8c8"/>`,
       `<path d="M${cx - 12 * scale} ${top + head * 1.05} L${cx + 12 * scale} ${top + head * 1.05} L${cx + 14 * scale} ${top + 70 * scale} L${cx + 10 * scale} ${groundY} L${cx + 2 * scale} ${groundY} L${cx} ${top + 95 * scale} L${cx - 2 * scale} ${groundY} L${cx - 10 * scale} ${groundY} L${cx - 14 * scale} ${top + 70 * scale} Z" fill="#9a9a9a"/>`,
-      `<text x="${cx}" y="${groundY + 14}" text-anchor="middle" fill="#d4af37" font-size="11">Persona de 1,70 m</text>`
+      `<text x="${cx}" y="${ly}" text-anchor="middle" fill="#d4af37" font-size="11">Persona de 1,70 m</text>`
     ].join('');
+  }
+
+  function layoutScale(artWcm, artHcm) {
+    // Vista más alta: la persona usa ~75% de la altura útil; si la obra es más grande, se reduce todo a escala.
+    const W = 360, H = 280;
+    const topPad = 24, bottomPad = 28, sidePad = 14, gap = 18;
+    const usableH = H - topPad - bottomPad;
+    const usableW = W - sidePad * 2;
+    const personWcm = 30;
+    let scale = (usableH * 0.78) / PERSONA_CM;
+    const fitH = Math.max(PERSONA_CM, artHcm);
+    if (fitH * scale > usableH) scale = usableH / fitH;
+    let artW = Math.max(4, artWcm * scale);
+    let artH = Math.max(4, artHcm * scale);
+    let personW = personWcm * scale;
+    const needW = personW + gap + artW;
+    if (needW > usableW) {
+      scale *= usableW / needW;
+      artW = Math.max(4, artWcm * scale);
+      artH = Math.max(4, artHcm * scale);
+      personW = personWcm * scale;
+    }
+    const ground = H - bottomPad;
+    const personX = Math.max(sidePad + personW / 2 + 4, sidePad + 72);
+    const artX = personX + personW / 2 + gap;
+    const artY = ground - artH;
+    const labelY = Math.min(H - 8, ground + 18);
+    return { W, H, scale, ground, personX, artX, artY, artW, artH, labelY, sidePad };
   }
 
   function artworkShape(forma, x, y, w, h, fill) {
@@ -220,27 +249,24 @@
       return;
     }
     const forma = document.getElementById('forma_lienzo')?.value || 'Estandar';
-    const W = 320, H = 200, pad = 16, ground = H - 28;
-    const maxArtH = PERSONA_CM * 1.15;
-    const scale = (H - 50) / maxArtH;
-    const artW = Math.max(4, dim.ancho * scale);
-    const artH = Math.max(4, (forma === 'Circular' ? dim.ancho : dim.alto) * scale);
-    const personX = 48;
-    const artX = 110;
-    const artY = ground - artH;
+    const artHcm = forma === 'Circular' ? dim.ancho : dim.alto;
+    const artWcm = dim.ancho;
+    const L = layoutScale(artWcm, artHcm);
     let fill = 'rgba(212,175,55,0.25)';
     let imageTag = '';
     const ref = document.querySelector('#referencias-previews img');
     if (ref && ref.src) {
       const clipId = 'clip-obra';
-      imageTag = `<defs><clipPath id="${clipId}">${artworkShape(forma, artX, artY, artW, artH, '#000').replace(/fill="[^"]*"/, 'fill="#fff"').replace(/ stroke="[^"]*"/g, '').replace(/ stroke-width="[^"]*"/g, '')}</clipPath></defs>` +
-        `<image href="${ref.src}" x="${artX}" y="${artY}" width="${artW}" height="${artH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clipId})" opacity="0.95"/>`;
+      imageTag = `<defs><clipPath id="${clipId}">${artworkShape(forma, L.artX, L.artY, L.artW, L.artH, '#000').replace(/fill="[^"]*"/, 'fill="#fff"').replace(/ stroke="[^"]*"/g, '').replace(/ stroke-width="[^"]*"/g, '')}</clipPath></defs>` +
+        `<image href="${ref.src}" x="${L.artX}" y="${L.artY}" width="${L.artW}" height="${L.artH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clipId})" opacity="0.95"/>`;
       fill = 'transparent';
     }
     const label = forma === 'Circular'
       ? `Diámetro ${Math.round(dim.ancho)} cm`
       : `${Math.round(dim.ancho)} × ${Math.round(dim.alto)} cm`;
-    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Comparación de tamaño: obra ${label} junto a una persona de 1,70 metros">${imageTag}${personPath(personX, ground, scale)}${artworkShape(forma, artX, artY, artW, artH, fill)}<text x="${artX + artW / 2}" y="${artY - 6}" text-anchor="middle" fill="#e5ca72" font-size="11">${label}</text><line x1="${pad}" y1="${ground}" x2="${W - pad}" y2="${ground}" stroke="#444" stroke-width="1"/></svg><p class="vista-escala-nota">La obra se muestra a escala real junto a una persona adulta de 1,70 m.</p>`;
+    const labelX = Math.min(L.W - L.sidePad, Math.max(L.sidePad + 40, L.artX + L.artW / 2));
+    const labelTop = Math.max(14, L.artY - 8);
+    el.innerHTML = `<svg viewBox="0 0 ${L.W} ${L.H}" role="img" aria-label="Comparación de tamaño: obra ${label} junto a una persona de 1,70 metros">${imageTag}${personPath(L.personX, L.ground, L.scale, L.labelY)}${artworkShape(forma, L.artX, L.artY, L.artW, L.artH, fill)}<text x="${labelX}" y="${labelTop}" text-anchor="middle" fill="#e5ca72" font-size="12">${label}</text><line x1="${L.sidePad}" y1="${L.ground}" x2="${L.W - L.sidePad}" y2="${L.ground}" stroke="#444" stroke-width="1"/></svg><p class="vista-escala-nota">La obra se muestra a escala real junto a una persona adulta de 1,70 m.</p>`;
   }
 
   function updateEscalaEscultura() {
@@ -252,12 +278,13 @@
     const cm = Number(document.getElementById('escultura_cm')?.value || 0);
     if (!tipo || !cm) { el.hidden = true; return; }
     el.hidden = false;
-    const W = 320, H = 200, pad = 16, ground = H - 28;
-    const scale = (H - 50) / (PERSONA_CM * 1.15);
-    const artH = Math.max(8, cm * scale);
-    const artW = artH * (tipo === 'Relieve' ? 1.1 : tipo === 'Busto' ? 0.7 : tipo === 'Medio cuerpo' ? 0.55 : 0.4);
-    const personX = 48, artX = 130, artY = ground - artH;
-    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Escultura de ${cm} cm junto a una persona de 1,70 m">${personPath(personX, ground, scale)}<rect x="${artX}" y="${artY}" width="${artW}" height="${artH}" rx="6" fill="rgba(180,180,180,0.35)" stroke="#d4af37" stroke-width="2"/><text x="${artX + artW / 2}" y="${artY - 6}" text-anchor="middle" fill="#e5ca72" font-size="11">${tipo}: ${cm} cm</text><line x1="${pad}" y1="${ground}" x2="${W - pad}" y2="${ground}" stroke="#444" stroke-width="1"/></svg><p class="vista-escala-nota">Altura de la pieza a escala junto a una persona de 1,70 m.</p>`;
+    const artHcm = cm;
+    const artWcm = cm * (tipo === 'Relieve' ? 1.1 : tipo === 'Busto' ? 0.7 : tipo === 'Medio cuerpo' ? 0.55 : 0.4);
+    const L = layoutScale(artWcm, artHcm);
+    const label = `${tipo}: ${cm} cm`;
+    const labelX = Math.min(L.W - L.sidePad, Math.max(L.sidePad + 40, L.artX + L.artW / 2));
+    const labelTop = Math.max(14, L.artY - 8);
+    el.innerHTML = `<svg viewBox="0 0 ${L.W} ${L.H}" role="img" aria-label="Escultura de ${cm} cm junto a una persona de 1,70 m">${personPath(L.personX, L.ground, L.scale, L.labelY)}<rect x="${L.artX}" y="${L.artY}" width="${L.artW}" height="${L.artH}" rx="6" fill="rgba(180,180,180,0.35)" stroke="#d4af37" stroke-width="2"/><text x="${labelX}" y="${labelTop}" text-anchor="middle" fill="#e5ca72" font-size="12">${label}</text><line x1="${L.sidePad}" y1="${L.ground}" x2="${L.W - L.sidePad}" y2="${L.ground}" stroke="#444" stroke-width="1"/></svg><p class="vista-escala-nota">Altura de la pieza a escala junto a una persona de 1,70 m.</p>`;
   }
 
   function refreshAll() {
