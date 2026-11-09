@@ -32,6 +32,42 @@
   if (!references.length) return text;
   return text + '\n📸 Te envío ' + (references.length === 1 ? 'la foto de referencia' : 'las ' + references.length + ' fotos de referencia') + ' en este chat.\n';
  }
+ function withPhotoLinks(text, urls) {
+  if (!urls.length) return text;
+  return text + '\n📸 *Foto' + (urls.length===1?'':'s') + ' de referencia:*\n' + urls.map((u,i)=> (urls.length>1? (i+1)+'. ' : '') + u).join('\n') + '\n';
+ }
+ async function compressReference(file) {
+  const maxSide = 2000;
+  let bitmap = null;
+  try { bitmap = await createImageBitmap(file); } catch {}
+  if (!bitmap) {
+   const url = URL.createObjectURL(file);
+   try {
+    const img = await new Promise((resolve, reject) => { const i=new Image(); i.onload=()=>resolve(i); i.onerror=reject; i.src=url; });
+    const c = document.createElement('canvas'); const scale=Math.min(1, maxSide/Math.max(img.naturalWidth, img.naturalHeight));
+    c.width=Math.max(1, Math.round(img.naturalWidth*scale)); c.height=Math.max(1, Math.round(img.naturalHeight*scale));
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    const blob = await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(Error('No se pudo comprimir.')),'image/webp',0.85)).catch(()=>new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(Error('No se pudo comprimir.')),'image/jpeg',0.88)));
+    return new File([blob], 'referencia.webp', { type: blob.type || 'image/webp' });
+   } finally { URL.revokeObjectURL(url); }
+  }
+  try {
+   const scale=Math.min(1, maxSide/Math.max(bitmap.width, bitmap.height));
+   const c=document.createElement('canvas'); c.width=Math.max(1,Math.round(bitmap.width*scale)); c.height=Math.max(1,Math.round(bitmap.height*scale));
+   c.getContext('2d').drawImage(bitmap,0,0,c.width,c.height);
+   const blob = await new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(Error('No se pudo comprimir.')),'image/webp',0.85)).catch(()=>new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(Error('No se pudo comprimir.')),'image/jpeg',0.88)));
+   const ext = (blob.type||'').includes('jpeg') ? 'jpg' : 'webp';
+   return new File([blob], 'referencia.'+ext, { type: blob.type || 'image/webp' });
+  } finally { bitmap.close?.(); }
+ }
+ function openWhatsAppSafely(url) {
+  // Misma pulsación: si hay ventana en blanco abierta al inicio, se redirige; si el navegador la bloquea, queda el botón de continuar.
+  try {
+   if (window.__waPopup && !window.__waPopup.closed) { window.__waPopup.location.href = url; return true; }
+  } catch {}
+  const opened = window.open(url,'_blank','noopener,noreferrer');
+  return !!opened;
+ }
  function whatsappUrl(message) {
   return 'https://wa.me/' + (window.sitioActual?.whatsapp || '595972173847') + '?text=' + encodeURIComponent(message);
  }
@@ -73,7 +109,7 @@
   picker.value='';
   if (references.length) photoChoice.value='Sí, quiero cargar fotos de guía';
   hideWhatsAppActions();
-  renderPreviews();status(errors.join(' ') || 'Fotos listas. Al continuar, en el celular se adjuntan al mensaje de WhatsApp.');
+  renderPreviews();status(errors.join(' ') || 'Fotos listas. Al continuar se suben y el mensaje de WhatsApp lleva el enlace.');
  });
  photoChoice.addEventListener('change', () => {
   hideWhatsAppActions();
@@ -88,15 +124,47 @@
    errorCampo('fotos_referencia','Cargá al menos una imagen o elegí que necesitás asesoramiento.');picker.focus();return;
   }
   const text = prepararMensajeObra();if (!text) return;
-  const message = withPhotoNote(text);
-  const url = whatsappUrl(message);
-  // Siempre abrir directo el chat del artista con el pedido escrito; compartir fotos queda como paso secundario.
-  const sharable = references.length ? canSharePhotos(referenceFiles(), message) : false;
-  revealWhatsApp(url, sharable);
-  window.open(url,'_blank','noopener,noreferrer');
-  status(!references.length ? 'Revisá el mensaje en WhatsApp antes de enviarlo.' : sharable
-   ? 'Se abrió el chat de WhatsApp con el pedido. Después usá «Compartir fotos por WhatsApp» para mandar las imágenes al mismo chat.'
-   : 'Se abrió el chat de WhatsApp con el pedido. Enviá las fotos en ese mismo chat.');
+  if (!references.length) {
+   const url = whatsappUrl(text);
+   revealWhatsApp(url, false);
+   openWhatsAppSafely(url);
+   status('Revisá el mensaje en WhatsApp antes de enviarlo.');
+   return;
+  }
+  // Abrir ventana en el mismo toque para que el celular no bloquee WhatsApp después de subir.
+  try { window.__waPopup = window.open('about:blank','_blank'); } catch { window.__waPopup = null; }
+  uploading = true; lockQuote(true); hideWhatsAppActions();
+  const links = [];
+  try {
+   const api = await firebase();
+   const pedido = (crypto.randomUUID && crypto.randomUUID()) || (api.newId());
+   for (let i = 0; i < references.length; i++) {
+    status('Subiendo foto ' + (i+1) + ' de ' + references.length + '…');
+    const compressed = await compressReference(references[i].file);
+    if (compressed.size > 8*1024*1024) throw Error('La foto comprimida supera 8 MB.');
+    const ext = (compressed.type||'').includes('jpeg') ? 'jpg' : 'webp';
+    const path = 'pedidos/' + pedido + '/' + (i+1) + '.' + ext;
+    const url = await api.uploadReference(compressed, path, p => { if (p>=90) status('Subiendo foto ' + (i+1) + ' de ' + references.length + '…'); });
+    links.push(url); references[i].url = url; references[i].path = path;
+   }
+   const message = withPhotoLinks(text, links);
+   const wa = whatsappUrl(message);
+   revealWhatsApp(wa, false);
+   openWhatsAppSafely(wa);
+   status('Se abrió WhatsApp con el pedido y el enlace de ' + (links.length===1?'tu foto':'tus fotos') + ' de referencia. Revisá el mensaje antes de enviarlo.');
+  } catch (error) {
+   try { if (window.__waPopup && !window.__waPopup.closed) window.__waPopup.close(); } catch {}
+   window.__waPopup = null;
+   const message = withPhotoNote(text);
+   const wa = whatsappUrl(message);
+   const sharable = canSharePhotos(referenceFiles(), message);
+   revealWhatsApp(wa, sharable);
+   openWhatsAppSafely(wa);
+   const why = (error && error.message) ? error.message : 'sin conexión';
+   status('No se pudo subir ' + (references.length===1?'la foto':'las fotos') + ' (' + why + '). Se abrió WhatsApp: enviá ' + (references.length===1?'la imagen':'las imágenes') + ' en ese mismo chat' + (sharable ? ' o usá «Compartir fotos por WhatsApp».' : '.'));
+  } finally {
+   uploading = false; lockQuote(false); window.__waPopup = null; renderPreviews();
+  }
  };
  shareBtn.addEventListener('click', async () => {
   if (uploading || !references.length) return;

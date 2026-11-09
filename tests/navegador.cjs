@@ -25,7 +25,7 @@ export async function readConfig(name){if(state.offline)throw Error('Offline');r
 export async function readGallery(){if(state.offline)throw Error('Offline');return state.gallery;}
 export async function saveConfig(name,value){state.config[name]=value;state.saved.push({name,value});}
 export async function saveGalleryBatch(items){for(const item of items){state.gallery=state.gallery.filter(i=>i.id!==item.id);state.gallery.push(item);}state.saved.push({items});}
-export async function uploadImage(file,path,progress){state.uploadAttempts++;if(state.failUpload||state.failAt===state.uploadAttempts)throw Error('Carga de prueba fallida');progress(100);const url='https://example.com/'+encodeURIComponent(path);state.uploads.push({name:file.name,type:file.type,size:file.size,path,url});return url;}
+export async function uploadImage(file,path,progress){state.uploadAttempts++;if(state.failUpload||state.failAt===state.uploadAttempts)throw Error('Carga de prueba fallida');progress(100);const url='https://example.com/'+encodeURIComponent(path);state.uploads.push({name:file.name,type:file.type,size:file.size,path,url,bucket:'fotos'});return url;}export async function uploadReference(file,path,progress){state.uploadAttempts++;if(state.failReference||state.failAt===state.uploadAttempts)throw Error(state.failReferenceMessage||'Carga de referencia fallida');progress(100);const url='https://example.com/referencias/'+path;state.uploads.push({name:file.name,type:file.type,size:file.size,path,url,bucket:'referencias'});return url;}
 export async function deleteGalleryItem(item){state.gallery=state.gallery.filter(i=>i.id!==item.id);state.deleted.push(item.id);}
 export async function deleteStorageFile(path){state.deleted.push(path);}
 `;
@@ -45,7 +45,7 @@ async function session(settings={}){
  await context.addInitScript(value=>{
   window.__mock={config:{},gallery:[],saved:[],uploads:[],uploadAttempts:0,deleted:[],...value};
   window.__opened=[];
-  window.open=(url)=>{if(url!=='about:blank')window.__opened.push(url);return {opener:null,document:{title:'',body:{textContent:''}},location:{replace:link=>window.__opened.push(link)},close:()=>{window.__mock.closed=true;}};};
+  window.open=(url)=>{if(url!=='about:blank')window.__opened.push(url);let current=url;const loc={replace(link){current=link;if(link&&link!=='about:blank')window.__opened.push(link);}};Object.defineProperty(loc,'href',{get(){return current;},set(v){current=v;if(v&&v!=='about:blank')window.__opened.push(v);},configurable:true});return {opener:null,closed:false,document:{title:'',body:{textContent:''}},location:loc,close(){window.__mock.closed=true;this.closed=true;}};};
  },settings);
  const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',dialog=>dialog.accept());
  return {context,page,errors};
@@ -74,28 +74,41 @@ let base;
   const {page,context}=await session();await quote(page);await page.selectOption('#fotos_referencia','Sí, quiero cargar fotos de guía');await page.click('#enviar-obra');assert.match(await page.textContent('#error-fotos_referencia'),/al menos/);
   await page.setInputFiles('#referencias_archivos',Array.from({length:6},(_,n)=>photo(n+'.png')));assert.equal(await page.locator('.upload-preview').count(),5);assert.match(await page.textContent('#referencias-estado'),/hasta 5/);await context.close();
  });
- await test('WhatsApp con fotos no sube a Storage y avisa que van en el chat',async()=>{
-  const {page,context}=await session();await quote(page);await page.setInputFiles('#referencias_archivos',[photo('guía.png'),photo('otra.png')]);await page.click('#enviar-obra');await page.waitForFunction(()=>window.__opened.length===1);
-  const state=await page.evaluate(()=>window.__mock);assert.equal(state.uploads.length,0);
-  const link=await page.evaluate(()=>window.__opened[0]);const text=new URL(link).searchParams.get('text');
-  assert.match(text,/fotos de referencia/);assert.match(text,/700.000/);assert.ok(!/example\.com/.test(text));
+ await test('WhatsApp con fotos sube referencias y pone los enlaces en el mensaje',async()=>{
+  const {page,context}=await session();await quote(page);await page.setInputFiles('#referencias_archivos',[photo('guía.png'),photo('otra.png')]);await page.click('#enviar-obra');
+  await page.waitForFunction(()=>window.__mock.uploads.filter(u=>u.bucket==='referencias').length===2);
+  await page.waitForFunction(()=>window.__opened.some(u=>String(u).includes('wa.me')));
+  const state=await page.evaluate(()=>window.__mock);
+  assert.equal(state.uploads.filter(u=>u.bucket==='fotos').length,0);
+  assert.equal(state.uploads.length,2);
+  assert.match(state.uploads[0].path,/^pedidos\/[0-9a-f-]{36}\/1\.(webp|jpg)$/);
+  assert.match(state.uploads[1].path,/^pedidos\/[0-9a-f-]{36}\/2\.(webp|jpg)$/);
+  const link=await page.evaluate(()=>window.__opened.find(u=>String(u).includes('wa.me')));
+  const text=new URL(link).searchParams.get('text');
+  assert.match(text,/Foto(s)? de referencia/);assert.match(text,/700.000/);
+  assert.match(text,/https:\/\/example\.com\/referencias\/pedidos\//);
+  assert.equal((text.match(/https:\/\/example\.com\/referencias\/pedidos\//g)||[]).length,2);
+  assert.ok(!/Te envío/.test(text));
   assert.equal(await page.locator('#whatsapp-continuar').isVisible(),true);
-  assert.equal(await page.locator('#referencias-compartir').isHidden(),true);await context.close();
+  assert.equal(await page.locator('#referencias-compartir').isHidden(),true);
+  assert.match(await page.textContent('#referencias-estado'),/enlace/);
+  await context.close();
  });
- await test('En el celular abre directo el chat del artista y deja compartir fotos como paso secundario',async()=>{
-  const {page,context}=await session();
+ await test('Si falla la subida, WhatsApp abre con aviso y se puede compartir como respaldo',async()=>{
+  const {page,context}=await session({failReference:true,failReferenceMessage:'Sin red de prueba'});
   await page.addInitScript(()=>{
    window.__shared=[];
    navigator.canShare=data=>!!(data&&data.files&&data.files.length);
    navigator.share=async data=>{window.__shared.push({files:[...data.files].map(f=>f.name),text:data.text});};
   });
   await quote(page);await page.setInputFiles('#referencias_archivos',[photo('guía.png'),photo('otra.png')]);await page.click('#enviar-obra');
-  await page.waitForFunction(()=>window.__opened.length===1);
-  const link=await page.evaluate(()=>window.__opened[0]);assert.match(link,/^https:\/\/wa\.me\/595972173847\?text=/);
-  const text=new URL(link).searchParams.get('text');assert.match(text,/700.000/);assert.match(text,/fotos de referencia/);
-  assert.deepEqual(await page.evaluate(()=>window.__shared),[]);
+  await page.waitForFunction(()=>window.__opened.some(u=>String(u).includes('wa.me')));
   assert.equal(await page.evaluate(()=>window.__mock.uploads.length),0);
+  const link=await page.evaluate(()=>window.__opened.find(u=>String(u).includes('wa.me')));
+  const text=new URL(link).searchParams.get('text');
+  assert.match(text,/Te envío/);assert.match(text,/700.000/);assert.ok(!/example\.com\/referencias/.test(text));
   assert.equal(await page.locator('#referencias-compartir').isVisible(),true);
+  assert.match(await page.textContent('#referencias-estado'),/No se pudo subir/);
   await page.click('#referencias-compartir');await page.waitForFunction(()=>window.__shared.length===1);
   assert.deepEqual(await page.evaluate(()=>window.__shared[0].files),['referencia-1.png','referencia-2.png']);await context.close();
  });

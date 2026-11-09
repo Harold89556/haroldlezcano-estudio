@@ -97,6 +97,18 @@ export function createClient(url,key,options){
  result=await page.evaluate(async()=>{auth.currentUser={email:'otro@example.com',emailVerified:true};try{await api.signInStorage('otro@example.com','local');}catch(e){return e.message;}});
  assert.match(result,/cuenta administradora/);
  await page.evaluate(async()=>{await api.signOutStorage();});assert.equal(await page.evaluate(()=>state.signouts),1);
+ 
+ result=await page.evaluate(async()=>{
+  state.upload=null;state.bucket=null;
+  const progress=[];const url=await api.uploadReference(new File(['x'],'ref.webp',{type:'image/webp'}),'pedidos/11111111-1111-4111-8111-111111111111/1.webp',p=>progress.push(p));
+  return {url,progress,upload:state.upload,bucket:state.bucket};
+ });
+ assert.equal(result.bucket,'referencias');
+ assert.equal(result.url,'https://fbeihokebuekvqsfvnjv.supabase.co/storage/v1/object/public/referencias/pedidos/11111111-1111-4111-8111-111111111111/1.webp');
+ assert.deepEqual(result.progress,[10,90,100]);
+ for(const bad of ['pedidos/no-uuid/1.webp','galeria/x/1.webp','pedidos/11111111-1111-4111-8111-111111111111/9.webp']){
+  assert.match(await page.evaluate(async bad=>{try{await api.uploadReference(new File(['x'],'a.webp',{type:'image/webp'}),bad);}catch(e){return e.message;}},bad),/Ruta de referencia/);
+ }
  console.log('Supabase: lazy SDK, sesión/alta, permisos, formatos, subida, progreso y borrado: OK (sin servicios reales)');
  await context.close();
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{await browser?.close();server.close();});

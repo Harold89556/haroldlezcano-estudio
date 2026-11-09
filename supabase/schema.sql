@@ -55,3 +55,10 @@ revoke execute on function public.preparar_admin_estudio() from public, anon, au
 grant execute on function public.preparar_admin_estudio() to service_role;
 create trigger preparar_admin_estudio before insert on auth.users
  for each row execute function public.preparar_admin_estudio();
+
+
+-- Bucket público de referencias del cotizador (migración referencias_bucket_public_upload).
+-- Anon puede INSERT en pedidos/{uuid}/{1-5}.webp|jpg|png; sin update/delete/list.
+-- Lectura pública solo por URL directa. Admin (es_admin) puede SELECT y DELETE.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('referencias','referencias',true,8388608,array['image/webp','image/jpeg','image/png','image/gif','image/avif']);

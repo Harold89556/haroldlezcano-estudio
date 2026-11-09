@@ -109,6 +109,22 @@ export async function deleteGalleryItem(item) {
   catch { const failure=Error('La foto salió de la galería, pero no se pudo borrar el archivo de Supabase. Usá la limpieza de archivos pendientes.'); failure.galleryRemoved=true; throw failure; }
  }
 }
+
+export async function uploadReference(file, path, progress) {
+ checkImage(file);
+ if(!/^image\/(jpeg|png|webp)$/i.test(file.type)) throw Error('La foto de referencia debe ser JPG, PNG o WEBP.');
+ if(typeof path!=='string' || !/^pedidos\/[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/[1-5]\.(webp|jpg|jpeg|png)$/.test(path)) throw Error('Ruta de referencia no permitida.');
+ const client=await getStorageClient();
+ const bucket=client.storage.from('referencias');
+ progress?.(10);
+ const {error}=await bucket.upload(path,file,{upsert:false,contentType:file.type.toLowerCase(),cacheControl:'3600'});
+ if(error) throw error;
+ progress?.(90);
+ const {data}=bucket.getPublicUrl(path);
+ if(!httpsURL(data.publicUrl)) throw Error('No se obtuvo un enlace HTTPS válido.');
+ progress?.(100);
+ return data.publicUrl;
+}
 export async function uploadImage(file, path, progress) {
  checkImage(file);
  if(!/^image\/(jpeg|png|webp|gif|avif)$/i.test(file.type)) throw Error('Para la galería usá JPG, PNG, WEBP, GIF o AVIF. Convertí primero las fotos HEIC, HEIF, BMP o TIFF.');
