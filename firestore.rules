@@ -44,9 +44,12 @@ service cloud.firestore {
   match /config/sitio {
    allow read: if true;
    allow create, update: if admin()
-    && request.resource.data.keys().hasOnly(['whatsapp','mapaCurso','textos','fotoArtista','fotoArtistaPath'])
+    && request.resource.data.keys().hasOnly(['whatsapp','mapaCurso','textos','fotoArtista','fotoArtistaPath','fondoImagen','fondoImagenPath','fondoOpacidad'])
     && (!('fotoArtista' in request.resource.data) || (request.resource.data.fotoArtista is string && request.resource.data.fotoArtista.size() <= 2048 && request.resource.data.fotoArtista.matches('https://.*')))
     && (!('fotoArtistaPath' in request.resource.data) || (request.resource.data.fotoArtistaPath is string && request.resource.data.fotoArtistaPath.size() <= 300 && (request.resource.data.fotoArtistaPath == '' || request.resource.data.fotoArtistaPath.matches('sitio/[A-Za-z0-9._-]+'))))
+    && (!('fondoImagen' in request.resource.data) || (request.resource.data.fondoImagen is string && request.resource.data.fondoImagen.size() <= 2048 && request.resource.data.fondoImagen.matches('https://.*')))
+    && (!('fondoImagenPath' in request.resource.data) || (request.resource.data.fondoImagenPath is string && request.resource.data.fondoImagenPath.size() <= 300 && (request.resource.data.fondoImagenPath == '' || request.resource.data.fondoImagenPath.matches('sitio/[A-Za-z0-9._-]+'))))
+    && (!('fondoOpacidad' in request.resource.data) || (request.resource.data.fondoOpacidad is number && request.resource.data.fondoOpacidad >= 0 && request.resource.data.fondoOpacidad <= 1))
     && request.resource.data.whatsapp is string && request.resource.data.whatsapp.matches('[0-9]{8,15}')
     && request.resource.data.mapaCurso is string && request.resource.data.mapaCurso.size() <= 2048 && request.resource.data.mapaCurso.matches('https://.*')
     && request.resource.data.textos is map && request.resource.data.textos.size() <= 60;

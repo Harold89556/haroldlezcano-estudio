@@ -16,11 +16,17 @@
 
         /* FONDO TOTALMENTE ESTÁTICO CON FILTRO ELEGANTE */
         .page-background {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)), 
-                        url('https://i.postimg.cc/NMk5wJ1T/Picsart-26-04-28-08-03-58-251.jpg') no-repeat center center;
-            background-size: cover; background-attachment: fixed; z-index: -1;
-            filter: brightness(0.7) contrast(1.1) saturate(0.8); 
+            position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background-color: #121212;
+            --fondo-url: url('https://i.postimg.cc/NMk5wJ1T/Picsart-26-04-28-08-03-58-251.jpg');
+            --fondo-opacidad: 0.45;
+        }
+        .page-background::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: var(--fondo-url);
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            opacity: var(--fondo-opacidad);
+            will-change: opacity;
         }
 
         /* CONTENEDOR PRINCIPAL GLASSMORPHISM */
@@ -456,3 +462,15 @@ body.editor-abierto .admin-bottom-nav, body:has(#admin-workspace[hidden]) .admin
 .admin-foto-inicio { display: grid; grid-template-columns: 120px 1fr; gap: 14px; align-items: center; }
 .admin-foto-inicio img { width: 120px; height: 120px; object-fit: contain; border-radius: 10px; background: repeating-conic-gradient(#222 0 25%, #2c2c2c 0 50%) 0 0/16px 16px; }
 .admin-foto-inicio .admin-edit { min-height: 46px; padding: 0 16px; border-radius: 9px; font: inherit; cursor: pointer; }
+
+/* Fondo de la página: vista previa en el administrador. */
+.admin-fondo-card { margin-bottom: 22px; }
+.admin-fondo-preview { position: relative; height: 140px; border-radius: 12px; overflow: hidden; background: #121212; border: 1px solid #444; margin: 10px 0 14px; }
+.admin-fondo-preview-img { position: absolute; inset: 0; background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0.45; }
+.admin-fondo-preview-label { position: absolute; left: 10px; bottom: 8px; font-size: 11px; color: #eee; text-shadow: 0 1px 4px #000; }
+.admin-fondo-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.admin-fondo-actions button { min-height: 46px; margin: 0 !important; }
+.admin-fondo-opacidad { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; margin-top: 12px; }
+.admin-fondo-opacidad input[type=range] { width: 100%; accent-color: #d4af37; }
+.admin-fondo-opacidad output { min-width: 3.5em; text-align: right; color: #e5ca72; font-size: 13px; }
+.admin-fondo-hint { color: #aaa; font-size: 11px; margin-top: 6px; }

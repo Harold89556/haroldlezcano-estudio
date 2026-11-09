@@ -1,4 +1,6 @@
 'use strict';
+window.ESTUDIO_FONDO_DEFAULT = 'https://i.postimg.cc/NMk5wJ1T/Picsart-26-04-28-08-03-58-251.jpg';
+window.ESTUDIO_FONDO_OPACIDAD_DEFAULT = 0.45;
 window.ESTUDIO_DEFAULTS = {
   "precios": {
     "matriz": {
@@ -381,6 +383,20 @@ window.EstudioDatos = (() => {
    const path = typeof value.fotoArtistaPath === 'string' ? value.fotoArtistaPath : '';
    if (path && (path.length > 300 || !/^sitio\/[A-Za-z0-9._-]+$/.test(path))) throw Error('Ruta de la foto de Inicio inválida.');
    out.fotoArtista = foto.href; out.fotoArtistaPath = path;
+  }
+  // Fondo de la página: imagen opcional (https) y opacidad 0–1. Sin imagen se usa el fondo original del sitio.
+  if (value.fondoImagen) {
+   let fondo;
+   try { fondo = new URL(value.fondoImagen); } catch { throw Error('La imagen de fondo no tiene un enlace válido.'); }
+   if (fondo.protocol !== 'https:' || fondo.href.length > 2048) throw Error('La imagen de fondo debe ser un enlace https.');
+   const fpath = typeof value.fondoImagenPath === 'string' ? value.fondoImagenPath : '';
+   if (fpath && (fpath.length > 300 || !/^sitio\/[A-Za-z0-9._-]+$/.test(fpath))) throw Error('Ruta de la imagen de fondo inválida.');
+   out.fondoImagen = fondo.href; out.fondoImagenPath = fpath;
+  }
+  if (value.fondoOpacidad !== undefined && value.fondoOpacidad !== null && value.fondoOpacidad !== '') {
+   const op = Number(value.fondoOpacidad);
+   if (!Number.isFinite(op) || op < 0 || op > 1) throw Error('La opacidad del fondo debe estar entre 0 y 1.');
+   out.fondoOpacidad = Math.round(op * 1000) / 1000;
   }
   return out;
  }

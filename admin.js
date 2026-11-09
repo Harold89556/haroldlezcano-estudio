@@ -161,8 +161,20 @@ function renderPrices() {
  }
  walk(prices,root);
 }
+
+function fondoUrl(){ return site.fondoImagen || window.ESTUDIO_FONDO_DEFAULT; }
+function fondoOp(){ return Number.isFinite(site.fondoOpacidad) ? site.fondoOpacidad : window.ESTUDIO_FONDO_OPACIDAD_DEFAULT; }
+function renderFondo(){
+ const url=fondoUrl(), op=fondoOp();
+ $('fondo-preview-img').style.backgroundImage='url("'+url.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'")';
+ $('fondo-preview-img').style.opacity=String(op);
+ $('fondo-opacidad').value=String(Math.round(op*100));
+ $('fondo-opacidad-valor').textContent=Math.round(op*100)+' %';
+ $('fondo-quitar').hidden=!(site.fondoImagen||site.fondoImagenPath);
+}
 function renderSite() {
  $('foto-inicio-preview').src=site.fotoArtista||'artista.jpg';
+ renderFondo();
  $('site-whatsapp').value=site.whatsapp;$('site-map').value=site.mapaCurso;
  $('site-text-fields').replaceChildren();
  for(const [key,value] of Object.entries(site.textos)) {
@@ -274,16 +286,56 @@ $('foto-inicio-editar').onclick=()=>{const out=t=>{$('foto-inicio-status').textC
   const path='sitio/artista-'+Date.now().toString(36)+'.'+ext;
   setPending(path,true);
   const url=await api.uploadImage(file,path,p=>progress('Subiendo: '+p+'%'));
-  const next=D.validateSite({...site,fotoArtista:url,fotoArtistaPath:path});await api.saveConfig('sitio',next);site=next;setPending(path,false);
+  const next=D.validateSite({...site,fotoArtista:url,fotoArtistaPath:path,fondoImagen:site.fondoImagen,fondoImagenPath:site.fondoImagenPath,fondoOpacidad:site.fondoOpacidad});await api.saveConfig('sitio',next);site=next;setPending(path,false);
   if(previous&&previous!==path&&previous.startsWith('sitio/')){try{await api.deleteStorageFile(previous);}catch{setPending(previous,true);}}
   $('foto-inicio-preview').src=url;out('Foto de Inicio guardada. Ya se ve en el sitio.');
  }}).catch(e=>out(api.explainError(e)));
 };
+async function saveSite(extra={}, statusEl=$('site-status'), msg='Textos y contacto guardados.'){
+ const textos={...site.textos};
+ for(const input of document.querySelectorAll('#site-form [data-text-key]')) textos[input.dataset.textKey]=input.value;
+ const next=D.validateSite({
+  whatsapp:$('site-whatsapp').value.trim()||site.whatsapp,
+  mapaCurso:$('site-map').value.trim()||site.mapaCurso,
+  textos,
+  fotoArtista:site.fotoArtista, fotoArtistaPath:site.fotoArtistaPath,
+  fondoImagen:site.fondoImagen, fondoImagenPath:site.fondoImagenPath, fondoOpacidad:site.fondoOpacidad,
+  ...extra
+ });
+ await api.saveConfig('sitio',next);site=next;statusEl.textContent=msg;renderFondo();
+}
 $('site-form').onsubmit=e=>{e.preventDefault();const form=e.currentTarget;action(form,async()=>{
- const next={fotoArtista:site.fotoArtista,fotoArtistaPath:site.fotoArtistaPath,whatsapp:$('site-whatsapp').value.trim(),mapaCurso:$('site-map').value.trim(),textos:{}};
- for(const input of form.querySelectorAll('[data-text-key]')) next.textos[input.dataset.textKey]=input.value;
- const validated=D.validateSite(next);await api.saveConfig('sitio',validated);site=validated;$('site-status').textContent='Textos y contacto guardados.';
+ await saveSite({}, $('site-status'), 'Textos y contacto guardados.');
 },text=>{$('site-status').textContent=text;});};
+$('fondo-cambiar').onclick=()=>{const out=t=>{$('fondo-status').textContent=t;};
+ abrirEditor({url:fondoUrl(),title:'Fondo de la página.',soloArchivo:true,onSave:async({file},progress)=>{
+  const previous=site.fondoImagenPath||'';const ext=(file.name.split('.').pop()||'webp').toLowerCase();
+  const path='sitio/fondo-'+Date.now().toString(36)+'.'+ext;
+  setPending(path,true);
+  const url=await api.uploadImage(file,path,p=>progress('Subiendo: '+p+'%'));
+  await saveSite({fondoImagen:url,fondoImagenPath:path,fondoOpacidad:fondoOp()}, $('fondo-status'), 'Imagen de fondo guardada.');
+  setPending(path,false);
+  if(previous&&previous!==path&&previous.startsWith('sitio/')){try{await api.deleteStorageFile(previous);}catch{setPending(previous,true);}}
+ }}).catch(e=>out(api.explainError(e)));
+};
+$('fondo-quitar').onclick=()=>action($('fondo-admin'),async()=>{
+ if(!site.fondoImagen && !site.fondoImagenPath) return;
+ if(!confirm('¿Volver a la imagen de fondo original del sitio?')) return;
+ const previous=site.fondoImagenPath||'';
+ const textos={...site.textos}; for(const input of document.querySelectorAll('#site-form [data-text-key]')) textos[input.dataset.textKey]=input.value;
+ const cleared={whatsapp:site.whatsapp,mapaCurso:site.mapaCurso,textos,fondoOpacidad:fondoOp()};
+ if(site.fotoArtista){cleared.fotoArtista=site.fotoArtista;cleared.fotoArtistaPath=site.fotoArtistaPath||'';}
+ const next=D.validateSite(cleared);await api.saveConfig('sitio',next);site=next;renderFondo();$('fondo-status').textContent='Se restauró la imagen original.';
+ if(previous.startsWith('sitio/')){try{await api.deleteStorageFile(previous);}catch{setPending(previous,true);}}
+},t=>$('fondo-status').textContent=t);
+$('fondo-opacidad').oninput=()=>{
+ const pct=Number($('fondo-opacidad').value);$('fondo-opacidad-valor').textContent=pct+' %';
+ $('fondo-preview-img').style.opacity=String(pct/100);
+};
+$('fondo-opacidad').onchange=()=>action($('fondo-admin'),async()=>{
+ const pct=Number($('fondo-opacidad').value);
+ await saveSite({fondoOpacidad:pct/100}, $('fondo-status'), 'Opacidad guardada.');
+},t=>$('fondo-status').textContent=t);
 try {
  services=await api.getServices();
  services.authSDK.onAuthStateChanged(services.auth,async user=>{

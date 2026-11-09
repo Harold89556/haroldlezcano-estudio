@@ -123,6 +123,13 @@
   }
   $('bioText').textContent=window.sitioActual.textos.biografia;
   const foto=document.querySelector('img.artista-foto');if(foto&&window.sitioActual.fotoArtista){foto.src=window.sitioActual.fotoArtista;foto.classList.add('artista-foto-propia');}
+  const bg=document.querySelector('.page-background');
+  if(bg){
+   const url=window.sitioActual.fondoImagen||window.ESTUDIO_FONDO_DEFAULT;
+   const op=Number.isFinite(window.sitioActual.fondoOpacidad)?window.sitioActual.fondoOpacidad:window.ESTUDIO_FONDO_OPACIDAD_DEFAULT;
+   bg.style.setProperty('--fondo-url','url("'+url.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'")');
+   bg.style.setProperty('--fondo-opacidad',String(op));
+  }
   if($('bioCurso')){$('bioCurso').textContent=window.sitioActual.textos.introduccionCurso;$('bioCurso').dataset.listo='1';}
   for (const a of document.querySelectorAll('a[href^="https://wa.me/595972173847"]')) a.href='https://wa.me/'+window.sitioActual.whatsapp;
  }

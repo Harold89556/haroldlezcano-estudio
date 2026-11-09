@@ -216,6 +216,35 @@ let base;
   assert.equal(await page.getAttribute('img.artista-foto','alt'),'Harold Lezcano, artista plástico');assert.equal(await page.locator('img.artista-foto.artista-foto-propia').count(),1);await context.close();
   ({page,context}=await session());await page.goto(base+'/index.html');await page.waitForTimeout(300);assert.match(await page.getAttribute('img.artista-foto','src'),/^artista\.jpg$/);await context.close();
  });
+ await test('Fondo de la página: cambiar imagen, opacidad y restaurar original',async()=>{
+  const {page,context,errors}=await session({config:{sitio:{...sitioBase,fondoImagen:'https://example.com/sitio/fondo-viejo.webp',fondoImagenPath:'sitio/fondo-viejo.webp',fondoOpacidad:0.3}}});
+  await page.setViewportSize({width:390,height:844});await page.goto(base+'/admin.html#sitio-admin');await page.fill('#admin-password','clave-simulada-local');await page.click('#login-button');await page.waitForSelector('#admin-workspace:not([hidden])');
+  assert.equal(await page.locator('#fondo-admin h2').textContent(),'Fondo de la página');
+  assert.equal(await page.inputValue('#fondo-opacidad'),'30');assert.equal(await page.textContent('#fondo-opacidad-valor'),'30 %');
+  assert.equal(await page.locator('#fondo-quitar').isVisible(),true);
+  await page.fill('#fondo-opacidad','70');await page.dispatchEvent('#fondo-opacidad','change');
+  await page.waitForFunction(()=>window.__mock.config.sitio?.fondoOpacidad===0.7);
+  assert.equal(await page.evaluate(()=>window.__mock.config.sitio.fondoImagen),'https://example.com/sitio/fondo-viejo.webp');
+  await page.click('#fondo-cambiar');await page.waitForFunction(()=>document.querySelector('#photo-editor .editor-save')&&!document.querySelector('#photo-editor .editor-save').disabled);
+  await page.setInputFiles('#editor-file',photo('fondo.png'));await page.waitForFunction(()=>!document.querySelector('#photo-editor .editor-save').disabled);
+  await page.locator('.editor-save').click();
+  await page.waitForFunction(()=>window.__mock.config.sitio?.fondoImagenPath?.startsWith('sitio/fondo-')&&window.__mock.deleted.includes('sitio/fondo-viejo.webp'));
+  const st=await page.evaluate(()=>JSON.parse(JSON.stringify({uploads:window.__mock.uploads,config:window.__mock.config})));
+  const up=st.uploads.find(u=>u.path.startsWith('sitio/fondo-'));assert.ok(up);assert.equal(st.config.sitio.fondoImagen,up.url);assert.equal(st.config.sitio.fondoOpacidad,0.7);
+  await page.fill('#site-whatsapp','595971111111');await page.locator('#site-form button[type=submit]').click();
+  await page.waitForFunction(()=>window.__mock.config.sitio?.whatsapp==='595971111111'&&window.__mock.config.sitio.fondoImagenPath?.startsWith('sitio/fondo-')&&window.__mock.config.sitio.fondoOpacidad===0.7);
+  await page.click('#fondo-quitar');await page.waitForFunction(()=>!window.__mock.config.sitio.fondoImagen&&!window.__mock.config.sitio.fondoImagenPath&&window.__mock.config.sitio.fondoOpacidad===0.7);
+  assert.deepEqual(errors,[]);await context.close();
+ });
+ await test('Sitio público aplica imagen y opacidad de fondo; sin config usa el original',async()=>{
+  let {page,context}=await session({config:{sitio:{...sitioBase,fondoImagen:'https://example.com/sitio/fondo-nueva.webp',fondoImagenPath:'sitio/fondo-nueva.webp',fondoOpacidad:0.55}}});
+  await page.goto(base+'/index.html');await page.waitForFunction(()=>getComputedStyle(document.querySelector('.page-background')).getPropertyValue('--fondo-opacidad').trim()==='0.55');
+  const url=await page.evaluate(()=>getComputedStyle(document.querySelector('.page-background')).getPropertyValue('--fondo-url'));
+  assert.match(url,/fondo-nueva\.webp/);await context.close();
+  ({page,context}=await session());await page.goto(base+'/index.html');await page.waitForTimeout(200);
+  const def=await page.evaluate(()=>({op:getComputedStyle(document.querySelector('.page-background')).getPropertyValue('--fondo-opacidad').trim(),url:getComputedStyle(document.querySelector('.page-background')).getPropertyValue('--fondo-url')}));
+  assert.ok(Number(def.op)>0);assert.match(def.url,/Picsart-26-04-28|i\.postimg\.cc/);await context.close();
+ });
  await test('Fallo del login de fotos cierra Firebase y conserva el panel bloqueado',async()=>{
   const {page,context}=await session({failStorageLogin:true});await page.goto(base+'/admin.html');await page.fill('#admin-password','clave-simulada-local');await page.click('#login-button');
   await page.waitForFunction(()=>document.getElementById('admin-status').textContent.includes('Sesión de fotos fallida'));
