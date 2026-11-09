@@ -177,15 +177,64 @@
   }
 
   function personPath(x, groundY, scale, labelY) {
-    // Silueta adulta ~170 cm: cabeza + torso + piernas. scale = px per cm.
-    const h = PERSONA_CM * scale;
-    const head = 18 * scale;
+    // Silueta adulta realista 170 cm (~7,5 cabezas). Coordenadas en cm desde la coronilla / eje.
+    // Cabeza ~23 cm, hombros ~45 cm, brazos hasta media muslo, piernas ~mitad de la altura.
+    const S = scale;
     const cx = x;
-    const top = groundY - h;
+    const top = groundY - PERSONA_CM * S;
     const ly = labelY == null ? groundY + 16 : labelY;
+    const X = (cm) => +(cx + cm * S).toFixed(2);
+    const Y = (cmFromTop) => +(top + cmFromTop * S).toFixed(2);
+    // Contorno frontal simétrico (derecha → abajo → izquierda), relleno gris neutro.
+    const d = [
+      `M${X(0)} ${Y(0)}`,
+      `C${X(4.2)} ${Y(0)} ${X(7.6)} ${Y(4.5)} ${X(7.6)} ${Y(11.5)}`,
+      `C${X(7.6)} ${Y(18.5)} ${X(5.2)} ${Y(22.5)} ${X(2.8)} ${Y(23.2)}`,
+      `L${X(2.4)} ${Y(26.5)}`,
+      `C${X(6)} ${Y(27.5)} ${X(16)} ${Y(29)} ${X(22.5)} ${Y(32)}`,
+      `C${X(24.2)} ${Y(38)} ${X(24.5)} ${Y(50)} ${X(23.5)} ${Y(62)}`,
+      `C${X(22.8)} ${Y(74)} ${X(21.5)} ${Y(88)} ${X(20)} ${Y(102)}`,
+      `C${X(19.2)} ${Y(108)} ${X(18.5)} ${Y(112)} ${X(16.5)} ${Y(112.5)}`,
+      `C${X(14.5)} ${Y(112.5)} ${X(13.8)} ${Y(110)} ${X(14.2)} ${Y(106)}`,
+      `C${X(14.8)} ${Y(95)} ${X(15.2)} ${Y(78)} ${X(14.5)} ${Y(58)}`,
+      `C${X(14)} ${Y(48)} ${X(12.5)} ${Y(40)} ${X(10.5)} ${Y(36)}`,
+      `L${X(9.5)} ${Y(42)}`,
+      `C${X(12)} ${Y(55)} ${X(13.5)} ${Y(68)} ${X(14)} ${Y(78)}`,
+      `C${X(15.5)} ${Y(86)} ${X(17)} ${Y(90)} ${X(17)} ${Y(94)}`,
+      `C${X(16.5)} ${Y(110)} ${X(14.5)} ${Y(125)} ${X(12)} ${Y(138)}`,
+      `C${X(10)} ${Y(148)} ${X(8.5)} ${Y(156)} ${X(6.5)} ${Y(162)}`,
+      `C${X(5.5)} ${Y(165)} ${X(6.5)} ${Y(168)} ${X(8)} ${Y(169.2)}`,
+      `C${X(9.5)} ${Y(170)} ${X(9.5)} ${Y(170)} ${X(4)} ${Y(170)}`,
+      `L${X(1.2)} ${Y(170)}`,
+      `L${X(1.5)} ${Y(165)}`,
+      `C${X(2)} ${Y(150)} ${X(2.5)} ${Y(130)} ${X(2.8)} ${Y(112)}`,
+      `C${X(3)} ${Y(100)} ${X(2.5)} ${Y(92)} ${X(0)} ${Y(88)}`,
+      // espejo izquierdo
+      `C${X(-2.5)} ${Y(92)} ${X(-3)} ${Y(100)} ${X(-2.8)} ${Y(112)}`,
+      `C${X(-2.5)} ${Y(130)} ${X(-2)} ${Y(150)} ${X(-1.5)} ${Y(165)}`,
+      `L${X(-1.2)} ${Y(170)}`,
+      `L${X(-4)} ${Y(170)}`,
+      `C${X(-9.5)} ${Y(170)} ${X(-9.5)} ${Y(170)} ${X(-8)} ${Y(169.2)}`,
+      `C${X(-6.5)} ${Y(168)} ${X(-5.5)} ${Y(165)} ${X(-6.5)} ${Y(162)}`,
+      `C${X(-8.5)} ${Y(156)} ${X(-10)} ${Y(148)} ${X(-12)} ${Y(138)}`,
+      `C${X(-14.5)} ${Y(125)} ${X(-16.5)} ${Y(110)} ${X(-17)} ${Y(94)}`,
+      `C${X(-17)} ${Y(90)} ${X(-15.5)} ${Y(86)} ${X(-14)} ${Y(78)}`,
+      `C${X(-13.5)} ${Y(68)} ${X(-12)} ${Y(55)} ${X(-9.5)} ${Y(42)}`,
+      `L${X(-10.5)} ${Y(36)}`,
+      `C${X(-12.5)} ${Y(40)} ${X(-14)} ${Y(48)} ${X(-14.5)} ${Y(58)}`,
+      `C${X(-15.2)} ${Y(78)} ${X(-14.8)} ${Y(95)} ${X(-14.2)} ${Y(106)}`,
+      `C${X(-13.8)} ${Y(110)} ${X(-14.5)} ${Y(112.5)} ${X(-16.5)} ${Y(112.5)}`,
+      `C${X(-18.5)} ${Y(112)} ${X(-19.2)} ${Y(108)} ${X(-20)} ${Y(102)}`,
+      `C${X(-21.5)} ${Y(88)} ${X(-22.8)} ${Y(74)} ${X(-23.5)} ${Y(62)}`,
+      `C${X(-24.5)} ${Y(50)} ${X(-24.2)} ${Y(38)} ${X(-22.5)} ${Y(32)}`,
+      `C${X(-16)} ${Y(29)} ${X(-6)} ${Y(27.5)} ${X(-2.4)} ${Y(26.5)}`,
+      `L${X(-2.8)} ${Y(23.2)}`,
+      `C${X(-5.2)} ${Y(22.5)} ${X(-7.6)} ${Y(18.5)} ${X(-7.6)} ${Y(11.5)}`,
+      `C${X(-7.6)} ${Y(4.5)} ${X(-4.2)} ${Y(0)} ${X(0)} ${Y(0)}`,
+      'Z'
+    ].join(' ');
     return [
-      `<ellipse cx="${cx}" cy="${top + head * 0.55}" rx="${head * 0.42}" ry="${head * 0.5}" fill="#c8c8c8"/>`,
-      `<path d="M${cx - 12 * scale} ${top + head * 1.05} L${cx + 12 * scale} ${top + head * 1.05} L${cx + 14 * scale} ${top + 70 * scale} L${cx + 10 * scale} ${groundY} L${cx + 2 * scale} ${groundY} L${cx} ${top + 95 * scale} L${cx - 2 * scale} ${groundY} L${cx - 10 * scale} ${groundY} L${cx - 14 * scale} ${top + 70 * scale} Z" fill="#9a9a9a"/>`,
+      `<path d="${d}" fill="#9e9e9e" stroke="#7a7a7a" stroke-width="0.6"/>`,
       `<text x="${cx}" y="${ly}" text-anchor="middle" fill="#d4af37" font-size="11">Persona de 1,70 m</text>`
     ].join('');
   }
@@ -196,7 +245,7 @@
     const topPad = 24, bottomPad = 28, sidePad = 14, gap = 18;
     const usableH = H - topPad - bottomPad;
     const usableW = W - sidePad * 2;
-    const personWcm = 30;
+    const personWcm = 48;
     let scale = (usableH * 0.78) / PERSONA_CM;
     const fitH = Math.max(PERSONA_CM, artHcm);
     if (fitH * scale > usableH) scale = usableH / fitH;
