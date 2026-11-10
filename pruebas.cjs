@@ -4,7 +4,7 @@ const {JSDOM,VirtualConsole}=jsdom;
 const base=__dirname,html=fs.readFileSync(path.join(base,'index.html'),'utf8');
 function iniciar(hash=''){
  const errors=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));const dom=new JSDOM(html,{url:'https://harold-lezcano-estudio.web.app/'+hash,runScripts:'outside-only',virtualConsole:vc});const w=dom.window;w.structuredClone=structuredClone;const opens=[];w.open=url=>opens.push(url);w.fetch=async()=>{throw Error('Red simulada sin conexión');};
- require('node:vm').runInContext(['estudio-datos.js','estudio-i18n.js','estudio-i18n-mas.js','cotizador.js','cotizador-visual.js','interfaz.js','cotizador-asistente.js','mejoras.js','estudio.js'].map(f=>fs.readFileSync(path.join(base,f),'utf8')).join('\n'),dom.getInternalVMContext());w.onload();w.onload=null;
+ require('node:vm').runInContext(['estudio-datos.js','estudio-i18n.js','estudio-i18n-mas.js','estudio-i18n-asia.js','cotizador.js','cotizador-visual.js','interfaz.js','cotizador-asistente.js','mejoras.js','estudio.js'].map(f=>fs.readFileSync(path.join(base,f),'utf8')).join('\n'),dom.getInternalVMContext());w.onload();w.onload=null;
  const d=w.document;const set=(id,v)=>{d.getElementById(id).value=String(v);};const price=()=>d.getElementById('precioFinal').textContent;
  const listo=()=>{w.switchTab('cotizacion');set('estilo','Realista');w.onEstiloChange();set('tecnica','Oleo');w.onTecnicaChange();set('tema','Retrato');w.onTemaChange();set('tamano_predefinido','30x40');w.handleTamanoChange();set('envio_nombre','Cliente de prueba');set('fotos_referencia','No, necesito asesoramiento');};
  return {w,d,set,price,opens,listo,errors};
@@ -465,7 +465,7 @@ test('30. Textos de material únicos, sin repetir la nota compartida',()=>{
 test('31. Solo selector de país con bandera: más países, idioma y moneda por país',()=>{
   const a=iniciar();a.listo();a.w.EstudioI18n.iniciar();
   assert.equal(a.d.getElementById('selector-idioma'),null);
-  const esperado={CN:['en','CNY'],JP:['en','JPY'],KR:['en','KRW'],IN:['en','INR'],RU:['en','RUB'],AU:['en','AUD'],CH:['de','CHF'],EC:['es','USD'],FR:['fr','EUR'],IT:['it','EUR'],DE:['de','EUR'],GB:['en','GBP'],PT:['pt','EUR'],ES:['es','EUR']};
+  const esperado={CN:['zh','CNY'],JP:['ja','JPY'],KR:['ko','KRW'],IN:['hi','INR'],RU:['ru','RUB'],AU:['en','AUD'],CH:['de','CHF'],EC:['es','USD'],FR:['fr','EUR'],IT:['it','EUR'],DE:['de','EUR'],GB:['en','GBP'],PT:['pt','EUR'],ES:['es','EUR']};
   const ids=[...a.d.querySelectorAll('#selector-pais option')].map(o=>o.value);
   const lis=[...a.d.querySelectorAll('#pais-lista .pais-opcion')];
   assert.equal(lis.length,ids.length);
@@ -479,6 +479,73 @@ test('31. Solo selector de país con bandera: más países, idioma y moneda por 
     a.w.calcular();assert.ok(!/₲/.test(a.price())||id==='PY',id+' '+a.price());
   }
   a.d.querySelector('#pais-op-PY').click();assert.equal(a.w.EstudioI18n.idioma,'es');
+});
+
+test('32. Idiomas nativos zh/ja/ko/hi/ru: todas las claves de es existen, con lang de <html> y respaldo en inglés',()=>{
+  const a=iniciar();a.w.EstudioI18n.iniciar();
+  const I=a.w.EstudioI18n;
+  const claves=[...new Set([...fs.readFileSync(path.join(base,'estudio-i18n.js'),'utf8').matchAll(/^\s+"([^"]+)":/gm)].map(m=>m[1]).concat([...fs.readFileSync(path.join(base,'estudio-i18n-mas.js'),'utf8').matchAll(/"([A-Za-z_.:0-9À-ÿ -]+)"\s*:/g)].map(m=>m[1])))];
+  assert.ok(claves.length>400,'claves '+claves.length);
+  const clavesEs=I.claves('es');assert.ok(clavesEs.length>=453,'es '+clavesEs.length);
+  for(const l of ['en','pt','fr','it','de','zh','ja','ko','hi','ru']){const set=new Set(I.claves(l));const falta=clavesEs.filter(k=>!set.has(k));assert.equal(falta.length,0,l+' sin clave: '+falta.join(', '));}
+  const langHtml={zh:'zh-CN',ja:'ja',ko:'ko',hi:'hi',ru:'ru'};
+  const es={};
+  I.setIdioma('es');
+  const asia=fs.readFileSync(path.join(base,'estudio-i18n-asia.js'),'utf8');
+  const sandbox={window:a.w};
+  for(const lang of Object.keys(langHtml)){
+    I.setIdioma(lang);
+    assert.equal(a.d.documentElement.lang,langHtml[lang]);
+    I.setIdioma(lang,{silent:true});
+    const rx={zh:/[\u4e00-\u9fff]/,ja:/[\u3040-\u30ff\u4e00-\u9fff]/,ko:/[\uac00-\ud7af]/,hi:/[\u0900-\u097f]/,ru:/[\u0400-\u04ff]/}[lang];
+    let sinTraducir=[];
+    for(const k of claves){
+      I.setIdioma(lang,{silent:true});const v=I.t(k);
+      assert.notEqual(v,k,lang+' falta '+k);
+      I.setIdioma('es',{silent:true});const ves=I.t(k);
+      I.setIdioma('en',{silent:true});const ven=I.t(k);I.setIdioma(lang,{silent:true});
+      if(!rx.test(v)&&v===ves&&v!==ven) sinTraducir.push(k);
+    }
+    assert.deepEqual(sinTraducir,[],lang+' sin traducir: '+sinTraducir.join(','));
+  }
+  // textos del sitio por idioma
+  I.setIdioma('zh');assert.match(I.textoSitio('biografia'),/亚松森/);assert.ok(I.textoSitio('modulo-1').length>3);
+  I.setIdioma('ja');assert.match(I.textoSitio('tituloCursos'),/デッサン/);
+  I.setIdioma('ko');assert.match(I.textoSitio('subtitulo'),/예술가/);
+  I.setIdioma('hi');assert.match(I.textoSitio('horarioCurso'),/शुक्रवार/);
+  I.setIdioma('ru');assert.match(I.textoSitio('condiciones'),/заказ/);
+  for(const l of Object.keys(langHtml)){I.setIdioma(l);for(const k of Object.keys(a.w.ESTUDIO_DEFAULTS.sitio.textos)) assert.ok(I.textoSitio(k).trim(),l+' '+k);}
+  // respaldo: clave inexistente en un idioma nuevo → inglés → español
+  I.registrar({en:{'prueba.solo_en':'Only English'},es:{'prueba.solo_en':'Solo español','prueba.solo_es':'Solo español'}});
+  I.setIdioma('ja');assert.equal(I.t('prueba.solo_en'),'Only English');assert.equal(I.t('prueba.solo_es'),'Solo español');
+  I.setIdioma('es');
+  // cada país con idioma nativo
+  const nat={CN:'zh',JP:'ja',KR:'ko',IN:'hi',RU:'ru'};
+  for(const [pid,l] of Object.entries(nat)){I.setPais(pid);assert.equal(I.idioma,l);assert.equal(a.d.documentElement.lang,langHtml[l]);}
+  I.setPais('AU');assert.equal(I.idioma,'en');I.setPais('CH');assert.equal(I.idioma,'de');I.setPais('PY');
+});
+
+test('33. Tamaño: Ancho/Alto y su nota solo se ven con "Personalizado" (todas las técnicas)',()=>{
+  const a=iniciar();a.listo();
+  const box=a.d.getElementById('tamano_manual_container');
+  const css=fs.readFileSync(path.join(base,'style.css'),'utf8');
+  assert.match(css,/#tamano_manual_container\.en-asistente:not\(\.manual-visible\)\s*\{\s*display:\s*none\s*!important/);
+  for(const tec of ['Oleo','Acrilico','Carbonilla']){
+    a.set('tecnica',tec);a.w.onTecnicaChange();
+    if(tec==='Carbonilla')a.set('color_lapiz','Sin color');
+    const sel=a.d.getElementById('tamano_predefinido');
+    const estandar=[...sel.options].find(o=>o.value&&!o.disabled&&o.value!=='personalizado');
+    a.set('tamano_predefinido',estandar.value);a.w.handleTamanoChange();
+    assert.equal(box.style.display,'none',tec);assert.ok(!box.classList.contains('manual-visible'),tec);
+    const [w,h]=estandar.value.split('x').map(Number);
+    assert.equal(Number(a.d.getElementById('ancho_cm').value),w);assert.equal(Number(a.d.getElementById('alto_cm').value),h);
+    assert.ok([...sel.options].some(o=>o.value==='personalizado'),tec+' sin opción personalizado');
+    a.set('tamano_predefinido','personalizado');a.w.handleTamanoChange();
+    assert.equal(box.style.display,'block',tec);assert.ok(box.classList.contains('manual-visible'),tec);
+    assert.ok(box.contains(a.d.getElementById('nota-personalizado')));
+    a.set('tamano_predefinido',estandar.value);a.w.handleTamanoChange();
+    assert.equal(box.style.display,'none',tec);
+  }
 });
 
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));

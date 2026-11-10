@@ -23,7 +23,7 @@ async function action(form, callback, output = say) {
  finally { busy(form,false); }
 }
 let adminLang='es';
-const ADMIN_LANGS=[['es','Español'],['en','English'],['pt','Português'],['fr','Français'],['it','Italiano'],['de','Deutsch']];
+const ADMIN_LANGS=[['es','Español'],['en','English'],['pt','Português'],['fr','Français'],['it','Italiano'],['de','Deutsch'],['zh','中文'],['ja','日本語'],['ko','한국어'],['hi','हिन्दी'],['ru','Русский']];
 function pintarLangTabs(host,hint){
  if(!host) return;
  host.replaceChildren();

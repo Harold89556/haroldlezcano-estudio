@@ -433,6 +433,7 @@
                 st.add(new Option(`A4 (${formatOpt(21, 29.7)})`, '21x30'));
                 st.add(new Option(`A3 (${formatOpt(29.7, 42)})`, '30x42'));
                 st.add(new Option(`A2 (${formatOpt(42, 59.4)})`, '42x59'));
+                st.add(new Option('Personalizado','personalizado'));
             } else {
                 let szs = (f === 'Circular' || f === 'Hexagonal') ? ['30x30','50x50','70x70','100x100'] : ['30x40','40x50','50x70','70x100','100x120'];
                 szs.forEach(z => {
@@ -469,15 +470,21 @@
         if(st&&st.value!=='personalizado'){
             st.value='personalizado';
         }
-        const box=document.getElementById('tamano_manual_container');
-        if(box)box.style.display='block';
+        mostrarMedidaManual(true);
         if(typeof calcular==='function')calcular();
         else if(window.CotizadorVisual)CotizadorVisual.updateEscala();
+    }
+    /* Ancho/Alto y su nota solo se ven con "Personalizado"; con un tamaño de la lista se ocultan (los valores se asignan por dentro). */
+    function mostrarMedidaManual(mostrar){
+        const box=document.getElementById('tamano_manual_container');
+        if(!box)return;
+        box.style.display=mostrar?'block':'none';
+        box.classList.toggle('manual-visible',!!mostrar);
     }
     function onFormaChange(){ updateSize(); calcular(); }
     function handleTamanoChange(){ 
         const st=document.getElementById('tamano_predefinido').value;
-        document.getElementById('tamano_manual_container').style.display = (st === 'personalizado') ? 'block' : 'none';
+        mostrarMedidaManual(st === 'personalizado');
         if(st && st!=='personalizado')aplicarMedidasDelSelect();
         calcular();
     }

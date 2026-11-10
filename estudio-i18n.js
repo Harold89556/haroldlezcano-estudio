@@ -20,14 +20,14 @@
     { id: 'PT', moneda: 'EUR', lang: 'pt', flag: 'pt' },
     { id: 'GB', moneda: 'GBP', lang: 'en', flag: 'gb' },
     { id: 'CH', moneda: 'CHF', lang: 'de', flag: 'ch' },
-    { id: 'RU', moneda: 'RUB', lang: 'en', flag: 'ru' },
-    { id: 'CN', moneda: 'CNY', lang: 'en', flag: 'cn' },
-    { id: 'JP', moneda: 'JPY', lang: 'en', flag: 'jp' },
-    { id: 'KR', moneda: 'KRW', lang: 'en', flag: 'kr' },
-    { id: 'IN', moneda: 'INR', lang: 'en', flag: 'in' },
+    { id: 'RU', moneda: 'RUB', lang: 'ru', flag: 'ru' },
+    { id: 'CN', moneda: 'CNY', lang: 'zh', flag: 'cn' },
+    { id: 'JP', moneda: 'JPY', lang: 'ja', flag: 'jp' },
+    { id: 'KR', moneda: 'KRW', lang: 'ko', flag: 'kr' },
+    { id: 'IN', moneda: 'INR', lang: 'hi', flag: 'in' },
     { id: 'AU', moneda: 'AUD', lang: 'en', flag: 'au' },
   ];
-  const LANGS = ['es', 'en', 'pt', 'fr', 'it', 'de'];
+  const LANGS = ['es', 'en', 'pt', 'fr', 'it', 'de', 'zh', 'ja', 'ko', 'hi', 'ru'];
   const STRINGS = {
     es: {
       "nav.inicio": "Inicio",
@@ -895,14 +895,15 @@
 
   function t(key, vars) {
     const pack = STRINGS[idioma] || STRINGS.es;
-    let s = pack[key] != null ? pack[key] : (STRINGS.es[key] != null ? STRINGS.es[key] : key);
+    // Respaldo de claves ausentes: idioma elegido, luego inglés, luego español.
+    let s = pack[key] != null ? pack[key] : (STRINGS.en && STRINGS.en[key] != null ? STRINGS.en[key] : (STRINGS.es[key] != null ? STRINGS.es[key] : key));
     if (vars) {
       Object.keys(vars).forEach((k) => { s = s.replaceAll('{' + k + '}', String(vars[k])); });
     }
     return s;
   }
   function locale() {
-    return { es: 'es-PY', en: 'en-US', pt: 'pt-BR', fr: 'fr-FR', it: 'it-IT', de: 'de-DE' }[idioma] || 'es-PY';
+    return { es: 'es-PY', en: 'en-US', pt: 'pt-BR', fr: 'fr-FR', it: 'it-IT', de: 'de-DE', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', hi: 'hi-IN', ru: 'ru-RU' }[idioma] || 'es-PY';
   }
   function paisInfo(id) { return PAISES.find((p) => p.id === (id || pais)) || PAISES[0]; }
   function rellenarSelects() {
@@ -1006,7 +1007,7 @@
     if (pa) pa.addEventListener('change', () => setPais(pa.value));
   }
   function aplicar() {
-    document.documentElement.lang = idioma === 'pt' ? 'pt-BR' : idioma;
+    document.documentElement.lang = ({ pt: 'pt-BR', zh: 'zh-CN' })[idioma] || idioma;
     document.querySelectorAll('[data-i18n]').forEach((el) => {
       const key = el.getAttribute('data-i18n');
       if (!key) return;
@@ -1071,6 +1072,12 @@
         const def = defPack && defPack[idioma] && defPack[idioma][key];
         if (typeof def === 'string' && def.trim()) return def;
       }
+    }
+    if (idioma && idioma !== 'es' && idioma !== 'en') {
+      const enPack = (sitio.textosI18n && sitio.textosI18n.en) || {};
+      const defEn = global.ESTUDIO_DEFAULTS && global.ESTUDIO_DEFAULTS.sitio && global.ESTUDIO_DEFAULTS.sitio.textosI18n && global.ESTUDIO_DEFAULTS.sitio.textosI18n.en;
+      const en = typeof enPack[key] === 'string' && enPack[key].trim() ? enPack[key] : (defEn && defEn[key]);
+      if (typeof en === 'string' && en.trim()) return en;
     }
     const es = sitio.textos && sitio.textos[key];
     if (typeof es === 'string') return es;
@@ -1140,6 +1147,7 @@
   else setTimeout(iniciar, 0);
 
   global.EstudioI18n = {
+    claves: (lang) => Object.keys(STRINGS[lang] || {}),
     t, locale, setIdioma, setPais, aplicar, iniciar, registrar, textoSitio, captionDe, PAISES, LANGS,
     get idioma() { return idioma; },
     get pais() { return pais; },

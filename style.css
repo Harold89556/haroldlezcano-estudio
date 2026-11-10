@@ -636,6 +636,8 @@ body.editor-abierto .admin-bottom-nav, body:has(#admin-workspace[hidden]) .admin
 .asistente-grid .guia-cap span { font-size: 13px; }
 .asistente-extra { margin-top: 8px; }
 .asistente-extra .en-asistente, .en-asistente { display: block !important; }
+/* En el asistente, Ancho/Alto y su nota solo aparecen con el tamaño "Personalizado" */
+#tamano_manual_container.en-asistente:not(.manual-visible) { display: none !important; }
 .asistente-extra .form-card { margin: 0; }
 .asistente-resumen { list-style: none; padding: 0; margin: 0 0 16px; }
 .asistente-resumen li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.08); font-size: 14px; color: #ddd; }
@@ -749,3 +751,28 @@ body.asistente-abierto .page-background { z-index: 0; }
 .idioma-tab{min-height:36px;padding:6px 10px;border-radius:999px;border:1px solid rgba(212,175,55,.35);background:rgba(255,255,255,.06);color:#eee;font:inherit;font-size:13px;cursor:pointer;}
 .idioma-tab.active{background:#d4af37;color:#111;border-color:#d4af37;font-weight:700;}
 .admin-hint{font-size:12px;color:#bbb;margin:0 0 10px;}
+
+/* Tipografías para idiomas con otros alfabetos (el atributo lang de <html> lo fija estudio-i18n.js) */
+html[lang="zh-CN"] body, html[lang="zh-CN"] button, html[lang="zh-CN"] input, html[lang="zh-CN"] select, html[lang="zh-CN"] textarea {
+  font-family: 'Montserrat','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC','Noto Sans CJK SC','Source Han Sans SC',sans-serif;
+}
+html[lang="ja"] body, html[lang="ja"] button, html[lang="ja"] input, html[lang="ja"] select, html[lang="ja"] textarea {
+  font-family: 'Montserrat','Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo','Noto Sans JP','Noto Sans CJK JP','Source Han Sans JP',sans-serif;
+}
+html[lang="ko"] body, html[lang="ko"] button, html[lang="ko"] input, html[lang="ko"] select, html[lang="ko"] textarea {
+  font-family: 'Montserrat','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR','Noto Sans CJK KR','Source Han Sans K',sans-serif;
+}
+html[lang="hi"] body, html[lang="hi"] button, html[lang="hi"] input, html[lang="hi"] select, html[lang="hi"] textarea {
+  font-family: 'Montserrat','Noto Sans Devanagari','Nirmala UI','Kohinoor Devanagari','Mangal','Lohit Devanagari',sans-serif;
+}
+/* Montserrat ya incluye cirílico; ruso usa su propia familia como respaldo */
+html[lang="ru"] body, html[lang="ru"] button, html[lang="ru"] input, html[lang="ru"] select, html[lang="ru"] textarea {
+  font-family: 'Montserrat','Segoe UI','Roboto','Helvetica Neue',Arial,sans-serif;
+}
+/* Textos largos o sin espacios (chino, japonés, coreano, hindi, ruso): ajuste de línea y espaciado */
+html[lang="zh-CN"] body, html[lang="ja"] body { line-break: strict; overflow-wrap: anywhere; }
+html[lang="ko"] body { word-break: keep-all; overflow-wrap: anywhere; }
+html[lang="hi"] body { line-height: 1.7; }
+html[lang="ru"] body, html[lang="hi"] body { overflow-wrap: break-word; }
+html[lang="zh-CN"] .header p, html[lang="ja"] .header p, html[lang="ko"] .header p, html[lang="hi"] .header p { letter-spacing: .08em; font-size: 12px; }
+html[lang="zh-CN"] .tab-btn, html[lang="ja"] .tab-btn, html[lang="ko"] .tab-btn, html[lang="hi"] .tab-btn, html[lang="ru"] .tab-btn { letter-spacing: 0; }

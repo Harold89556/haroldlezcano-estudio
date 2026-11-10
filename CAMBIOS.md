@@ -103,3 +103,11 @@ Mantener respaldo de los archivos actuales. Publicar los 15 archivos de forma co
 - **Monedas nuevas:** CNY, JPY, KRW, INR, RUB, AUD (tasas de respaldo en `estudio-datos.js`; las tasas en vivo se piden para todas las monedas conocidas, y las que falten en una configuración remota antigua se completan con las de respaldo).
 - **Imagen de Inicio:** `artista.jpg` ahora tiene fondo granate (estilo Instagram), con bata de pintor y paleta. La anterior (fondo verde azulado) queda en `img/artista-teal-anterior.jpg`. Logotipo cuadrado: `img/logo-hl-granate.png` (1024) y `img/logo-hl-granate-512.png`.
 - Pruebas: nueva prueba 31 (países, banderas, idioma y moneda por país); ajustadas la 29 y la prueba de navegador del selector.
+
+## 10 de noviembre de 2026 (tarde) — Idiomas nativos y medidas personalizadas
+
+- **Cada país en su idioma nativo:** China → chino simplificado (`zh-CN`), Japón → japonés, Corea del Sur → coreano, India → hindi, Rusia → ruso. Traducciones completas (453 claves de interfaz + textos del sitio: biografía, cursos, módulos, kit, condiciones…) en `estudio-i18n-asia.js`. Australia queda en inglés y Suiza en alemán. `<html lang>` se ajusta a `zh-CN`, `ja`, `ko`, `hi`, `ru`.
+- **Respaldo de claves ausentes:** idioma elegido → inglés → español (`t()` y `textoSitio()`). `EstudioI18n.claves(lang)` permite comprobar que cada clave de `es` existe en todos los idiomas (prueba 32).
+- **Tipografías:** reglas por idioma en `style.css` (CJK, Devanagari, cirílico) con respaldos del sistema, sin descargas extra; ajuste de espaciado y saltos de línea para esos alfabetos. Sin desbordes a 412 px (verificado en el asistente con los 5 idiomas).
+- **Admin:** pestañas de traducción de textos y pies de foto para los 5 idiomas nuevos; el validador de `config/sitio` los conserva.
+- **Tamaño personalizado:** en el asistente, Ancho/Alto y la nota «El precio se calcula según el área…» ya no aparecen por defecto (una regla CSS del asistente los forzaba a mostrarse). Solo aparecen con «Personalizado»; con un tamaño de la lista se asignan por dentro. Carbonilla ahora también tiene «Personalizado». Pruebas 33 (jsdom) y de navegador.

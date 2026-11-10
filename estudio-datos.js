@@ -635,7 +635,7 @@ window.EstudioDatos = (() => {
   }
   const out = { whatsapp:value.whatsapp, mapaCurso:map.href, textos };
   if (value.textosI18n && typeof value.textosI18n === 'object' && !Array.isArray(value.textosI18n)) {
-   const langs = ['en','pt','fr','it','de'];
+   const langs = ['en','pt','fr','it','de','zh','ja','ko','hi','ru'];
    const known = Object.keys(defaults.sitio.textos);
    const outI = {};
    for (const lang of langs) {
@@ -703,7 +703,7 @@ window.EstudioDatos = (() => {
     if (url.protocol !== 'https:' || !/^[a-z][a-z0-9-]{0,39}$/.test(item.category || '')) continue;
     const captions={};
     if (item.captions && typeof item.captions==='object' && !Array.isArray(item.captions)) {
-     for (const lang of ['en','pt','fr','it','de']) {
+     for (const lang of ['en','pt','fr','it','de','zh','ja','ko','hi','ru']) {
       if (typeof item.captions[lang]==='string' && item.captions[lang].trim()) captions[lang]=item.captions[lang].trim().slice(0,240);
      }
     }
