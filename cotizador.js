@@ -101,7 +101,7 @@ function calcular(){
  const foot=document.getElementById('sticky-footer');if(!foot)return;
  if(valor('tamano_predefinido')==='personalizado' && typeof errorCampo==='function') errorCampo('ancho_cm',obtenerDimensiones().valida?'':'Indicá medidas positivas entre 0,1 y 500 cm (o su equivalente).');
  const p=presupuesto();ultimoPresupuesto=p;
- if(!p||!document.getElementById('tab-cotizacion').classList.contains('active')){foot.style.display='none';return;}
+ if(!p||!document.getElementById('tab-cotizacion').classList.contains('active')){foot.style.display='none';actualizarVistasTamano();return;}
  const c=document.getElementById('cuotas');const allow=p.sub>=AJUSTES.cuotasMinimo&&p.t!=='Restauracion';
  if(c){const old=c.value;c.innerHTML='<option value="1">Contado (seña y saldo a partes iguales)</option>'+(allow?'<option value="3">Hasta '+AJUSTES.cuotasCantidad+' cuotas con tarjeta</option>':'');c.value=allow&&old==='3'?'3':'1';}
  const result=presupuesto();ultimoPresupuesto=result;
@@ -115,6 +115,7 @@ function calcular(){
   document.getElementById('tasa-info').textContent='';
   const infoM=document.getElementById('info-cuotas');if(infoM)infoM.textContent='Las condiciones se acuerdan al consultar.';
   foot.style.display='flex';
+  actualizarVistasTamano();
   return;
  }
  document.getElementById('precioFinal').textContent=result.evaluar?'A evaluar':dinero(result.total);
@@ -128,6 +129,9 @@ function calcular(){
  document.getElementById('tasa-info').textContent=(valor('moneda')||'PYG')==='PYG'?'':tasaEstado;
  const info=document.getElementById('info-cuotas');if(info)info.textContent=result.digital?'Contado al aprobar la muestra.':result.evaluar?'Condiciones a definir tras la evaluación.':result.cuotas?'Hasta '+AJUSTES.cuotasCantidad+' cuotas con tarjeta.':'Seña inicial y saldo contra entrega aprobada.';
  foot.style.display='flex';
+ actualizarVistasTamano();
+}
+function actualizarVistasTamano(){
  if(window.CotizadorVisual){try{CotizadorVisual.updateEscala();CotizadorVisual.updateEscalaEscultura();CotizadorVisual.renderFondo();CotizadorVisual.renderSujetos();}catch(e){}}
 }
 async function leerTasas(url){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),6000);try{const r=await fetch(url,{signal:controller.signal});if(!r.ok)throw Error('Sin respuesta válida');return await r.json();}finally{clearTimeout(timer);}}

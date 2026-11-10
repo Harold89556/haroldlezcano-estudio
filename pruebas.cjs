@@ -46,5 +46,75 @@ test('18. Abstracto es un estilo, sin precio inventado, y las guías por defecto
     assert.ok(!/postimg|instagram|img\/galeria|\/galeria\//i.test(v.url),k+' '+v.url);
   }
 });
+test('19. Medidas personalizadas actualizan escala, select y unidades',()=>{const a=iniciar();a.listo();
+  a.set('tamano_predefinido','70x100');a.w.handleTamanoChange();
+  assert.equal(a.d.getElementById('ancho_cm').value,'70');
+  assert.equal(a.d.getElementById('alto_cm').value,'100');
+  assert.match(a.d.getElementById('vista-escala').textContent,/70\s*×\s*100/);
+  const fire=(id,v)=>{a.d.getElementById(id).value=String(v);a.w.onMedidaManualInput();};
+  fire('ancho_cm',200);fire('alto_cm',100);
+  assert.equal(a.d.getElementById('tamano_predefinido').value,'personalizado');
+  assert.equal(a.w.obtenerDimensiones().ancho,200);
+  assert.equal(a.w.obtenerDimensiones().alto,100);
+  assert.match(a.d.getElementById('vista-escala').textContent,/200\s*×\s*100/);
+  const precioCustom=a.price();
+  a.set('tamano_predefinido','70x100');a.w.handleTamanoChange();
+  assert.equal(a.d.getElementById('ancho_cm').value,'70');
+  assert.equal(a.d.getElementById('alto_cm').value,'100');
+  assert.notEqual(a.price(),precioCustom);
+  a.w.setUnidad('in',{currentTarget:a.d.getElementById('btn-uni-in')});
+  assert.equal(a.w.obtenerDimensiones().ancho,70);
+  assert.equal(a.w.obtenerDimensiones().alto,100);
+  assert.ok(Math.abs(Number(a.d.getElementById('ancho_cm').value)-70/2.54)<1e-8);
+  fire('ancho_cm',(200/2.54).toPrecision(12));fire('alto_cm',(100/2.54).toPrecision(12));
+  assert.equal(a.d.getElementById('tamano_predefinido').value,'personalizado');
+  assert.ok(Math.abs(a.w.obtenerDimensiones().ancho-200)<1e-6);
+  assert.ok(Math.abs(a.w.obtenerDimensiones().alto-100)<1e-6);
+  a.w.setUnidad('cm',{currentTarget:a.d.getElementById('btn-uni-cm')});
+  assert.ok(Math.abs(Number(a.d.getElementById('ancho_cm').value)-200)<1e-6);
+});
+
+test('20. Asistente: precio en vivo, chips y sugerencias de presupuesto',()=>{
+  const a=iniciar();a.listo();
+  a.set('tema','Paisaje');a.w.onTemaChange();
+  a.set('tamano_predefinido','70x100');a.w.handleTamanoChange();
+  a.w.AsistentePedido.abrir();
+  a.d.querySelector('#asistente-opciones .guia-card[data-value="oleo"]').click();
+  a.w.AsistentePedido.irA('tamano');
+  const bar=a.d.getElementById('asistente-precio-bar');
+  const vivo=a.d.getElementById('asistente-precio-vivo');
+  assert.equal(bar.hidden,false);
+  assert.match(vivo.textContent,/2\.715\.000/);
+  assert.match(a.d.querySelector('#asistente-precio-bar .asistente-iva').textContent,/IVA incluido/);
+  assert.ok(a.d.querySelector('.asistente-chip[data-paso="trabajo"]'));
+  assert.ok(a.d.querySelector('.asistente-chip[data-paso="estilo"]'));
+  assert.ok(a.d.querySelector('.asistente-chip[data-paso="tamano"]'));
+  const sugs=a.w.AsistentePedido.sugerencias();
+  const keys=sugs.map(s=>s.cambios.tamano_predefinido);
+  assert.ok(keys.includes('50x70'),JSON.stringify(sugs));
+  assert.ok(keys.includes('70x100'),JSON.stringify(sugs));
+  assert.ok(keys.includes('100x120'),JSON.stringify(sugs));
+  const actual=sugs.find(s=>s.actual);
+  assert.equal(actual&&actual.cambios.tamano_predefinido,'70x100');
+  sugs.forEach(s=>{assert.equal(/%/.test(s.precio||''),false);assert.ok(s.precio);});
+  const chica=sugs.find(s=>s.cambios.tamano_predefinido==='50x70'&&!s.cambios.tecnica);
+  a.w.AsistentePedido.aplicarSugerencia(chica);
+  assert.equal(a.d.getElementById('tamano_predefinido').value,'50x70');
+  assert.match(a.d.getElementById('asistente-precio-vivo').textContent,/1\.570\.000/);
+  assert.match(a.d.getElementById('vista-escala').textContent,/50\s*×\s*70/);
+  a.w.AsistentePedido.irA('trabajo');
+  a.d.querySelector('#asistente-opciones .guia-card[data-value="acrilico"]').click();
+  assert.equal(a.d.getElementById('tecnica').value,'Acrilico');
+  assert.equal(a.d.getElementById('tamano_predefinido').value,'50x70');
+  assert.match(a.d.getElementById('asistente-precio-vivo').textContent,/1\.334\.500/);
+  // mural: A consultar, sin precios inventados
+  a.d.querySelector('#asistente-opciones .guia-card[data-value="mural"]').click();
+  a.set('mural_ancho','3');a.set('mural_alto','2');a.w.calcular();
+  a.w.AsistentePedido.irA('tamano_mural');
+  assert.match(a.d.getElementById('asistente-precio-vivo').textContent,/A consultar/);
+  assert.equal(a.w.AsistentePedido.sugerencias().length,0);
+  assert.equal(/%/.test(a.d.getElementById('asistente-pedido').textContent),false);
+});
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));
 

@@ -546,9 +546,39 @@ body.editor-abierto .admin-bottom-nav, body:has(#admin-workspace[hidden]) .admin
 .asistente-resumen li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.08); font-size: 14px; color: #ddd; }
 .asistente-resumen strong { color: #e5ca72; margin-right: 6px; }
 .asistente-precio { font-size: 28px; font-weight: 700; color: #d4af37; margin: 8px 0 4px; }
-.asistente-pie {
-  flex: 0 0 auto; display: flex; gap: 10px; padding-top: 10px;
+.asistente-chips { display: none; gap: 6px; overflow-x: auto; padding: 8px 0 2px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.asistente-chips:not([hidden]) { display: flex; }
+.asistente-chips::-webkit-scrollbar { display: none; }
+.asistente-chip {
+  flex: 0 0 auto; border-radius: 99px; padding: 6px 10px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(212,175,55,.35);
+  color: #eee; font: inherit; font-size: 12px; white-space: nowrap; cursor: pointer;
 }
+.asistente-chip .cambiar { color: #d4af37; font-weight: 600; }
+.asistente-sugerencias { margin: 18px 0 8px; }
+.asistente-sugerencias[hidden] { display: none !important; }
+.asistente-sugerencias h3 { margin: 0 0 10px; font-size: 15px; font-weight: 600; color: #e5ca72; }
+.asistente-sugerencias-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.asistente-sug {
+  display: flex; flex-direction: column; gap: 4px; text-align: left;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px; padding: 10px 12px; color: #eee; font: inherit; cursor: pointer;
+}
+.asistente-sug.actual { border-color: #d4af37; box-shadow: 0 0 0 1px rgba(212,175,55,.35); }
+.asistente-sug strong { font-size: 13px; font-weight: 600; color: #fff; }
+.asistente-sug .sug-precio { color: #d4af37; font-weight: 700; font-size: 15px; }
+.asistente-sug .sug-nota { font-size: 11px; color: #bbb; }
+.asistente-precio-bar {
+  display: none; align-items: baseline; justify-content: space-between; gap: 8px;
+  width: 100%; padding: 2px 2px 8px;
+}
+.asistente-precio-bar:not([hidden]) { display: flex; }
+.asistente-precio-vivo { font-size: 22px; font-weight: 700; color: #d4af37; margin: 0; line-height: 1.1; }
+.asistente-iva { font-size: 12px; color: #cfcfcf; white-space: nowrap; }
+.asistente-pie {
+  flex: 0 0 auto; display: flex; flex-wrap: wrap; gap: 10px; padding-top: 10px;
+}
+.asistente-pie-botones { display: flex; gap: 10px; width: 100%; }
 .asistente-btn {
   flex: 1 1 0; min-height: 52px; border-radius: 14px; font: inherit; font-size: 16px; font-weight: 700;
   cursor: pointer; letter-spacing: .4px;

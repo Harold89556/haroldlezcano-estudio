@@ -325,8 +325,8 @@
 </div>
 <div id="tamano_manual_container" style="display:none; margin-top:15px; background:rgba(0,0,0,0.3); padding:15px; border-radius:10px; border: 1px solid rgba(255,255,255,0.05);">
 <div style="display: flex; gap: 15px;">
-<div id="c_ancho" style="width:50%"><label for="ancho_cm" id="l_ancho" style="margin:0">Ancho (cm)</label><input aria-describedby="error-ancho_cm" id="ancho_cm" max="500" min="0.1" oninput="calcular()" step="any" type="number" value="50"/><div aria-live="polite" class="field-error" id="error-ancho_cm"></div></div>
-<div id="c_alto" style="width:50%"><label for="alto_cm" id="l_alto" style="margin:0">Alto (cm)</label><input aria-describedby="error-alto_cm" id="alto_cm" max="500" min="0.1" oninput="calcular()" step="any" type="number" value="70"/><div aria-live="polite" class="field-error" id="error-alto_cm"></div></div>
+<div id="c_ancho" style="width:50%"><label for="ancho_cm" id="l_ancho" style="margin:0">Ancho (cm)</label><input aria-describedby="error-ancho_cm" id="ancho_cm" max="500" min="0.1" oninput="onMedidaManualInput()" step="any" type="number" value="50"/><div aria-live="polite" class="field-error" id="error-ancho_cm"></div></div>
+<div id="c_alto" style="width:50%"><label for="alto_cm" id="l_alto" style="margin:0">Alto (cm)</label><input aria-describedby="error-alto_cm" id="alto_cm" max="500" min="0.1" oninput="onMedidaManualInput()" step="any" type="number" value="70"/><div aria-live="polite" class="field-error" id="error-alto_cm"></div></div>
 </div>
 <p class="info-text" id="nota-personalizado" style="display:block;margin-top:10px">El precio se calcula según el área, en proporción a los tamaños de la tabla.</p>
 </div>
@@ -526,16 +526,27 @@
     <button type="button" class="asistente-cerrar" id="asistente-cerrar" aria-label="Cerrar">×</button>
     <p class="asistente-paso-n" id="asistente-paso-n">Paso 1</p>
     <div class="asistente-progreso" aria-hidden="true"><div class="asistente-progreso-bar" id="asistente-progreso-bar"></div></div>
+    <div id="asistente-chips" class="asistente-chips" hidden></div>
   </header>
   <div class="asistente-cuerpo">
     <h2 id="asistente-pregunta">¿Qué tipo de trabajo buscás?</h2>
     <p id="asistente-ayuda"></p>
     <div id="asistente-opciones" class="guia-grid asistente-grid" role="listbox"></div>
     <div id="asistente-extra" class="asistente-extra"></div>
+    <section id="asistente-sugerencias" class="asistente-sugerencias" hidden>
+      <h3>Otras opciones para tu presupuesto</h3>
+      <div id="asistente-sugerencias-grid" class="asistente-sugerencias-grid"></div>
+    </section>
   </div>
   <footer class="asistente-pie">
-    <button type="button" class="asistente-btn asistente-btn-atras" id="asistente-atras">Atrás</button>
-    <button type="button" class="asistente-btn asistente-btn-sig" id="asistente-siguiente">Siguiente</button>
+    <div id="asistente-precio-bar" class="asistente-precio-bar" hidden>
+      <p class="asistente-precio-vivo" id="asistente-precio-vivo"></p>
+      <span class="asistente-iva">IVA incluido</span>
+    </div>
+    <div class="asistente-pie-botones">
+      <button type="button" class="asistente-btn asistente-btn-atras" id="asistente-atras">Atrás</button>
+      <button type="button" class="asistente-btn asistente-btn-sig" id="asistente-siguiente">Siguiente</button>
+    </div>
   </footer>
 </div>
 

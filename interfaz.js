@@ -336,9 +336,35 @@
         }
     }
 
+    function cmAUnidad(cm){
+        const factor={cm:1,in:2.54,m:100}[unidadActual]||1;
+        return Number((cm/factor).toPrecision(12));
+    }
+    function aplicarMedidasDelSelect(){
+        const st=document.getElementById('tamano_predefinido');
+        if(!st||!st.value||st.value==='personalizado')return;
+        const parts=st.value.split('x').map(Number);
+        if(parts.length<2||!parts.every(Number.isFinite))return;
+        const aw=document.getElementById('ancho_cm');
+        const ah=document.getElementById('alto_cm');
+        if(aw)aw.value=String(cmAUnidad(parts[0]));
+        if(ah)ah.value=String(cmAUnidad(parts[1]));
+    }
+    function onMedidaManualInput(){
+        const st=document.getElementById('tamano_predefinido');
+        if(st&&st.value!=='personalizado'){
+            st.value='personalizado';
+        }
+        const box=document.getElementById('tamano_manual_container');
+        if(box)box.style.display='block';
+        if(typeof calcular==='function')calcular();
+        else if(window.CotizadorVisual)CotizadorVisual.updateEscala();
+    }
     function onFormaChange(){ updateSize(); calcular(); }
     function handleTamanoChange(){ 
-        document.getElementById('tamano_manual_container').style.display = (document.getElementById('tamano_predefinido').value === 'personalizado') ? 'block' : 'none'; 
+        const st=document.getElementById('tamano_predefinido').value;
+        document.getElementById('tamano_manual_container').style.display = (st === 'personalizado') ? 'block' : 'none';
+        if(st && st!=='personalizado')aplicarMedidasDelSelect();
         calcular();
     }
     function toggleFactura(){ document.getElementById('factura-datos').style.display = document.getElementById('factura').checked ? 'block' : 'none'; calcular(); }

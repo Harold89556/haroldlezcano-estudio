@@ -226,7 +226,10 @@
     if (paso.id === 'tipo_escultura') return !!valor('tipo_escultura');
     if (paso.id === 'estilo_mural') return !!valor('estilo_mural');
     if (paso.id === 'tipo_restauracion') return !!valor('tipo_restauracion');
-    if (paso.id === 'tamano') return !!valor('tamano_predefinido');
+    if (paso.id === 'tamano') {
+      if (!valor('tamano_predefinido')) return false;
+      return typeof obtenerDimensiones !== 'function' || obtenerDimensiones().valida;
+    }
     if (paso.id === 'altura_escultura') return !!valor('tipo_escultura');
     if (paso.id === 'tamano_mural') return !!valor('mural_ancho') && !!valor('mural_alto');
     if (paso.id === 'fotos') return !!valor('fotos_referencia');
@@ -293,6 +296,281 @@
     add('Nombre', valor('envio_nombre'));
     const nota = trabajo === 'mural' ? 'El mural se cotiza a consultar, según la pared.' : 'IVA incluido. Envío aparte.';
     return '<ul class="asistente-resumen">' + filas.join('') + '</ul><p class="asistente-precio" id="asistente-precio">' + precio + '</p><p class="vista-escala-nota">' + nota + '</p>';
+  }
+
+
+  function irA(id) {
+    const lista = pasos();
+    const i = lista.findIndex((p) => p.id === id);
+    if (i < 0) return;
+    indice = i;
+    pintar();
+  }
+
+  function textoPrecioDe(p) {
+    if (!p) return '';
+    if (p.consultar) return 'A consultar';
+    if (p.evaluar) return 'A evaluar';
+    return typeof dinero === 'function' ? dinero(p.total) : '';
+  }
+
+  function precioListo() {
+    return typeof presupuesto === 'function' && !!presupuesto();
+  }
+
+  function peekPresupuesto(cambios) {
+    const prev = {};
+    Object.keys(cambios).forEach((id) => {
+      const el = $(id);
+      if (!el) return;
+      prev[id] = el.value;
+      el.value = cambios[id];
+    });
+    let p = null;
+    try { p = typeof presupuesto === 'function' ? presupuesto() : null; }
+    finally {
+      Object.keys(prev).forEach((id) => { const el = $(id); if (el) el.value = prev[id]; });
+    }
+    return p;
+  }
+
+  function etiquetaTamano(key) {
+    if (!key || key === 'personalizado') {
+      const d = typeof obtenerDimensiones === 'function' ? obtenerDimensiones() : null;
+      if (d && d.valida) return Math.round(d.ancho) + ' × ' + Math.round(d.alto) + ' cm';
+      return 'Personalizado';
+    }
+    const parts = key.split('x').map(Number);
+    if (parts.length >= 2 && parts.every(Number.isFinite)) return parts[0] + ' × ' + parts[1] + ' cm';
+    return key;
+  }
+
+  function clavesDeTabla() {
+    if (typeof familiaClaves === 'function') {
+      const d = typeof obtenerDimensiones === 'function' ? obtenerDimensiones() : null;
+      if (d && d.valida) return familiaClaves(d).slice();
+    }
+    return valor('tecnica') === 'Carbonilla' ? ['15x21', '21x30', '30x42', '42x59'] : ['30x40', '40x50', '50x70', '70x100', '100x120'];
+  }
+
+  function alternativaEconomica(p0, st) {
+    if (!p0 || p0.consultar) return null;
+    const te = valor('tecnica');
+    const est = valor('estilo');
+    const cands = [];
+    if (te === 'Oleo') cands.push({ tecnica: 'Acrilico', estilo: est, title: 'Acrílico · ' + etiquetaTamano(st) });
+    if (te === 'Acrilico') { /* óleo no es más barato */ }
+    if (est !== 'Bocetado' && est !== 'Abstracto' && te !== 'Carbonilla') {
+      cands.push({ tecnica: te, estilo: 'Bocetado', title: 'Bocetado · ' + etiquetaTamano(st) });
+    }
+    let best = null;
+    cands.forEach((c) => {
+      const cambios = { tecnica: c.tecnica, estilo: c.estilo };
+      if (st) cambios.tamano_predefinido = st;
+      const p = peekPresupuesto(cambios);
+      if (!p || p.consultar || !(p.total < p0.total)) return;
+      if (!best || p.total < best.total) best = { ...c, total: p.total, precio: textoPrecioDe(p), cambios };
+    });
+    if (!best) return null;
+    return { id: 'alt', title: best.title, precio: best.precio, actual: false, economica: true, cambios: best.cambios };
+  }
+
+  function sugerenciasPresupuesto() {
+    if (!esPintura() || !precioListo()) return [];
+    const p0 = presupuesto();
+    if (!p0 || p0.consultar) return [];
+    const st = valor('tamano_predefinido');
+    const keys = clavesDeTabla();
+    let idx = keys.indexOf(st);
+    if (idx < 0) {
+      const d = typeof obtenerDimensiones === 'function' ? obtenerDimensiones() : null;
+      const area = d && d.valida ? d.ancho * d.alto : 0;
+      idx = keys.findIndex((k) => {
+        const [w, h] = k.split('x').map(Number);
+        return w * h >= area;
+      });
+      if (idx < 0) idx = keys.length;
+    }
+    const picked = [];
+    const take = (i) => {
+      if (i >= 0 && i < keys.length && !picked.includes(keys[i])) picked.push(keys[i]);
+    };
+    const curEnTabla = st && keys.includes(st);
+    if (curEnTabla) {
+      take(idx - 1);
+      take(idx);
+      take(idx + 1);
+      take(idx + 2);
+      if (picked.length < 3) take(idx - 2);
+    } else {
+      if (idx >= keys.length) { take(keys.length - 2); take(keys.length - 1); }
+      else if (idx <= 0) { take(0); take(1); take(2); }
+      else { take(idx - 1); take(idx); take(idx + 1); }
+    }
+    const alt = alternativaEconomica(p0, st);
+    const maxSizes = alt ? 3 : 4;
+    const sizeKeys = curEnTabla
+      ? picked.filter((k) => k === st || true).slice(0, maxSizes)
+      : picked.slice(0, maxSizes);
+    // Prefer keeping current + smaller + larger when we must trim
+    if (curEnTabla && sizeKeys.length > maxSizes) {
+      /* already sliced */
+    }
+    if (curEnTabla && sizeKeys.length === maxSizes && !sizeKeys.includes(st)) {
+      sizeKeys[sizeKeys.length - 1] = st;
+    }
+    const out = [];
+    if (!curEnTabla && st) {
+      out.push({
+        id: 'actual',
+        title: etiquetaTamano(st),
+        precio: textoPrecioDe(p0),
+        actual: true,
+        cambios: { tamano_predefinido: st }
+      });
+    }
+    sizeKeys.forEach((k) => {
+      const p = peekPresupuesto({ tamano_predefinido: k });
+      if (!p || p.consultar) return;
+      out.push({
+        id: 'tam-' + k,
+        title: etiquetaTamano(k),
+        precio: textoPrecioDe(p),
+        actual: k === st,
+        cambios: { tamano_predefinido: k }
+      });
+    });
+    // avoid duplicating current custom vs first card
+    const seen = new Set();
+    const uniq = [];
+    out.forEach((s) => {
+      const key = s.cambios.tamano_predefinido + '|' + (s.cambios.tecnica || '') + '|' + (s.cambios.estilo || '');
+      if (seen.has(key)) return;
+      seen.add(key);
+      uniq.push(s);
+    });
+    const sizesOnly = uniq.slice(0, maxSizes);
+    if (alt) sizesOnly.push(alt);
+    return sizesOnly.slice(0, 4);
+  }
+
+  function aplicarSugerencia(sug) {
+    if (!sug || !sug.cambios) return;
+    if (sug.cambios.tecnica) {
+      const te = sug.cambios.tecnica;
+      trabajo = te === 'Oleo' ? 'oleo' : te === 'Acrilico' ? 'acrilico' : te === 'Carbonilla' ? 'carbonilla' : trabajo;
+      setVal('tecnica', te);
+    }
+    if (sug.cambios.estilo) setVal('estilo', sug.cambios.estilo);
+    if (sug.cambios.tamano_predefinido) {
+      setVal('tamano_predefinido', sug.cambios.tamano_predefinido);
+      if (typeof handleTamanoChange === 'function') handleTamanoChange();
+    }
+    if (typeof calcular === 'function') calcular();
+    pintar();
+  }
+
+  function chipsDe() {
+    if (!precioListo()) return [];
+    const lista = pasos();
+    const has = (id) => lista.some((p) => p.id === id);
+    const items = [];
+    const add = (id, label, texto) => {
+      if (!has(id) || !texto) return;
+      items.push({ id, label, texto });
+    };
+    if (esPintura()) {
+      add('trabajo', 'Técnica', TRABAJOS.find((t) => t.id === trabajo)?.title);
+      add('estilo', 'Estilo', $('estilo')?.selectedOptions[0]?.text);
+      add('tema', 'Tema', $('tema')?.selectedOptions[0]?.text);
+      if (valor('tema') === 'Retrato') {
+        const p = Number(valor('personas') || 0);
+        const m = Number(valor('mascotas') || 0);
+        const sujetos = p >= 1 ? '2 personas' : '1 persona';
+        add('sujetos', 'Sujetos', m >= 1 ? sujetos + ' y mascota' : sujetos);
+      }
+      add('tamano', 'Tamaño', etiquetaTamano(valor('tamano_predefinido')));
+    } else if (trabajo === 'escultura') {
+      add('trabajo', 'Trabajo', 'Escultura');
+      add('tipo_escultura', 'Tipo', $('tipo_escultura')?.selectedOptions[0]?.text);
+      if (valor('escultura_cm')) add('altura_escultura', 'Altura', valor('escultura_cm') + ' cm');
+    } else if (trabajo === 'mural') {
+      add('trabajo', 'Trabajo', 'Mural');
+      add('estilo_mural', 'Estilo', $('estilo_mural')?.selectedOptions[0]?.text);
+      if (valor('mural_ancho') && valor('mural_alto')) {
+        add('tamano_mural', 'Tamaño', valor('mural_ancho') + ' m × ' + valor('mural_alto') + ' m');
+      }
+    } else if (trabajo === 'restauracion') {
+      add('trabajo', 'Trabajo', 'Restauración');
+      add('tipo_restauracion', 'Tipo', $('tipo_restauracion')?.selectedOptions[0]?.text);
+    }
+    return items;
+  }
+
+  function actualizarBarra() {
+    const root = $('asistente-pedido');
+    const bar = $('asistente-precio-bar');
+    const vivo = $('asistente-precio-vivo');
+    const chips = $('asistente-chips');
+    const sugBox = $('asistente-sugerencias');
+    const sugGrid = $('asistente-sugerencias-grid');
+    if (!root || root.hidden) return;
+    const listo = precioListo();
+    const p = listo ? presupuesto() : null;
+    const txt = textoPrecioDe(p);
+    if (bar) bar.hidden = !listo;
+    if (vivo && listo) vivo.textContent = txt;
+    if ($('asistente-precio') && listo) $('asistente-precio').textContent = txt;
+    const pie = root.querySelector('.asistente-pie');
+    if (pie) pie.classList.toggle('con-precio', listo);
+    const chipItems = chipsDe();
+    if (chips) {
+      chips.hidden = !chipItems.length;
+      chips.replaceChildren();
+      chipItems.forEach((c) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'asistente-chip';
+        btn.dataset.paso = c.id;
+        btn.innerHTML = '';
+        const lab = document.createElement('span');
+        lab.textContent = c.label + ': ' + c.texto + ' · ';
+        const ch = document.createElement('span');
+        ch.className = 'cambiar';
+        ch.textContent = 'cambiar';
+        btn.append(lab, ch);
+        btn.setAttribute('aria-label', 'Cambiar ' + c.label);
+        btn.addEventListener('click', () => irA(c.id));
+        chips.append(btn);
+      });
+    }
+    const sugs = listo ? sugerenciasPresupuesto() : [];
+    if (sugBox && sugGrid) {
+      sugBox.hidden = sugs.length === 0;
+      sugGrid.replaceChildren();
+      sugs.forEach((s) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'asistente-sug' + (s.actual ? ' actual' : '');
+        if (s.cambios.tamano_predefinido) btn.dataset.tamano = s.cambios.tamano_predefinido;
+        if (s.cambios.tecnica) btn.dataset.tecnica = s.cambios.tecnica;
+        if (s.cambios.estilo) btn.dataset.estilo = s.cambios.estilo;
+        const t = document.createElement('strong');
+        t.textContent = s.title;
+        const pr = document.createElement('span');
+        pr.className = 'sug-precio';
+        pr.textContent = s.precio;
+        btn.append(t, pr);
+        if (s.actual || s.economica) {
+          const n = document.createElement('span');
+          n.className = 'sug-nota';
+          n.textContent = s.actual ? 'Actual' : 'Más económica';
+          btn.append(n);
+        }
+        btn.addEventListener('click', () => aplicarSugerencia(s));
+        sugGrid.append(btn);
+      });
+    }
   }
 
   function pintar() {
@@ -386,6 +664,7 @@
     if (paso.id === 'resumen' && $('asistente-precio') && $('precioFinal')) {
       $('asistente-precio').textContent = $('precioFinal').textContent;
     }
+    actualizarBarra();
   }
 
   function abrir() {
@@ -458,7 +737,7 @@
     if (location.hash === '#cotizacion' || document.body.dataset.pantalla === 'cotizacion') abrir();
   }
 
-  window.AsistentePedido = { abrir, cerrar, pintar, iniciar };
+  window.AsistentePedido = { abrir, cerrar, pintar, iniciar, irA, aplicarSugerencia, sugerencias: sugerenciasPresupuesto, actualizarBarra };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
   else iniciar();
 })();
