@@ -53,6 +53,7 @@
             'Hiperrealista': 'Nivel de detalle extremo y minucioso, casi idéntico a una fotografía. Un verdadero artículo de lujo.',
             'Espatulado': 'Textura gruesa y pintura en relieve aplicada con espátula. Estilo impresionista.',
             'Bocetado': 'Trazo suelto, rápido y artístico que muestra el proceso creativo y la esencia.',
+            'Abstracto': 'Expresión visual mediante formas, colores y texturas, sin representar una escena literal.',
             'Mural': 'Arte pintado directamente sobre pared a gran escala. El valor se acuerda según la pared, el acceso y el detalle.',
             'Escultura': 'Pieza modelada a mano: busto, medio cuerpo, figura de cuerpo entero o relieve. No realizo fundición.',
             'Restauracion': 'Tratamiento profesional para devolver a su estado original obras desgastadas o antiguas.'
@@ -67,8 +68,7 @@
             'default': 'Elegí la temática que mejor se adapte a tu idea.',
             'Retrato': 'Obra enfocada en capturar la esencia y rasgos de personas o animales.',
             'Paisaje': 'Representación artística de entornos naturales o urbanos.',
-            'Bodegon': 'Composición de objetos inanimados, frutas o elementos cotidianos.',
-            'Abstracto': 'Expresión visual mediante formas, colores y texturas sin forma definida.'
+            'Bodegon': 'Composición de objetos inanimados, frutas o elementos cotidianos.'
         },
         color_lapiz: {
             'default': 'Elegí si preferís la obra en el clásico blanco y negro o con detalles a color.',
@@ -476,7 +476,9 @@
         if(m.value) texto += "💵 *Moneda:* " + m.options[m.selectedIndex].text + "\n";
 
         if (t === 'Mural' || (typeof ultimoPresupuesto !== 'undefined' && ultimoPresupuesto && ultimoPresupuesto.consultar)) {
-            texto += "\n💰 *INVERSIÓN ESTIMADA:* A consultar según la pared, el acceso y el detalle.\n";
+            texto += (t === 'Mural' || document.getElementById('estilo').value === 'Mural')
+              ? "\n💰 *INVERSIÓN ESTIMADA:* A consultar según la pared, el acceso y el detalle.\n"
+              : "\n💰 *INVERSIÓN ESTIMADA:* A consultar.\n";
         } else {
             const precioFinal = document.getElementById('precioFinal').textContent;
             texto += "\n💰 *INVERSIÓN ESTIMADA:* " + precioFinal + " (IVA incluido)\n";

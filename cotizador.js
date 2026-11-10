@@ -74,6 +74,9 @@ function presupuesto(){
   if(!te)return null;dim=obtenerDimensiones();if(!dim.valida)return null;
   let config=MATRIZ_PRECIOS[claveEstandar(dim)]||configPorArea(dim);
   if(!config)return null;
+  if(est==='Abstracto'&&te!=='Carbonilla'){
+   return {t,dim,base:0,extras:0,marco:0,fondo:0,andamio:0,sub:0,recargo:0,iva:0,total:0,cuotas:false,digital:false,evaluar:false,consultar:true};
+  }
   if(te==='Carbonilla'){base=config.base ?? AJUSTES.carbonillaRespaldo;if(valor('color_lapiz')==='A color')base=Math.round(base*AJUSTES.carbonillaColor);}
   else{
    base=config[est==='Hiperrealista'?'hiper':est==='Espatulado'?'espatulado':est==='Bocetado'?'boceto':'realista'];
@@ -105,7 +108,9 @@ function calcular(){
  document.getElementById('alerta-andamio').style.display=(result.consultar&&Number(valor('mural_alto'))>=2.5)||result.andamio?'block':'none';
  if(result.consultar){
   document.getElementById('precioFinal').textContent='A consultar';
-  document.getElementById('desglose').textContent='El mural se cotiza de forma personalizada según la pared, el acceso y el nivel de detalle.';
+  document.getElementById('desglose').textContent=(valor('estilo')==='Mural'||result.t==='Mural')
+   ? 'El mural se cotiza de forma personalizada según la pared, el acceso y el nivel de detalle.'
+   : 'Este estilo no tiene un precio fijo en la lista actual; el valor se acuerda según la obra.';
   document.querySelector('.nota').textContent='IVA incluido. Envío aparte.';
   document.getElementById('tasa-info').textContent='';
   const infoM=document.getElementById('info-cuotas');if(infoM)infoM.textContent='Las condiciones se acuerdan al consultar.';

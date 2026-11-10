@@ -27,5 +27,24 @@ test('14. Sin porcentajes en selects y picker múltiple disponible',()=>{const a
 test('15. Personalizado 35x67 interpola por área (óleo y acrílico)',()=>{const a=iniciar();a.listo();a.set('tema','Paisaje');a.w.onTemaChange();a.set('tamano_predefinido','personalizado');a.w.handleTamanoChange();a.set('ancho_cm',35);a.set('alto_cm',67);a.w.calcular();assert.equal(a.price(),'1.131.000 ₲');a.set('tema','Retrato');a.w.onTemaChange();a.set('tamano_predefinido','personalizado');a.w.handleTamanoChange();a.set('ancho_cm',35);a.set('alto_cm',67);a.w.calcular();assert.equal(a.price(),'1.131.000 ₲');a.set('tecnica','Acrilico');a.w.onTecnicaChange();a.set('tema','Retrato');a.w.onTemaChange();a.set('tamano_predefinido','personalizado');a.w.handleTamanoChange();a.set('ancho_cm',35);a.set('alto_cm',67);a.w.calcular();assert.equal(a.price(),Math.round(1131000*0.85).toLocaleString('es-PY')+' ₲');a.set('ancho_cm',10);a.set('alto_cm',10);a.w.calcular();assert.ok(a.w.presupuesto().base>=85000);a.set('ancho_cm',200);a.set('alto_cm',200);a.w.calcular();assert.ok(a.w.presupuesto().base>0);});
 test('16. Guías visuales: tarjetas y escala en cotizador',()=>{const a=iniciar();a.listo();assert.ok(a.d.querySelectorAll('#guias-estilo .guia-card').length>=4);const first=a.d.querySelector('#guias-estilo .guia-card');first.click();assert.ok(a.d.getElementById('estilo').value);assert.ok(a.d.querySelector('#guias-estilo .guia-card.active'));assert.equal(a.d.querySelector('#guias-estilo .guia-card.active').getAttribute('aria-selected'),'true');assert.ok(a.d.getElementById('vista-escala'));a.set('tamano_predefinido','30x40');a.w.handleTamanoChange();assert.match(a.d.getElementById('vista-escala').textContent,/Persona de 1,70 m/);});
 test('17. Config del sitio: ventanas, desenfoque y valores por defecto',()=>{const a=iniciar();const D=a.w.EstudioDatos;const base=D.clone(a.w.ESTUDIO_DEFAULTS.sitio);const ok=D.validateSite({...base,ventanasOpacidad:0.8,fondoDesenfoque:12,fondoOpacidad:0.4});assert.equal(ok.ventanasOpacidad,0.8);assert.equal(ok.fondoDesenfoque,12);assert.equal(ok.fondoOpacidad,0.4);assert.equal(a.w.ESTUDIO_VENTANAS_OPACIDAD_DEFAULT,0.55);assert.equal(a.w.ESTUDIO_FONDO_DESENFOQUE_DEFAULT,0);assert.throws(()=>D.validateSite({...base,ventanasOpacidad:1.2}));assert.throws(()=>D.validateSite({...base,fondoDesenfoque:21}));assert.throws(()=>D.validateSite({...base,fondoDesenfoque:-1}));const plain=D.validateSite(base);assert.equal(plain.ventanasOpacidad,undefined);assert.equal(plain.fondoDesenfoque,undefined);});
+test('18. Abstracto es un estilo, sin precio inventado, y las guías por defecto no usan fotos de la galería',()=>{const a=iniciar();a.listo();
+  const estilos=[...a.d.querySelectorAll('#estilo option')].map(o=>o.value);
+  assert.ok(estilos.includes('Abstracto'));
+  const temas=[...a.d.querySelectorAll('#tema option')].map(o=>o.value);
+  assert.ok(!temas.includes('Abstracto'));
+  const guiaEstilos=[...a.d.querySelectorAll('#guias-estilo .guia-card')].map(c=>c.getAttribute('data-value'));
+  assert.ok(guiaEstilos.includes('Abstracto'));
+  assert.ok(![...a.d.querySelectorAll('#guias-tema .guia-card')].some(c=>c.getAttribute('data-value')==='Abstracto'));
+  a.set('estilo','Abstracto');a.w.onEstiloChange();a.set('tecnica','Oleo');a.w.onTecnicaChange();a.set('tema','Paisaje');a.w.onTemaChange();a.set('tamano_predefinido','30x40');a.w.handleTamanoChange();a.w.calcular();
+  assert.equal(a.price(),'A consultar');assert.equal(a.w.presupuesto().consultar,true);
+  a.set('tecnica','Carbonilla');a.w.onTecnicaChange();a.set('color_lapiz','Sin color');a.set('tamano_predefinido','21x30');a.w.handleTamanoChange();a.w.calcular();
+  const carb=a.w.presupuesto();assert.ok(carb&&!carb.consultar);assert.match(a.price(),/\d/);
+  const items=a.w.ESTUDIO_GUIAS_DEFAULT.items;
+  assert.ok(items['estilo:Abstracto']);
+  for(const [k,v] of Object.entries(items)){
+    assert.ok(v.url.startsWith('img/guias/'),k+' '+v.url);
+    assert.ok(!/postimg|instagram|img\/galeria|\/galeria\//i.test(v.url),k+' '+v.url);
+  }
+});
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));
 

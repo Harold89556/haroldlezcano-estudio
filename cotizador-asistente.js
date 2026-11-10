@@ -54,7 +54,7 @@
   function pasos() {
     const s = [{ id: 'trabajo', pregunta: '¿Qué tipo de trabajo buscás?', ayuda: 'Elegí la opción que más se parezca a lo que querés. En el siguiente paso te pedimos más detalles, siempre con imágenes de guía.' }];
     if (esPintura()) {
-      s.push({ id: 'estilo', pregunta: '¿Qué estilo te gusta más?', ayuda: 'El estilo es la forma en que se pinta: más natural, con más detalle, con textura o con aspecto de boceto.' });
+      s.push({ id: 'estilo', pregunta: '¿Qué estilo te gusta más?', ayuda: 'El estilo es la forma en que se pinta: más natural, con más detalle, con textura, con aspecto de boceto o abstracto.' });
       s.push({ id: 'tema', pregunta: '¿Qué querés que se vea en la obra?', ayuda: 'Retrato es una persona, una pareja o un animal. También podés pedir un paisaje, objetos o algo más libre.' });
       if (valor('tema') === 'Retrato') {
         s.push({ id: 'sujetos', pregunta: '¿Quiénes van a aparecer?', ayuda: 'El precio base ya incluye a una persona. Si hay más personas o una mascota, se suma al pedido.' });
@@ -117,14 +117,14 @@
       ];
       if (trabajo !== 'carbonilla') list.push({ value: 'Espatulado', key: 'estilo:Espatulado', title: 'Espatulado' });
       list.push({ value: 'Bocetado', key: 'estilo:Bocetado', title: 'Bocetado' });
+      list.push({ value: 'Abstracto', key: 'estilo:Abstracto', title: 'Abstracto' });
       return list.map((o) => ({ ...o, text: guia(o.key).text, url: guia(o.key).url, selected: valor('estilo') === o.value }));
     }
     if (paso.id === 'tema') {
       return [
         { value: 'Retrato', key: 'tema:Retrato', title: 'Retrato' },
         { value: 'Paisaje', key: 'tema:Paisaje', title: 'Paisaje' },
-        { value: 'Bodegon', key: 'tema:Bodegon', title: 'Bodegón / objetos' },
-        { value: 'Abstracto', key: 'tema:Abstracto', title: 'Abstracto' }
+        { value: 'Bodegon', key: 'tema:Bodegon', title: 'Bodegón / objetos' }
       ].map((o) => ({ ...o, text: guia(o.key).text, url: guia(o.key).url, selected: valor('tema') === o.value }));
     }
     if (paso.id === 'sujetos') {
@@ -178,7 +178,7 @@
     if (paso.id === 'estilo_mural') {
       return [
         { value: 'Realista Mural', title: 'Realismo con detalles', text: 'Un mural con aspecto natural y detalle.', url: guia('estilo:Mural').url, selected: valor('estilo_mural') === 'Realista Mural' },
-        { value: 'Ilustracion Mural', title: 'Ilustración / gráfico', text: 'Un mural más gráfico o ilustrado.', url: guia('tema:Abstracto').url, selected: valor('estilo_mural') === 'Ilustracion Mural' },
+        { value: 'Ilustracion Mural', title: 'Ilustración / gráfico', text: 'Un mural más gráfico o ilustrado.', url: guia('estilo:Abstracto').url, selected: valor('estilo_mural') === 'Ilustracion Mural' },
         { value: 'Bocetado', title: 'Bocetado', text: guia('estilo:Bocetado').text, url: guia('estilo:Bocetado').url, selected: valor('estilo_mural') === 'Bocetado' }
       ];
     }
@@ -219,7 +219,7 @@
 
   function puedeSeguir(paso) {
     if (paso.id === 'trabajo') return !!trabajo;
-    if (paso.id === 'estilo') return ['Realista', 'Hiperrealista', 'Espatulado', 'Bocetado'].includes(valor('estilo'));
+    if (paso.id === 'estilo') return ['Realista', 'Hiperrealista', 'Espatulado', 'Bocetado', 'Abstracto'].includes(valor('estilo'));
     if (paso.id === 'tema') return !!valor('tema');
     if (paso.id === 'sujetos') return true;
     if (paso.id === 'fondo' || paso.id === 'color' || paso.id === 'forma' || paso.id === 'marco') return true;
