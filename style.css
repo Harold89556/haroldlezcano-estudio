@@ -503,3 +503,72 @@ body.editor-abierto .admin-bottom-nav, body:has(#admin-workspace[hidden]) .admin
 .admin-guia-row input { width: 100%; box-sizing: border-box; }
 #contenedor-fondo .checkbox-label, #contenedor-fondo > .info-text { /* keep checkbox for a11y but cards are primary */ }
 @media (min-width: 700px) { .guia-grid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+
+/* Mapa embebido y Cómo llegar */
+.mapa-cuadro { margin: 14px 0 16px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(212,175,55,.25); background: rgba(0,0,0,.35); }
+.mapa-embed { display: block; width: 100%; height: 220px; border: 0; filter: grayscale(.15) contrast(1.05); }
+.btn-como-llegar { margin: 10px 12px 12px !important; width: calc(100% - 24px); box-sizing: border-box; }
+.mapa-cuadro-curso { margin-top: 12px; }
+@media (min-width: 700px) { .mapa-embed { height: 280px; } }
+
+/* Asistente de pedido */
+.asistente {
+  position: fixed; inset: 0; z-index: 12000;
+  display: flex; flex-direction: column;
+  background: rgba(12,12,12, calc(0.72 + var(--ventanas-opacidad) * 0.25));
+  color: #eee; font-family: inherit;
+  padding: calc(8px + env(safe-area-inset-top,0px)) 14px calc(10px + env(safe-area-inset-bottom,0px));
+  box-sizing: border-box;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.asistente[hidden] { display: none !important; }
+.asistente-cabecera { flex: 0 0 auto; position: relative; padding: 4px 44px 10px 0; }
+.asistente-cerrar {
+  position: absolute; right: 0; top: 0; width: 44px; height: 44px;
+  border: 1px solid rgba(255,255,255,.15); border-radius: 50%;
+  background: rgba(0,0,0,.35); color: #eee; font-size: 26px; line-height: 1; cursor: pointer;
+}
+.asistente-paso-n { margin: 6px 0 8px; font-size: 12px; color: #d4af37; letter-spacing: .6px; text-transform: uppercase; }
+.asistente-progreso { height: 6px; border-radius: 99px; background: rgba(255,255,255,.1); overflow: hidden; }
+.asistente-progreso-bar { height: 100%; width: 10%; background: linear-gradient(90deg,#d4af37,#f0d77f); transition: width .25s ease; }
+.asistente-cuerpo { flex: 1 1 auto; overflow: auto; min-height: 0; padding: 8px 0 16px; -webkit-overflow-scrolling: touch; }
+.asistente-cuerpo h2 { margin: 4px 0 8px; font-size: 22px; font-weight: 600; letter-spacing: .3px; color: #fff; }
+#asistente-ayuda { margin: 0 0 14px; font-size: 14px; line-height: 1.5; color: #cfcfcf; }
+.asistente-grid { grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 520px) { .asistente-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+.asistente-grid .guia-media { aspect-ratio: 16/10; }
+.asistente-grid .guia-cap strong { font-size: 15px; }
+.asistente-grid .guia-cap span { font-size: 13px; }
+.asistente-extra { margin-top: 8px; }
+.asistente-extra .en-asistente, .en-asistente { display: block !important; }
+.asistente-extra .form-card { margin: 0; }
+.asistente-resumen { list-style: none; padding: 0; margin: 0 0 16px; }
+.asistente-resumen li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.08); font-size: 14px; color: #ddd; }
+.asistente-resumen strong { color: #e5ca72; margin-right: 6px; }
+.asistente-precio { font-size: 28px; font-weight: 700; color: #d4af37; margin: 8px 0 4px; }
+.asistente-pie {
+  flex: 0 0 auto; display: flex; gap: 10px; padding-top: 10px;
+}
+.asistente-btn {
+  flex: 1 1 0; min-height: 52px; border-radius: 14px; font: inherit; font-size: 16px; font-weight: 700;
+  cursor: pointer; letter-spacing: .4px;
+}
+.asistente-btn-atras { background: rgba(255,255,255,.06); color: #eee; border: 1px solid rgba(255,255,255,.16); }
+.asistente-btn-atras:disabled { opacity: .4; cursor: default; }
+.asistente-btn-sig, .asistente-enviar, #asistente-extra #enviar-obra, .asistente-pie #enviar-obra {
+  background: linear-gradient(135deg,#d4af37,#b5952f); color: #111; border: 0;
+}
+.asistente-pie #enviar-obra { flex: 1 1 0; min-height: 52px; margin: 0; width: auto; }
+body.asistente-abierto { overflow: hidden; }
+body.asistente-abierto .bottom-nav,
+body.asistente-abierto .sticky-footer { display: none !important; }
+body.asistente-abierto .page-background { z-index: 0; }
+
+/* Admin: inputs legibles aunque las ventanas se transparenten */
+.admin-container input:not([type=checkbox]):not([type=range]),
+.admin-container select,
+.admin-container textarea {
+  background: rgba(10, 10, 10, max(0.78, var(--ventanas-opacidad)));
+  color: #fff;
+}
+.admin-body .container.admin-container { background: rgba(18, 18, 18, var(--ventanas-opacidad)); }

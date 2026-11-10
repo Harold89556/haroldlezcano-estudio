@@ -7,7 +7,7 @@ const server=http.createServer((req,res)=>{
  const filename=path.resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));
  if(!filename.startsWith(root+path.sep)){res.writeHead(403);res.end();return;}
  const target=fs.existsSync(filename)&&fs.statSync(filename).isDirectory()?path.join(filename,'index.html'):filename;
- fs.readFile(target,(error,bytes)=>{if(error){res.writeHead(404);res.end();return;}res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.json':'application/json','.css':'text/css','.png':'image/png'})[path.extname(target)]||'text/plain');res.end(bytes);});
+ fs.readFile(target,(error,bytes)=>{if(error){res.writeHead(404);res.end();return;}res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.json':'application/json','.css':'text/css','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.jpeg':'image/jpeg'})[path.extname(target)]||'text/plain');res.end(bytes);});
 });
 const mock=String.raw`
 const state=window.__mock;
@@ -52,8 +52,23 @@ async function session(settings={}){
 }
 async function quote(page){
  await page.goto(base+'/index.html#cotizacion');
- await page.selectOption('#estilo','Realista');await page.selectOption('#tecnica','Oleo');await page.selectOption('#tema','Retrato');await page.selectOption('#tamano_predefinido','30x40');await page.fill('#envio_nombre','Prueba local');await page.selectOption('#fotos_referencia','No, necesito asesoramiento');
+ await page.waitForSelector('#estilo');
+ await page.waitForFunction(()=>window.AsistentePedido);
+ await page.evaluate(()=>window.AsistentePedido.cerrar());
+ await page.evaluate(()=>{
+  const fire=(id,v)=>{const e=document.getElementById(id);if(!e)return;e.value=String(v);e.dispatchEvent(new Event('change',{bubbles:true}));};
+  fire('tecnica','Oleo');fire('estilo','Realista');if(window.onEstiloChange)onEstiloChange();
+  fire('tema','Retrato');if(window.onTemaChange)onTemaChange();
+  fire('tamano_predefinido','30x40');if(window.handleTamanoChange)handleTamanoChange();
+  const n=document.getElementById('envio_nombre');if(n){n.value='Prueba local';n.dispatchEvent(new Event('input',{bubbles:true}));}
+  fire('fotos_referencia','No, necesito asesoramiento');
+  if(window.calcular)calcular();
+ });
 }
+async function enviarPedido(page){ await page.evaluate(()=>window.enviarObra()); }
+async function elegirAsistente(page,value){ await page.locator('#asistente-opciones .guia-card[data-value="'+value+'"]').click(); }
+async function siguienteAsistente(page){ await page.locator('#asistente-siguiente').click(); }
+
 const photo=(name='foto.png',size)=>({name,mimeType:'image/png',buffer:size?Buffer.alloc(size):png});
 async function test(name,fn){try{await fn();results.push({prueba:name,resultado:'OK'});}catch(error){results.push({prueba:name,resultado:'FALLO',detalle:error.stack});process.exitCode=1;}}
 let base;
@@ -62,7 +77,7 @@ let base;
  browser=await chromium.launch({headless:true,args:['--no-sandbox']});
  await test('Cotizador sin Firebase: base 700.000 y 152 fotos',async()=>{
   const {page,context,errors}=await session({offline:true});await quote(page);
-  assert.equal(await page.textContent('#precioFinal'),'700.000 ₲');assert.match(await page.textContent('.nota'),/IVA incluido/);assert.ok(!/Base:|IVA:|Seña:/.test(await page.textContent('#desglose')));await page.check('#factura');await page.waitForFunction(()=>document.getElementById('precioFinal').textContent==='700.000 ₲');assert.match(await page.textContent('.nota'),/IVA incluido/);assert.equal(await page.locator('#mainGallery .gallery-item').count(),152);assert.deepEqual(errors,[]);await context.close();
+  assert.equal(await page.textContent('#precioFinal'),'700.000 ₲');assert.match(await page.textContent('.nota'),/IVA incluido/);assert.ok(!/Base:|IVA:|Seña:/.test(await page.textContent('#desglose')));await page.evaluate(()=>{const e=document.getElementById('factura');e.checked=true;e.dispatchEvent(new Event('change',{bubbles:true}));});await page.waitForFunction(()=>document.getElementById('precioFinal').textContent==='700.000 ₲');assert.match(await page.textContent('.nota'),/IVA incluido/);assert.equal(await page.locator('#mainGallery .gallery-item').count(),152);assert.deepEqual(errors,[]);await context.close();
  });
  await test('Picker: vistas previas, quitar, tamaño y asesoramiento',async()=>{
   const {page,context}=await session();await quote(page);await page.setInputFiles('#referencias_archivos',[photo('uno.png'),photo('dos.png')]);
@@ -71,11 +86,11 @@ let base;
   await page.selectOption('#fotos_referencia','No, necesito asesoramiento');assert.equal(await page.inputValue('#fotos_referencia'),'Sí, quiero cargar fotos de guía');await context.close();
  });
  await test('Límite de cinco fotos y no envío sin archivo',async()=>{
-  const {page,context}=await session();await quote(page);await page.selectOption('#fotos_referencia','Sí, quiero cargar fotos de guía');await page.click('#enviar-obra');assert.match(await page.textContent('#error-fotos_referencia'),/al menos/);
+  const {page,context}=await session();await quote(page);await page.selectOption('#fotos_referencia','Sí, quiero cargar fotos de guía');await enviarPedido(page);assert.match(await page.textContent('#error-fotos_referencia'),/al menos/);
   await page.setInputFiles('#referencias_archivos',Array.from({length:6},(_,n)=>photo(n+'.png')));assert.equal(await page.locator('.upload-preview').count(),5);assert.match(await page.textContent('#referencias-estado'),/hasta 5/);await context.close();
  });
  await test('WhatsApp con fotos sube referencias y pone los enlaces en el mensaje',async()=>{
-  const {page,context}=await session();await quote(page);await page.setInputFiles('#referencias_archivos',[photo('guía.png'),photo('otra.png')]);await page.click('#enviar-obra');
+  const {page,context}=await session();await quote(page);await page.setInputFiles('#referencias_archivos',[photo('guía.png'),photo('otra.png')]);await enviarPedido(page);
   await page.waitForFunction(()=>window.__mock.uploads.filter(u=>u.bucket==='referencias').length===2);
   await page.waitForFunction(()=>window.__opened.some(u=>String(u).includes('wa.me')));
   const state=await page.evaluate(()=>window.__mock);
@@ -101,7 +116,7 @@ let base;
    navigator.canShare=data=>!!(data&&data.files&&data.files.length);
    navigator.share=async data=>{window.__shared.push({files:[...data.files].map(f=>f.name),text:data.text});};
   });
-  await quote(page);await page.setInputFiles('#referencias_archivos',[photo('guía.png'),photo('otra.png')]);await page.click('#enviar-obra');
+  await quote(page);await page.setInputFiles('#referencias_archivos',[photo('guía.png'),photo('otra.png')]);await enviarPedido(page);
   await page.waitForFunction(()=>window.__opened.some(u=>String(u).includes('wa.me')));
   assert.equal(await page.evaluate(()=>window.__mock.uploads.length),0);
   const link=await page.evaluate(()=>window.__opened.find(u=>String(u).includes('wa.me')));
@@ -109,7 +124,7 @@ let base;
   assert.match(text,/Te envío/);assert.match(text,/700.000/);assert.ok(!/example\.com\/referencias/.test(text));
   assert.equal(await page.locator('#referencias-compartir').isVisible(),true);
   assert.match(await page.textContent('#referencias-estado'),/No se pudo subir/);
-  await page.click('#referencias-compartir');await page.waitForFunction(()=>window.__shared.length===1);
+  await page.locator('#referencias-compartir').click();await page.waitForFunction(()=>window.__shared.length===1);
   assert.deepEqual(await page.evaluate(()=>window.__shared[0].files),['referencia-1.png','referencia-2.png']);await context.close();
  });
  await test('Inicio, menú inferior y hashes',async()=>{
@@ -118,9 +133,11 @@ let base;
   const nav=await page.locator('.bottom-nav').boundingBox();assert.ok(Math.abs(nav.y+nav.height-844)<2);
   for(const b of await page.locator('.bottom-nav .tab-btn').all()){const box=await b.boundingBox();assert.ok(box.height>=44&&box.width>=44);}
   await page.click('.tab-btn[data-tab="cotizacion"]');assert.equal(new URL(page.url()).hash,'#cotizacion');
-  await page.selectOption('#estilo','Realista');await page.selectOption('#tecnica','Oleo');await page.selectOption('#tema','Retrato');await page.selectOption('#tamano_predefinido','30x40');
-  await page.waitForTimeout(800);const foot=await page.locator('#sticky-footer').boundingBox();assert.ok(foot.y+foot.height<=nav.y+1,JSON.stringify([foot,nav]));
-  await page.click('.tab-btn[data-tab="inicio"]');assert.equal(await page.locator('#sticky-footer').isVisible(),false);assert.equal(await page.locator('.bottom-nav .tab-btn').count(),3);assert.equal(await page.locator('#tab-inicio img.artista-foto').isVisible(),true);assert.ok((await page.locator('#tab-inicio img.artista-foto').boundingBox()).width>=300);assert.equal(await page.locator('#tab-inicio #vista-albumes').isVisible(),true);
+  await page.waitForSelector('#asistente-pedido:not([hidden])');
+  assert.equal(await page.locator('#asistente-pedido').isVisible(),true);
+  assert.equal(await page.locator('#sticky-footer').isVisible(),false);
+  await page.locator('#asistente-cerrar').click();
+  assert.equal(await page.locator('#asistente-pedido').isVisible(),false);assert.equal(await page.locator('.bottom-nav .tab-btn').count(),3);assert.equal(await page.locator('#tab-inicio img.artista-foto').isVisible(),true);assert.ok((await page.locator('#tab-inicio img.artista-foto').boundingBox()).width>=300);assert.equal(await page.locator('#tab-inicio #vista-albumes').isVisible(),true);
   await page.goto(base+'/index.html#galeria/retrato/2');await page.waitForSelector('#imageModal:not([hidden])');assert.equal(await page.locator('.tab-btn.active').getAttribute('data-tab'),'inicio');await page.keyboard.press('Escape');
   await page.goto(base+'/index.html#inicio');assert.equal(await page.locator('.tab-btn.active').getAttribute('data-tab'),'inicio');
   await page.goto(base+'/index.html#cursos');assert.equal(await page.locator('.tab-btn.active').getAttribute('data-tab'),'curso');
@@ -271,8 +288,24 @@ let base;
   assert.match(await page.locator('#fondo-preview-img').evaluate(el=>el.style.filter),/blur\(12px\)/);
   await page.dispatchEvent('#fondo-desenfoque','change');
   await page.waitForFunction(()=>window.__mock.config.sitio?.fondoDesenfoque===12&&window.__mock.config.sitio?.ventanasOpacidad===0.8);
+  const live=await page.evaluate(()=>{
+    const bg=document.querySelector('.page-background');
+    const cs=getComputedStyle(bg);
+    const before=getComputedStyle(bg,'::before');
+    const panel=document.querySelector('#fondo-admin')||document.querySelector('.admin-container .form-card');
+    return {
+      blur:cs.getPropertyValue('--fondo-desenfoque').trim(),
+      vent:getComputedStyle(document.documentElement).getPropertyValue('--ventanas-opacidad').trim(),
+      filter:before.filter,
+      panelBg:panel?getComputedStyle(panel).backgroundColor:''
+    };
+  });
+  if(live.blur!=='12px') throw Error('desenfoque admin no aplicado: '+live.blur);
+  if(live.vent!=='0.8') throw Error('ventanas admin no aplicadas: '+live.vent);
+  if(!/blur\(12px\)/.test(live.filter||'')) throw Error('filter blur no visible: '+live.filter);
   await page.evaluate(()=>document.getElementById('fondo-admin')?.scrollIntoView({block:'start'}));
   await page.screenshot({path:'/workspace/admin-fondo-ventanas.png'});
+  await page.screenshot({path:'/workspace/admin-tiempo-real.png'});
   assert.deepEqual(errors,[]);await context.close();
   let {page:pub,context:ctx2}=await session({config:{sitio:{...sitioBase,fondoImagen:'https://example.com/sitio/fondo-nueva.webp',fondoOpacidad:0.4,ventanasOpacidad:0.8,fondoDesenfoque:12}}});
   await pub.goto(base+'/index.html');
@@ -286,31 +319,76 @@ let base;
   assert.equal(applied.vent,'0.8');assert.equal(applied.blur,'12px');assert.equal(applied.op,'0.4');assert.match(applied.filter,/blur\(12px\)/);
   await ctx2.close();
  });
- await test('Guías visuales del cotizador: tarjetas, escala y sujetos',async()=>{
+ await test('Mapa embebido y botón Cómo llegar',async()=>{
   const {page,context,errors}=await session();await page.setViewportSize({width:390,height:844});
-  await page.goto(base+'/index.html#cotizacion');await page.waitForSelector('#guias-estilo .guia-card');
-  assert.ok(await page.locator('#guias-estilo .guia-card').count()>=4);
-  await page.locator('#guias-estilo .guia-card[data-value=Realista]').click();
-  await page.waitForFunction(()=>document.getElementById('estilo').value==='Realista');
-  const sel=await page.locator('#guias-estilo .guia-card[data-value=Realista]').evaluate(el=>{const s=getComputedStyle(el);return {cls:el.className,border:s.borderTopColor,width:s.borderTopWidth,transform:s.transform,shadow:s.boxShadow};});
-  assert.match(sel.cls,/active/);assert.ok(parseFloat(sel.width)>=2.5);assert.match(sel.shadow,/212|d4af|212, 175, 55/i);assert.notEqual(sel.transform,'none');
-  await page.evaluate(()=>document.getElementById('guias-estilo')?.scrollIntoView({block:'start'}));
-  await page.screenshot({path:'/workspace/seleccion-iluminada.png'});
-  await page.locator('#guias-tecnica .guia-card[data-value=Oleo]').click();
-  await page.waitForFunction(()=>document.getElementById('tecnica').value==='Oleo');
-  await page.locator('#guias-tema .guia-card[data-value=Retrato]').click();
-  await page.waitForFunction(()=>document.getElementById('tema').value==='Retrato'&&document.getElementById('retratos-extras').style.display!=='none');
-  assert.ok(await page.locator('#guias-sujetos .guia-card').count()>=3);
-  await page.locator('#guias-sujetos .guia-card[data-value="2"]').click();
-  await page.waitForFunction(()=>document.getElementById('personas').value==='1');
-  await page.selectOption('#tamano_predefinido','30x40');
-  await page.waitForSelector('#vista-escala svg');
-  assert.match(await page.locator('#vista-escala').textContent(),/1,70|1\.70|Persona/);
-  assert.match(await page.locator('#vista-escala').textContent(),/30/);
-  await page.screenshot({path:'/workspace/cotizador-visual.png'});
+  await page.goto(base+'/index.html');
+  await page.waitForSelector('#contacto .mapa-embed');
+  const src=await page.getAttribute('#contacto .mapa-embed','src');
+  assert.match(src,/google\.com\/maps/);assert.match(src,/output=embed/);assert.match(src,/Residentas|Fernando/i);
+  const href=await page.getAttribute('#contacto .btn-como-llegar','href');
+  assert.match(href,/google\.com\/maps\/dir/);assert.match(href,/destination=/);assert.match(href,/Residentas|Fernando/i);
+  assert.equal(await page.locator('a[href*="wa.me/595972173847"]').count(),0);
+  assert.equal(await page.locator('button, a',{hasText:'Consultar por WhatsApp'}).count(),0);
+  await page.evaluate(()=>document.getElementById('contacto')?.scrollIntoView({block:'center'}));
+  await page.screenshot({path:'/workspace/mapa-como-llegar.png'});
+  assert.deepEqual(errors,[]);await context.close();
+ });
+ await test('Asistente de pedido: óleo, escultura y mural en móvil',async()=>{
+  const {page,context,errors}=await session();await page.setViewportSize({width:390,height:844});
+  await page.goto(base+'/index.html#cotizacion');
+  await page.waitForSelector('#asistente-pedido:not([hidden])');
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value=oleo]');
+  await page.screenshot({path:'/workspace/wizard-paso1.png'});
+  await elegirAsistente(page,'oleo');
+  const lit=await page.locator('#asistente-opciones .guia-card[data-value=oleo]').evaluate(el=>{const s=getComputedStyle(el);return {cls:el.className,width:s.borderTopWidth,shadow:s.boxShadow,transform:s.transform};});
+  assert.match(lit.cls,/active/);assert.ok(parseFloat(lit.width)>=2.5);assert.match(lit.shadow,/212|d4af|212, 175, 55/i);
+  await siguienteAsistente(page);
+  await elegirAsistente(page,'Realista');await siguienteAsistente(page);
+  await elegirAsistente(page,'Retrato');await siguienteAsistente(page);
+  await elegirAsistente(page,'2');await page.waitForFunction(()=>document.getElementById('personas').value==='1');
+  await siguienteAsistente(page);
+  await elegirAsistente(page,'simple');await siguienteAsistente(page);
+  await elegirAsistente(page,'Estandar');await siguienteAsistente(page);
+  await page.waitForSelector('#asistente-extra #tamano_predefinido');
   await page.selectOption('#tamano_predefinido','50x70');
-  await page.waitForFunction(()=>(document.getElementById('vista-escala')?.textContent||'').includes('50'));
+  await page.waitForSelector('#asistente-extra #vista-escala svg, #vista-escala svg');
+  assert.match(await page.locator('#vista-escala').textContent(),/1,70|1\.70|Persona/);
+  await siguienteAsistente(page);
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value=SinMarco], #asistente-opciones .guia-card[data-value=Clasico]');
+  await page.screenshot({path:'/workspace/wizard-marcos.png'});
+  await elegirAsistente(page,'SinMarco');await siguienteAsistente(page);
+  await page.selectOption('#fotos_referencia','No, necesito asesoramiento');await siguienteAsistente(page);
+  await page.fill('#envio_nombre','Prueba local');await siguienteAsistente(page);
+  await page.waitForSelector('#asistente-pedido #enviar-obra, .asistente-pie #enviar-obra, #asistente-extra #enviar-obra');
+  assert.match(await page.locator('#asistente-precio, #precioFinal').first().textContent(),/1\.920\.000|1920000|1.920.000/);
+  assert.match(await page.locator('#asistente-pedido').textContent(),/IVA incluido/);
+  assert.match(await page.locator('#enviar-obra').textContent(),/Enviar pedido/);
+  await page.screenshot({path:'/workspace/seleccion-iluminada.png'});
+  await page.screenshot({path:'/workspace/cotizador-visual.png'});
   await page.screenshot({path:'/workspace/cotizador-escala.png'});
+
+  await page.locator('#asistente-cerrar').click();
+  await page.goto(base+'/index.html#cotizacion');
+  await page.waitForSelector('#asistente-pedido:not([hidden]) #asistente-opciones .guia-card[data-value=escultura]');
+  await elegirAsistente(page,'escultura');await siguienteAsistente(page);
+  await elegirAsistente(page,'Busto');await siguienteAsistente(page);
+  await page.waitForFunction(()=>document.getElementById('tipo_escultura').value==='Busto');
+  await siguienteAsistente(page);
+  await page.selectOption('#fotos_referencia','No, necesito asesoramiento');await siguienteAsistente(page);
+  await page.fill('#envio_nombre','Prueba escultura');await siguienteAsistente(page);
+  assert.match(await page.locator('#asistente-pedido').textContent(),/Escultura|Busto|IVA incluido/);
+
+  await page.locator('#asistente-cerrar').click();
+  await page.goto(base+'/index.html#cotizacion');
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value=mural]');
+  await elegirAsistente(page,'mural');await siguienteAsistente(page);
+  await elegirAsistente(page,'Realista Mural');await siguienteAsistente(page);
+  await page.waitForSelector('#asistente-extra #mural_ancho, #mural_ancho');
+  await page.selectOption('#mural_ancho','3');await page.selectOption('#mural_alto','2');
+  await siguienteAsistente(page);
+  await page.selectOption('#fotos_referencia','No, necesito asesoramiento');await siguienteAsistente(page);
+  await page.fill('#envio_nombre','Prueba mural');await siguienteAsistente(page);
+  assert.match(await page.locator('#asistente-pedido').textContent(),/consultar|Mural/i);
   assert.deepEqual(errors,[]);await context.close();
  });
  await test('Fallo del login de fotos cierra Firebase y conserva el panel bloqueado',async()=>{

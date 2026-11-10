@@ -4,7 +4,7 @@ const {JSDOM,VirtualConsole}=jsdom;
 const base=__dirname,html=fs.readFileSync(path.join(base,'index.html'),'utf8');
 function iniciar(hash=''){
  const errors=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));const dom=new JSDOM(html,{url:'https://harold-lezcano-estudio.web.app/'+hash,runScripts:'outside-only',virtualConsole:vc});const w=dom.window;w.structuredClone=structuredClone;const opens=[];w.open=url=>opens.push(url);w.fetch=async()=>{throw Error('Red simulada sin conexión');};
- require('node:vm').runInContext(['estudio-datos.js','cotizador.js','cotizador-visual.js','interfaz.js','mejoras.js','estudio.js'].map(f=>fs.readFileSync(path.join(base,f),'utf8')).join('\n'),dom.getInternalVMContext());w.onload();w.onload=null;
+ require('node:vm').runInContext(['estudio-datos.js','cotizador.js','cotizador-visual.js','interfaz.js','cotizador-asistente.js','mejoras.js','estudio.js'].map(f=>fs.readFileSync(path.join(base,f),'utf8')).join('\n'),dom.getInternalVMContext());w.onload();w.onload=null;
  const d=w.document;const set=(id,v)=>{d.getElementById(id).value=String(v);};const price=()=>d.getElementById('precioFinal').textContent;
  const listo=()=>{w.switchTab('cotizacion');set('estilo','Realista');w.onEstiloChange();set('tecnica','Oleo');w.onTecnicaChange();set('tema','Retrato');w.onTemaChange();set('tamano_predefinido','30x40');w.handleTamanoChange();set('envio_nombre','Cliente de prueba');set('fotos_referencia','No, necesito asesoramiento');};
  return {w,d,set,price,opens,listo,errors};

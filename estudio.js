@@ -184,6 +184,33 @@
   }
  });
  for(const event of ['input','change']) $('tab-cotizacion').addEventListener(event,()=>{hideWhatsAppActions();});
+
+ function direccionEstudio(sitio){
+  const txt=(sitio&&sitio.textos)||{};
+  let raw=(txt.direccionCurso||txt.contacto||'Las Residentas 460, Fernando de la Mora, Paraguay');
+  return String(raw).replace(/📍/g,'').replace(/^Harold Lezcano\s*[·•]\s*/i,'').replace(/\.\s*$/,'').trim();
+ }
+ function mapsDesdeSitio(sitio){
+  const address=direccionEstudio(sitio);
+  let query=address;
+  try{
+    const u=new URL(sitio&&sitio.mapaCurso||'');
+    if(/google\.com$|maps\.google\.|goo\.gl$|maps\.app\.goo\.gl/.test(u.hostname)){
+      const q=u.searchParams.get('q');
+      if(q) query=q;
+      const place=u.pathname.match(/\/maps\/place\/([^/]+)/);
+      if(place) query=decodeURIComponent(place[1].replace(/\+/g,' '));
+    }
+  }catch{}
+  const enc=encodeURIComponent(query);
+  return {address, query, embed:'https://www.google.com/maps?q='+enc+'&output=embed', dir:'https://www.google.com/maps/dir/?api=1&destination='+enc};
+ }
+ function aplicarMapa(sitio){
+  const m=mapsDesdeSitio(sitio||window.sitioActual||window.ESTUDIO_DEFAULTS.sitio);
+  for(const iframe of document.querySelectorAll('.mapa-embed')) iframe.src=m.embed;
+  for(const a of document.querySelectorAll('.btn-como-llegar')){ a.href=m.dir; a.hidden=false; }
+ }
+
  function applySite(config) {
   window.sitioActual=data.validateSite(config);
   for (const el of document.querySelectorAll('[data-setting]')) {
@@ -203,13 +230,13 @@
    document.documentElement.style.setProperty('--ventanas-opacidad',String(vent));
   }
   if($('bioCurso')){$('bioCurso').textContent=window.sitioActual.textos.introduccionCurso;$('bioCurso').dataset.listo='1';}
-  for (const a of document.querySelectorAll('a[href^="https://wa.me/595972173847"]')) a.href='https://wa.me/'+window.sitioActual.whatsapp;
+  aplicarMapa(window.sitioActual);
  }
  function applyCoursePrices() {
   for (const el of document.querySelectorAll('[data-price]')) el.textContent=preciosActuales.cursos[el.dataset.price].toLocaleString('es-PY');
   document.querySelector('#c_pag option[value=""]').textContent='Pago de Matrícula ('+preciosActuales.cursos.matricula.toLocaleString('es-PY')+' Gs.)...';
  }
- $('mapa-curso').addEventListener('click',()=>window.open(window.sitioActual.mapaCurso,'_blank','noopener,noreferrer'));
+ if($('mapa-curso')) $('mapa-curso').addEventListener('click',()=>window.open(window.sitioActual.mapaCurso,'_blank','noopener,noreferrer'));
  function renderGallery() {
   const visible=gallery.filter(item=>!item.hidden);
   const albumGrid=$('vista-albumes');albumGrid.replaceChildren();
