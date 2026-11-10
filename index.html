@@ -17,17 +17,16 @@
 <body>
 <div class="page-background"></div>
 <div class="locale-bar" id="locale-bar">
-  <label class="locale-field" for="selector-idioma"><span data-i18n="locale.idioma">Idioma</span>
-    <select id="selector-idioma" aria-label="Idioma"></select>
-  </label>
-  <label class="locale-field" for="selector-pais"><span data-i18n="locale.pais">País</span>
-    <select id="selector-pais" aria-label="País"></select>
-  </label>
+  <div class="pais-picker" id="pais-picker">
+    <label for="selector-pais" hidden data-i18n="locale.pais">País</label><select id="selector-pais" aria-label="País" hidden tabindex="-1"></select>
+    <button type="button" class="pais-btn" id="pais-btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="pais-lista" aria-label="País" data-i18n-aria="locale.pais"><img id="pais-btn-flag" class="pais-flag" alt="" width="24" height="18" src="img/banderas/py.png"/><span id="pais-btn-codigo">PY</span><i class="fas fa-chevron-down" aria-hidden="true"></i></button>
+    <ul class="pais-lista" id="pais-lista" role="listbox" tabindex="-1" aria-label="País" data-i18n-aria="locale.pais" hidden></ul>
+  </div>
 </div>
 <div class="container app-shell">
 <div class="tab-content active" id="tab-inicio">
 <div class="header">
-<img alt="Harold Lezcano, artista plástico" class="artista-foto" height="800" src="artista.jpg" width="800" fetchpriority="high"/>
+<img alt="Harold Lezcano, artista plástico" class="artista-foto" height="1024" src="artista.jpg?v=granate" width="1024" fetchpriority="high"/>
 <h1>HAROLD LEZCANO</h1>
 <p data-setting="subtitulo">Artista plástico | Maestro de arte</p>
 <div class="social-links">
@@ -603,7 +602,13 @@
 <option value="COP">COP (Colombia)</option>
 <option value="PEN">PEN (Perú)</option>
 <option value="CAD">CAD (Canadá)</option>
-<option value="CHF">CHF</option>
+<option value="CHF">CHF (Suiza)</option>
+<option value="CNY">CNY (China)</option>
+<option value="JPY">JPY (Japón)</option>
+<option value="KRW">KRW (Corea del Sur)</option>
+<option value="INR">INR (India)</option>
+<option value="RUB">RUB (Rusia)</option>
+<option value="AUD">AUD (Australia)</option>
 </select><div aria-live="polite" class="field-error" id="error-moneda"></div>
 </div>
 <span class="nota" data-i18n="precio.ivaEnvio">IVA incluido. Envío aparte.</span>

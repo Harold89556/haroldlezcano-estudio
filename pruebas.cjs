@@ -377,7 +377,7 @@ test('29. El país aplica idioma y moneda al momento, y el idioma manual se pued
   assert.equal(a.w.EstudioI18n.idioma,'pt');
   assert.equal(a.w.EstudioI18n.pais,'BR');
   assert.equal(a.d.getElementById('moneda').value,'BRL');
-  assert.equal(a.d.getElementById('selector-idioma').value,'pt');
+  assert.equal(a.d.getElementById('selector-idioma'),null,'ya no hay selector de idioma');
   assert.equal(a.d.getElementById('selector-pais').value,'BR');
   a.w.calcular();
   const txt=a.price();
@@ -460,6 +460,25 @@ test('30. Textos de material únicos, sin repetir la nota compartida',()=>{
   assert.match(ayudaEl.textContent,/tejido metálico/i);
   assert.match(ayudaEl.textContent,/tratamiento antióxido|antioxido/i);
   assert.match(ayudaEl.textContent,/fundición|fundicion/i);
+});
+
+test('31. Solo selector de país con bandera: más países, idioma y moneda por país',()=>{
+  const a=iniciar();a.listo();a.w.EstudioI18n.iniciar();
+  assert.equal(a.d.getElementById('selector-idioma'),null);
+  const esperado={CN:['en','CNY'],JP:['en','JPY'],KR:['en','KRW'],IN:['en','INR'],RU:['en','RUB'],AU:['en','AUD'],CH:['de','CHF'],EC:['es','USD'],FR:['fr','EUR'],IT:['it','EUR'],DE:['de','EUR'],GB:['en','GBP'],PT:['pt','EUR'],ES:['es','EUR']};
+  const ids=[...a.d.querySelectorAll('#selector-pais option')].map(o=>o.value);
+  const lis=[...a.d.querySelectorAll('#pais-lista .pais-opcion')];
+  assert.equal(lis.length,ids.length);
+  for(const li of lis){const img=li.querySelector('img.pais-flag');assert.ok(img&&/^img\/banderas\/[a-z]{2}\.png$/.test(img.getAttribute('src')),li.textContent);assert.ok(fs.existsSync(path.join(base,img.getAttribute('src'))),img.getAttribute('src'));}
+  for(const [id,[lang,mon]] of Object.entries(esperado)){
+    assert.ok(ids.includes(id),id);
+    a.d.querySelector('#pais-op-'+id).click();
+    assert.equal(a.w.EstudioI18n.pais,id);assert.equal(a.w.EstudioI18n.idioma,lang,id);assert.equal(a.d.getElementById('moneda').value,mon,id);
+    assert.equal(a.d.getElementById('pais-btn-codigo').textContent,id);
+    assert.ok(a.d.getElementById('pais-btn-flag').getAttribute('src').endsWith('/'+id.toLowerCase()+'.png'));
+    a.w.calcular();assert.ok(!/₲/.test(a.price())||id==='PY',id+' '+a.price());
+  }
+  a.d.querySelector('#pais-op-PY').click();assert.equal(a.w.EstudioI18n.idioma,'es');
 });
 
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));

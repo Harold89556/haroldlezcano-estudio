@@ -326,7 +326,13 @@ window.ESTUDIO_DEFAULTS = {
       "COP": 0.517392,
       "PEN": 0.000549,
       "CAD": 0.000225,
-      "CHF": 0.000131
+      "CHF": 0.000131,
+      "CNY": 0.00114,
+      "JPY": 0.0243,
+      "KRW": 0.224,
+      "INR": 0.0141,
+      "RUB": 0.0128,
+      "AUD": 0.000245
     },
     "ajustes": {
       "restauracionDigital": 180000,

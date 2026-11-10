@@ -1,23 +1,31 @@
 'use strict';
 (function (global) {
   const PAISES = [
-    { id: 'PY', moneda: 'PYG', lang: 'es' },
-    { id: 'AR', moneda: 'ARS', lang: 'es' },
-    { id: 'BR', moneda: 'BRL', lang: 'pt' },
-    { id: 'UY', moneda: 'UYU', lang: 'es' },
-    { id: 'CL', moneda: 'CLP', lang: 'es' },
-    { id: 'BO', moneda: 'BOB', lang: 'es' },
-    { id: 'US', moneda: 'USD', lang: 'en' },
-    { id: 'ES', moneda: 'EUR', lang: 'es' },
-    { id: 'FR', moneda: 'EUR', lang: 'fr' },
-    { id: 'IT', moneda: 'EUR', lang: 'it' },
-    { id: 'DE', moneda: 'EUR', lang: 'de' },
-    { id: 'PT', moneda: 'EUR', lang: 'pt' },
-    { id: 'GB', moneda: 'GBP', lang: 'en' },
-    { id: 'MX', moneda: 'MXN', lang: 'es' },
-    { id: 'CO', moneda: 'COP', lang: 'es' },
-    { id: 'PE', moneda: 'PEN', lang: 'es' },
-    { id: 'CA', moneda: 'CAD', lang: 'en' },
+    { id: 'PY', moneda: 'PYG', lang: 'es', flag: 'py' },
+    { id: 'AR', moneda: 'ARS', lang: 'es', flag: 'ar' },
+    { id: 'BR', moneda: 'BRL', lang: 'pt', flag: 'br' },
+    { id: 'UY', moneda: 'UYU', lang: 'es', flag: 'uy' },
+    { id: 'CL', moneda: 'CLP', lang: 'es', flag: 'cl' },
+    { id: 'BO', moneda: 'BOB', lang: 'es', flag: 'bo' },
+    { id: 'EC', moneda: 'USD', lang: 'es', flag: 'ec' },
+    { id: 'PE', moneda: 'PEN', lang: 'es', flag: 'pe' },
+    { id: 'CO', moneda: 'COP', lang: 'es', flag: 'co' },
+    { id: 'MX', moneda: 'MXN', lang: 'es', flag: 'mx' },
+    { id: 'US', moneda: 'USD', lang: 'en', flag: 'us' },
+    { id: 'CA', moneda: 'CAD', lang: 'en', flag: 'ca' },
+    { id: 'ES', moneda: 'EUR', lang: 'es', flag: 'es' },
+    { id: 'FR', moneda: 'EUR', lang: 'fr', flag: 'fr' },
+    { id: 'IT', moneda: 'EUR', lang: 'it', flag: 'it' },
+    { id: 'DE', moneda: 'EUR', lang: 'de', flag: 'de' },
+    { id: 'PT', moneda: 'EUR', lang: 'pt', flag: 'pt' },
+    { id: 'GB', moneda: 'GBP', lang: 'en', flag: 'gb' },
+    { id: 'CH', moneda: 'CHF', lang: 'de', flag: 'ch' },
+    { id: 'RU', moneda: 'RUB', lang: 'en', flag: 'ru' },
+    { id: 'CN', moneda: 'CNY', lang: 'en', flag: 'cn' },
+    { id: 'JP', moneda: 'JPY', lang: 'en', flag: 'jp' },
+    { id: 'KR', moneda: 'KRW', lang: 'en', flag: 'kr' },
+    { id: 'IN', moneda: 'INR', lang: 'en', flag: 'in' },
+    { id: 'AU', moneda: 'AUD', lang: 'en', flag: 'au' },
   ];
   const LANGS = ['es', 'en', 'pt', 'fr', 'it', 'de'];
   const STRINGS = {
@@ -155,6 +163,14 @@
       "pais.CO": "Colombia",
       "pais.PE": "Perú",
       "pais.CA": "Canadá",
+      "pais.CN": "China",
+      "pais.JP": "Japón",
+      "pais.KR": "Corea del Sur",
+      "pais.IN": "India",
+      "pais.RU": "Rusia",
+      "pais.EC": "Ecuador",
+      "pais.CH": "Suiza",
+      "pais.AU": "Australia",
     },
     en: {
       "nav.inicio": "Home",
@@ -290,6 +306,14 @@
       "pais.CO": "Colombia",
       "pais.PE": "Peru",
       "pais.CA": "Canada",
+      "pais.CN": "China",
+      "pais.JP": "Japan",
+      "pais.KR": "South Korea",
+      "pais.IN": "India",
+      "pais.RU": "Russia",
+      "pais.EC": "Ecuador",
+      "pais.CH": "Switzerland",
+      "pais.AU": "Australia",
     },
     pt: {
       "nav.inicio": "Início",
@@ -425,6 +449,14 @@
       "pais.CO": "Colômbia",
       "pais.PE": "Peru",
       "pais.CA": "Canadá",
+      "pais.CN": "China",
+      "pais.JP": "Japão",
+      "pais.KR": "Coreia do Sul",
+      "pais.IN": "Índia",
+      "pais.RU": "Rússia",
+      "pais.EC": "Equador",
+      "pais.CH": "Suíça",
+      "pais.AU": "Austrália",
     },
     fr: {
       "nav.inicio": "Accueil",
@@ -560,6 +592,14 @@
       "pais.CO": "Colombie",
       "pais.PE": "Pérou",
       "pais.CA": "Canada",
+      "pais.CN": "Chine",
+      "pais.JP": "Japon",
+      "pais.KR": "Corée du Sud",
+      "pais.IN": "Inde",
+      "pais.RU": "Russie",
+      "pais.EC": "Équateur",
+      "pais.CH": "Suisse",
+      "pais.AU": "Australie",
     },
     it: {
       "nav.inicio": "Inizio",
@@ -695,6 +735,14 @@
       "pais.CO": "Colombia",
       "pais.PE": "Perù",
       "pais.CA": "Canada",
+      "pais.CN": "Cina",
+      "pais.JP": "Giappone",
+      "pais.KR": "Corea del Sud",
+      "pais.IN": "India",
+      "pais.RU": "Russia",
+      "pais.EC": "Ecuador",
+      "pais.CH": "Svizzera",
+      "pais.AU": "Australia",
     },
     de: {
       "nav.inicio": "Start",
@@ -830,6 +878,14 @@
       "pais.CO": "Kolumbien",
       "pais.PE": "Peru",
       "pais.CA": "Kanada",
+      "pais.CN": "China",
+      "pais.JP": "Japan",
+      "pais.KR": "Südkorea",
+      "pais.IN": "Indien",
+      "pais.RU": "Russland",
+      "pais.EC": "Ecuador",
+      "pais.CH": "Schweiz",
+      "pais.AU": "Australien",
     },
   };
 
@@ -850,18 +906,8 @@
   }
   function paisInfo(id) { return PAISES.find((p) => p.id === (id || pais)) || PAISES[0]; }
   function rellenarSelects() {
-    const idi = document.getElementById('selector-idioma');
     const pa = document.getElementById('selector-pais');
-    if (idi) {
-      idi.replaceChildren();
-      const names = { es: 'Español', en: 'English', pt: 'Português', fr: 'Français', it: 'Italiano', de: 'Deutsch' };
-      LANGS.forEach((code) => {
-        const o = document.createElement('option');
-        o.value = code; o.textContent = names[code];
-        idi.append(o);
-      });
-      idi.value = idioma;
-    }
+    const lista = document.getElementById('pais-lista');
     if (pa) {
       pa.replaceChildren();
       PAISES.forEach((p) => {
@@ -871,6 +917,93 @@
       });
       pa.value = pais;
     }
+    if (lista) {
+      lista.replaceChildren();
+      PAISES.forEach((p) => {
+        const li = document.createElement('li');
+        li.className = 'pais-opcion'; li.id = 'pais-op-' + p.id; li.setAttribute('role', 'option');
+        li.dataset.pais = p.id; li.tabIndex = -1;
+        const img = document.createElement('img');
+        img.className = 'pais-flag'; img.alt = ''; img.width = 24; img.height = 18; img.loading = 'lazy';
+        img.src = 'img/banderas/' + p.flag + '.png';
+        const sp = document.createElement('span');
+        sp.textContent = t('pais.' + p.id);
+        li.append(img, sp);
+        lista.append(li);
+      });
+    }
+    pintarPais();
+  }
+  function pintarPais() {
+    const info = paisInfo();
+    const btn = document.getElementById('pais-btn');
+    const flag = document.getElementById('pais-btn-flag');
+    const cod = document.getElementById('pais-btn-codigo');
+    if (flag) flag.src = 'img/banderas/' + info.flag + '.png';
+    if (cod) cod.textContent = info.id;
+    if (btn) btn.title = t('pais.' + info.id);
+    const pa = document.getElementById('selector-pais');
+    if (pa) pa.value = info.id;
+    document.querySelectorAll('#pais-lista .pais-opcion').forEach((li) => {
+      li.setAttribute('aria-selected', li.dataset.pais === info.id ? 'true' : 'false');
+    });
+  }
+  function iniciarSelectorPais() {
+    const btn = document.getElementById('pais-btn');
+    const lista = document.getElementById('pais-lista');
+    if (!btn || !lista || btn.dataset.listo) return;
+    btn.dataset.listo = '1';
+    const opciones = () => [...lista.querySelectorAll('.pais-opcion')];
+    let activa = -1;
+    const marcar = (i) => {
+      const ops = opciones();
+      if (!ops.length) return;
+      activa = (i + ops.length) % ops.length;
+      ops.forEach((o, k) => o.classList.toggle('activa', k === activa));
+      lista.setAttribute('aria-activedescendant', ops[activa].id);
+      ops[activa].scrollIntoView({ block: 'nearest' });
+    };
+    const abrir = () => {
+      lista.hidden = false; btn.setAttribute('aria-expanded', 'true');
+      const ops = opciones();
+      marcar(Math.max(0, ops.findIndex((o) => o.dataset.pais === pais)));
+      lista.focus({ preventScroll: true });
+    };
+    const cerrar = (volver) => {
+      lista.hidden = true; btn.setAttribute('aria-expanded', 'false');
+      lista.removeAttribute('aria-activedescendant');
+      if (volver) btn.focus();
+    };
+    const elegir = (id) => { cerrar(true); if (id && id !== pais) setPais(id); };
+    btn.addEventListener('click', () => (lista.hidden ? abrir() : cerrar(true)));
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (lista.hidden) abrir(); }
+    });
+    lista.addEventListener('click', (e) => {
+      const li = e.target.closest('.pais-opcion');
+      if (li) elegir(li.dataset.pais);
+    });
+    lista.addEventListener('keydown', (e) => {
+      const ops = opciones();
+      if (e.key === 'ArrowDown') { e.preventDefault(); marcar(activa + 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); marcar(activa - 1); }
+      else if (e.key === 'Home') { e.preventDefault(); marcar(0); }
+      else if (e.key === 'End') { e.preventDefault(); marcar(ops.length - 1); }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (ops[activa]) elegir(ops[activa].dataset.pais); }
+      else if (e.key === 'Escape') { e.preventDefault(); cerrar(true); }
+      else if (e.key === 'Tab') { cerrar(false); }
+      else if (e.key.length === 1) {
+        const q = e.key.toLowerCase();
+        const k = ops.findIndex((o, n) => n > activa && o.textContent.trim().toLowerCase().startsWith(q));
+        const k2 = k >= 0 ? k : ops.findIndex((o) => o.textContent.trim().toLowerCase().startsWith(q));
+        if (k2 >= 0) marcar(k2);
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (!lista.hidden && !e.target.closest('#pais-picker')) cerrar(false);
+    });
+    const pa = document.getElementById('selector-pais');
+    if (pa) pa.addEventListener('change', () => setPais(pa.value));
   }
   function aplicar() {
     document.documentElement.lang = idioma === 'pt' ? 'pt-BR' : idioma;
@@ -991,23 +1124,14 @@
   }
   function iniciar() {
     try {
-      const savedI = localStorage.getItem('estudio-idioma');
       const savedP = localStorage.getItem('estudio-pais');
-      idiomaManual = localStorage.getItem('estudio-idioma-manual') === '1';
-      if (savedI && STRINGS[savedI]) idioma = savedI;
       if (savedP && PAISES.some((p) => p.id === savedP)) pais = savedP;
     } catch (e) {}
+    // El idioma lo define el país elegido (ya no hay selector de idioma).
+    idioma = paisInfo().lang || 'es';
+    idiomaManual = false;
     rellenarSelects();
-    const idi = document.getElementById('selector-idioma');
-    const pa = document.getElementById('selector-pais');
-    if (idi) {
-      idi.value = idioma;
-      idi.addEventListener('change', () => setIdioma(idi.value, { manual: true }));
-    }
-    if (pa) {
-      pa.value = pais;
-      pa.addEventListener('change', () => setPais(pa.value));
-    }
+    iniciarSelectorPais();
     const mon = document.getElementById('moneda');
     if (mon) mon.value = paisInfo().moneda;
     aplicar();

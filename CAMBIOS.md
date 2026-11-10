@@ -95,3 +95,11 @@ Repetir: Node 20+ recomendado; ejecutar `npm install` y `npm test` en esta carpe
 No hubo navegador gráfico ni teléfono real. Falta verificar apariencia final en 320/360/390/768 px, Safari iOS, Android, lector de pantalla, portapapeles/Web Share, descarga de fuentes y la instalación/actualización real de PWA. Las pruebas de SW fueron de sintaxis y revisión de política, no una simulación completa de caché del navegador.
 
 Mantener respaldo de los archivos actuales. Publicar los 15 archivos de forma coordinada: index depende de interfaz.js, mejoras.js y style.css. Luego probar en sesión nueva y revisar actualización del service worker; evitar dejar parte del paquete antiguo mezclada con archivos nuevos. Confirmar en WhatsApp el texto preparado, sin enviarlo, antes de usarlo con clientes. El despliegue no se realizó en esta tarea.
+
+## 10 de noviembre de 2026 — Selector de país con bandera y nuevo diseño granate
+
+- **Solo país:** se quitó el selector de Idioma. El país elegido define idioma y moneda (`estudio-i18n.js`). El selector es ahora un botón compacto (bandera + código) con lista de países con bandera (`img/banderas/*.png`, derivadas de flag-icons, licencia MIT), accesible por teclado (flechas, Home/End, Enter, Escape). Se conserva un `<select id="selector-pais">` oculto para compatibilidad.
+- **Países nuevos:** Ecuador, Suiza, Rusia, China, Japón, Corea del Sur, India y Australia (además de los 17 anteriores = 25). China, Japón, Corea, India, Rusia y Australia usan la interfaz en **inglés** (aún no hay traducciones a zh/ja/ko/hi/ru); Suiza usa alemán; Ecuador, español.
+- **Monedas nuevas:** CNY, JPY, KRW, INR, RUB, AUD (tasas de respaldo en `estudio-datos.js`; las tasas en vivo se piden para todas las monedas conocidas, y las que falten en una configuración remota antigua se completan con las de respaldo).
+- **Imagen de Inicio:** `artista.jpg` ahora tiene fondo granate (estilo Instagram), con bata de pintor y paleta. La anterior (fondo verde azulado) queda en `img/artista-teal-anterior.jpg`. Logotipo cuadrado: `img/logo-hl-granate.png` (1024) y `img/logo-hl-granate-512.png`.
+- Pruebas: nueva prueba 31 (países, banderas, idioma y moneda por país); ajustadas la 29 y la prueba de navegador del selector.

@@ -244,7 +244,7 @@ let base;
   let {page,context}=await session({config:{sitio:{...sitioBase,fotoArtista:'https://example.com/sitio/artista-nueva.png',fotoArtistaPath:'sitio/artista-nueva.png'}}});
   await page.goto(base+'/index.html');await page.waitForFunction(()=>document.querySelector('img.artista-foto').src.includes('artista-nueva.png'));
   assert.equal(await page.getAttribute('img.artista-foto','alt'),'Harold Lezcano, artista plástico');assert.equal(await page.locator('img.artista-foto.artista-foto-propia').count(),1);await context.close();
-  ({page,context}=await session());await page.goto(base+'/index.html');await page.waitForTimeout(300);assert.match(await page.getAttribute('img.artista-foto','src'),/^artista\.jpg$/);await context.close();
+  ({page,context}=await session());await page.goto(base+'/index.html');await page.waitForTimeout(300);assert.match(await page.getAttribute('img.artista-foto','src'),/^artista\.jpg(\?v=granate)?$/);await context.close();
  });
  await test('Fondo de la página: cambiar imagen, opacidad y restaurar original',async()=>{
   const {page,context,errors}=await session({config:{sitio:{...sitioBase,fondoImagen:'https://example.com/sitio/fondo-viejo.webp',fondoImagenPath:'sitio/fondo-viejo.webp',fondoOpacidad:0.3}}});
@@ -654,7 +654,7 @@ let base;
   await page.waitForSelector('#asistente-pedido:not([hidden])');
   await page.waitForFunction(()=>/Quote|Next|Language/i.test(document.body.innerText));
   await page.evaluate(()=>{if(window.EstudioI18n){ EstudioI18n.setIdioma('en',{manual:true}); EstudioI18n.setPais('US',{sinIdioma:true}); }});
-  await page.waitForFunction(()=>document.getElementById('selector-idioma')?.value==='en' && document.getElementById('selector-pais')?.value==='US');
+  await page.waitForFunction(()=>document.getElementById('selector-pais')?.value==='US');
   await page.evaluate(()=>{const c=document.querySelector('#asistente-pedido .asistente-cuerpo'); if(c) c.scrollTop=0;});
   await page.screenshot({path:'/workspace/idioma-moneda.png'});
   assert.deepEqual(errors,[]);

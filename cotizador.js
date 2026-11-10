@@ -107,14 +107,15 @@ function pesoEsculturaKg(tipo,cm,material){
 function esMaterialHierro(mat){ mat=mat||(typeof valor==='function'?valor('material_escultura'):''); return mat==='Chapa'||mat==='Chatarra'; }
 function tasasRespaldo(){
  const t=(preciosActuales&&preciosActuales.tasasRespaldo)||{};
+ const base=(window.ESTUDIO_DEFAULTS&&window.ESTUDIO_DEFAULTS.precios&&window.ESTUDIO_DEFAULTS.precios.tasasRespaldo)||{};
  const out={PYG:1};
- for(const [k,v] of Object.entries(t)){if(Number.isFinite(Number(v))&&Number(v)>0)out[k]=Number(v);}
+ for(const [k,v] of Object.entries(Object.assign({},base,t))){if(Number.isFinite(Number(v))&&Number(v)>0)out[k]=Number(v);}
  if(!out.USD&&AJUSTES&&AJUSTES.cambioUSD)out.USD=1/AJUSTES.cambioUSD;
  if(!out.EUR&&AJUSTES&&AJUSTES.cambioEUR&&out.USD)out.EUR=out.USD*AJUSTES.cambioEUR;
  if(!out.BRL&&AJUSTES&&AJUSTES.cambioBRL&&out.USD)out.BRL=out.USD*AJUSTES.cambioBRL;
  return out;
 }
-function monedasEnteras(){return {PYG:1,CLP:1,ARS:1,UYU:1,COP:1,KRW:1};}
+function monedasEnteras(){return {PYG:1,CLP:1,ARS:1,UYU:1,COP:1,KRW:1,JPY:1};}
 
 function esRestauracionDigital(){return valor('estilo')==='Restauracion' && ['Digital','Digital Compleja'].includes(valor('tipo_restauracion'));}
 function obtenerDimensiones(){
@@ -221,7 +222,7 @@ function presupuesto(){
  const recargo=cuotas?sub*AJUSTES.tarjeta:0;
  return {t,dim,base,extras,marco,fondo,andamio,sub,recargo,iva:0,total:sub+recargo,cuotas,digital:esRestauracionDigital(),evaluar:t==='Restauracion'&&valor('tipo_restauracion')==='Fisica',consultar:false,peso:t==='Escultura'?(typeof pesoEst!=='undefined'?pesoEst:pesoEsculturaKg()):null};
 }
-function simboloMoneda(m){return ({PYG:'₲',USD:'US$',EUR:'€',BRL:'R$',ARS:'$',UYU:'$',CLP:'$',BOB:'Bs',GBP:'£',MXN:'$',COP:'$',PEN:'S/',CAD:'CA$',CHF:'CHF'})[m]||m;}
+function simboloMoneda(m){return ({PYG:'₲',USD:'US$',EUR:'€',BRL:'R$',ARS:'$',UYU:'$',CLP:'$',BOB:'Bs',GBP:'£',MXN:'$',COP:'$',PEN:'S/',CAD:'CA$',CHF:'CHF',CNY:'CN¥',JPY:'JP¥',KRW:'₩',INR:'₹',RUB:'₽',AUD:'A$'})[m]||m;}
 function dinero(n,moneda){
  const m=moneda||valor('moneda')||'PYG';
  const loc=(window.EstudioI18n&&EstudioI18n.locale())||'es-PY';
@@ -298,6 +299,8 @@ function aplicarTasas(rates,ts,fuente){
  const next={PYG:1};
  for(const [k,v] of Object.entries(rates||{})){if(k!=='PYG'&&Number.isFinite(Number(v))&&Number(v)>0)next[k]=Number(v);}
  if(!next.USD)return false;
+ const resp=tasasRespaldo();
+ for(const [k,v] of Object.entries(resp)){if(!(k in next))next[k]=v;}
  cotizaciones=next;
  tasaVerificada=fuente!=='respaldo';
  tasaOrigen=fuente||'api';

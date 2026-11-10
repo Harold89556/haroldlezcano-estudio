@@ -701,27 +701,45 @@ body.asistente-abierto .page-background { z-index: 0; }
 
 /* Idioma y país */
 .locale-bar {
-  position: fixed; top: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 720px; z-index: 13050;
-  display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: flex-end;
-  padding: 8px 10px;
+  position: fixed; top: 0; right: max(8px, calc(50% - 352px)); left: auto; transform: none;
+  width: auto; max-width: calc(100% - 16px); z-index: 13050;
+  display: flex; align-items: center; justify-content: flex-end;
+  padding: 5px 6px;
   margin: 0;
-  background: rgba(12,12,12,0.96);
-  border-bottom: 1px solid rgba(212,175,55,0.22);
+  background: rgba(12,12,12,0.92);
+  border: 1px solid rgba(212,175,55,0.22); border-top: 0;
   border-radius: 0 0 12px 12px;
   backdrop-filter: blur(10px);
   box-sizing: border-box;
 }
-.app-shell { padding-top: 64px; }
-.asistente { padding-top: calc(72px + env(safe-area-inset-top,0px)) !important; }
+.app-shell { padding-top: 52px; }
+.asistente { padding-top: calc(58px + env(safe-area-inset-top,0px)) !important; }
 
-.locale-field { display: flex; flex-direction: column; gap: 3px; margin: 0; font-size: 10px; letter-spacing: .4px; text-transform: uppercase; color: #bbb; }
-.locale-field select {
-  min-height: 36px; min-width: 128px; max-width: 48vw;
+.pais-picker { position: relative; margin: 0; }
+.pais-btn {
+  display: inline-flex; align-items: center; gap: 6px; margin: 0;
+  min-height: 34px; padding: 4px 9px; width: auto;
   border-radius: 8px; border: 1px solid rgba(255,255,255,.16);
-  background: #161616; color: #eee; font: inherit; font-size: 13px; text-transform: none; letter-spacing: 0;
-  padding: 4px 8px;
+  background: #161616; color: #eee; font: inherit; font-size: 13px; font-weight: 600; letter-spacing: .5px; cursor: pointer;
 }
+.pais-btn i { font-size: 10px; color: #d4af37; }
+.pais-btn:focus-visible, .pais-opcion:focus-visible { outline: 2px solid #d4af37; outline-offset: 2px; }
+.pais-flag { width: 24px; height: 18px; border-radius: 3px; object-fit: cover; box-shadow: 0 0 0 1px rgba(255,255,255,.18); flex: none; display: block; }
+.pais-lista {
+  position: absolute; top: calc(100% + 6px); right: 0; z-index: 13060;
+  list-style: none; margin: 0; padding: 4px;
+  width: max-content; min-width: 190px; max-width: calc(100vw - 20px); max-height: min(62vh, 420px); overflow-y: auto;
+  background: #161616; border: 1px solid rgba(212,175,55,.35); border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.6);
+}
+.pais-lista[hidden] { display: none; }
+.pais-opcion {
+  display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 5px 10px;
+  border-radius: 7px; color: #eee; font-size: 14px; cursor: pointer; text-transform: none; letter-spacing: 0;
+}
+.pais-opcion:hover, .pais-opcion.activa { background: rgba(212,175,55,.16); }
+.pais-opcion[aria-selected="true"] { color: #e5ca72; font-weight: 700; }
+
 .peso-estimado { margin: 10px 0 0; font-size: 14px; color: #e5ca72; font-weight: 600; overflow-wrap: anywhere; }
 .grupo-material-escultura { width: 100%; box-sizing: border-box; }
 #nota-tejido-metalico { margin-top: 8px; }
