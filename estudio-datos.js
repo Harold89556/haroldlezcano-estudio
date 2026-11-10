@@ -537,30 +537,16 @@ window.ESTUDIO_DEFAULTS = {
     }
   },
   "categorias": [
-    {
-      "id": "retrato",
-      "name": "Retratos"
-    },
-    {
-      "id": "paisaje",
-      "name": "Paisajes"
-    },
-    {
-      "id": "escultura",
-      "name": "Esculturas"
-    },
-    {
-      "id": "mural",
-      "name": "Murales"
-    },
-    {
-      "id": "abstracto",
-      "name": "Abstractos"
-    },
-    {
-      "id": "otros",
-      "name": "Otros"
-    }
+    { "id": "retrato", "name": "Retratos", "nombreI18n": {"en": "Portraits", "pt": "Retratos", "fr": "Portraits", "it": "Ritratti", "de": "Porträts", "zh": "肖像", "ja": "肖像画", "ko": "초상화", "hi": "चित्र", "ru": "Портреты"} },
+    { "id": "paisaje", "name": "Paisajes", "nombreI18n": {"en": "Landscapes", "pt": "Paisagens", "fr": "Paysages", "it": "Paesaggi", "de": "Landschaften", "zh": "风景", "ja": "風景画", "ko": "풍경화", "hi": "दृश्य-चित्र", "ru": "Пейзажи"} },
+    { "id": "escultura", "name": "Esculturas", "nombreI18n": {"en": "Sculptures", "pt": "Esculturas", "fr": "Sculptures", "it": "Sculture", "de": "Skulpturen", "zh": "雕塑", "ja": "彫刻", "ko": "조각", "hi": "मूर्तियाँ", "ru": "Скульптуры"} },
+    { "id": "mural", "name": "Murales", "nombreI18n": {"en": "Murals", "pt": "Murais", "fr": "Peintures murales", "it": "Murali", "de": "Wandbilder", "zh": "壁画", "ja": "壁画", "ko": "벽화", "hi": "भित्ति-चित्र", "ru": "Муралы"} },
+    { "id": "abstracto", "name": "Abstractos", "nombreI18n": {"en": "Abstract", "pt": "Abstratos", "fr": "Abstrait", "it": "Astratti", "de": "Abstrakt", "zh": "抽象画", "ja": "抽象画", "ko": "추상화", "hi": "अमूर्त कृतियाँ", "ru": "Абстракция"} },
+    { "id": "animales", "name": "Animales", "nombreI18n": {"en": "Animals", "pt": "Animais", "fr": "Animaux", "it": "Animali", "de": "Tiere", "zh": "动物", "ja": "動物", "ko": "동물", "hi": "पशु", "ru": "Животные"} },
+    { "id": "vehiculos", "name": "Vehículos", "nombreI18n": {"en": "Vehicles", "pt": "Veículos", "fr": "Véhicules", "it": "Veicoli", "de": "Fahrzeuge", "zh": "交通工具", "ja": "乗り物", "ko": "탈것", "hi": "वाहन", "ru": "Транспорт"} },
+    { "id": "bodegones", "name": "Bodegones", "nombreI18n": {"en": "Still lifes", "pt": "Naturezas-mortas", "fr": "Natures mortes", "it": "Nature morte", "de": "Stillleben", "zh": "静物", "ja": "静物", "ko": "정물", "hi": "स्थिर जीवन", "ru": "Натюрморты"} },
+    { "id": "personajes", "name": "Personajes", "nombreI18n": {"en": "Characters", "pt": "Personagens", "fr": "Personnages", "it": "Personaggi", "de": "Figuren", "zh": "角色", "ja": "キャラクター", "ko": "캐릭터", "hi": "पात्र", "ru": "Персонажи"} },
+    { "id": "otros", "name": "Otros", "nombreI18n": {"en": "Other", "pt": "Outros", "fr": "Autres", "it": "Altri", "de": "Weitere", "zh": "其他", "ja": "その他", "ko": "기타", "hi": "अन्य", "ru": "Другое"} }
   ],
   "etiquetasTextos": {
     "subtitulo": "Subtítulo de la cabecera",
@@ -686,12 +672,49 @@ window.EstudioDatos = (() => {
   }
   return out;
  }
+ const I18N_LANGS = ['en','pt','fr','it','de','zh','ja','ko','hi','ru'];
+ function nombreI18nDe(src) {
+  if (!src || typeof src !== 'object' || Array.isArray(src)) return undefined;
+  const map = {};
+  for (const lang of I18N_LANGS) {
+   if (typeof src[lang] === 'string' && src[lang].trim()) map[lang] = src[lang].trim().slice(0, 80);
+  }
+  return Object.keys(map).length ? map : undefined;
+ }
+ const ALBUM_TRADUCCIONES = {
+  'Retratos': {"en":"Portraits","pt":"Retratos","fr":"Portraits","it":"Ritratti","de":"Porträts","zh":"肖像","ja":"肖像画","ko":"초상화","hi":"चित्र","ru":"Портреты"},
+  'Paisajes': {"en":"Landscapes","pt":"Paisagens","fr":"Paysages","it":"Paesaggi","de":"Landschaften","zh":"风景","ja":"風景画","ko":"풍경화","hi":"दृश्य-चित्र","ru":"Пейзажи"},
+  'Esculturas': {"en":"Sculptures","pt":"Esculturas","fr":"Sculptures","it":"Sculture","de":"Skulpturen","zh":"雕塑","ja":"彫刻","ko":"조각","hi":"मूर्तियाँ","ru":"Скульптуры"},
+  'Murales': {"en":"Murals","pt":"Murais","fr":"Peintures murales","it":"Murali","de":"Wandbilder","zh":"壁画","ja":"壁画","ko":"벽화","hi":"भित्ति-चित्र","ru":"Муралы"},
+  'Abstractos': {"en":"Abstract","pt":"Abstratos","fr":"Abstrait","it":"Astratti","de":"Abstrakt","zh":"抽象画","ja":"抽象画","ko":"추상화","hi":"अमूर्त कृतियाँ","ru":"Абстракция"},
+  'Otros': {"en":"Other","pt":"Outros","fr":"Autres","it":"Altri","de":"Weitere","zh":"其他","ja":"その他","ko":"기타","hi":"अन्य","ru":"Другое"},
+  'Animales': {"en":"Animals","pt":"Animais","fr":"Animaux","it":"Animali","de":"Tiere","zh":"动物","ja":"動物","ko":"동물","hi":"पशु","ru":"Животные"},
+  'Vehículos': {"en":"Vehicles","pt":"Veículos","fr":"Véhicules","it":"Veicoli","de":"Fahrzeuge","zh":"交通工具","ja":"乗り物","ko":"탈것","hi":"वाहन","ru":"Транспорт"},
+  'Bodegones': {"en":"Still lifes","pt":"Naturezas-mortas","fr":"Natures mortes","it":"Nature morte","de":"Stillleben","zh":"静物","ja":"静物","ko":"정물","hi":"स्थिर जीवन","ru":"Натюрморты"},
+  'Personajes': {"en":"Characters","pt":"Personagens","fr":"Personnages","it":"Personaggi","de":"Figuren","zh":"角色","ja":"キャラクター","ko":"캐릭터","hi":"पात्र","ru":"Персонажи"},
+  'Óleo': {"en":"Oil paintings","pt":"Óleo","fr":"Peintures à l'huile","it":"Olio","de":"Ölmalerei","zh":"油画","ja":"油彩","ko":"유화","hi":"तेल चित्र","ru":"Масло"},
+  'Acrílico': {"en":"Acrylics","pt":"Acrílico","fr":"Acrylique","it":"Acrilico","de":"Acryl","zh":"丙烯","ja":"アクリル","ko":"아크릴","hi":"ऐक्रेलिक","ru":"Акрил"},
+  'Carbonilla': {"en":"Charcoal","pt":"Carvão","fr":"Fusain","it":"Carboncino","de":"Kohle","zh":"素描","ja":"木炭","ko":"목탄","hi":"चारकोल","ru":"Уголь"},
+  'Dibujos': {"en":"Drawings","pt":"Desenhos","fr":"Dessins","it":"Disegni","de":"Zeichnungen","zh":"素描作品","ja":"素描","ko":"드로잉","hi":"रेखाचित्र","ru":"Рисунки"},
+  'Técnica mixta': {"en":"Mixed media","pt":"Técnica mista","fr":"Technique mixte","it":"Tecnica mista","de":"Mischtechnik","zh":"综合材料","ja":"混合技法","ko":"혼합 매체","hi":"मिश्रित माध्यम","ru":"Смешанная техника"}
+ };
+ function traducirNombreAlbum(name) {
+  const n = String(name || '').trim();
+  if (!n) return {};
+  if (ALBUM_TRADUCCIONES[n]) return Object.assign({}, ALBUM_TRADUCCIONES[n]);
+  const hit = Object.keys(ALBUM_TRADUCCIONES).find((k) => k.toLowerCase() === n.toLowerCase());
+  return hit ? Object.assign({}, ALBUM_TRADUCCIONES[hit]) : {};
+ }
  function validateCategories(items) {
   if (!Array.isArray(items) || items.length < 1 || items.length > 50) throw Error('Usá entre 1 y 50 categorías.');
   const ids = new Set();
   return items.map(item => {
    if (!/^[a-z][a-z0-9-]{0,39}$/.test(item.id) || ids.has(item.id) || typeof item.name !== 'string' || !item.name.trim() || item.name.length > 80) throw Error('Categoría inválida o repetida.');
-   ids.add(item.id);return { id:item.id, name:item.name.trim() };
+   ids.add(item.id);
+   const out = { id:item.id, name:item.name.trim() };
+   const ni = nombreI18nDe(item.nombreI18n);
+   if (ni) out.nombreI18n = ni;
+   return out;
   });
  }
  function mergeGallery(seed, remote) {
@@ -742,5 +765,5 @@ window.EstudioDatos = (() => {
   }
   return { items };
  }
- return { clone, validatePrices, validateSite, validateCategories, mergeGallery, validateGuias };
+ return { clone, validatePrices, validateSite, validateCategories, mergeGallery, validateGuias, traducirNombreAlbum, I18N_LANGS };
 })();

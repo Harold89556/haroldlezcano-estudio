@@ -134,7 +134,7 @@
   {
     "id": "ig-013",
     "url": "/galeria-ig/013.jpg",
-    "category": "otros",
+    "category": "vehiculos",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 164,
@@ -145,7 +145,7 @@
   {
     "id": "ig-014",
     "url": "/galeria-ig/014.jpg",
-    "category": "otros",
+    "category": "vehiculos",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 165,
@@ -167,7 +167,7 @@
   {
     "id": "ig-016",
     "url": "/galeria-ig/016.jpg",
-    "category": "otros",
+    "category": "vehiculos",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 167,
@@ -398,7 +398,7 @@
   {
     "id": "ig-037",
     "url": "/galeria-ig/037.jpg",
-    "category": "otros",
+    "category": "vehiculos",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 188,
@@ -409,7 +409,7 @@
   {
     "id": "ig-038",
     "url": "/galeria-ig/038.jpg",
-    "category": "otros",
+    "category": "vehiculos",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 189,
@@ -552,7 +552,7 @@
   {
     "id": "ig-051",
     "url": "/galeria-ig/051.jpg",
-    "category": "otros",
+    "category": "vehiculos",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 202,
@@ -640,7 +640,7 @@
   {
     "id": "ig-059",
     "url": "/galeria-ig/059.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 210,
@@ -684,7 +684,7 @@
   {
     "id": "ig-063",
     "url": "/galeria-ig/063.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 214,
@@ -750,7 +750,7 @@
   {
     "id": "ig-069",
     "url": "/galeria-ig/069.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 220,
@@ -816,7 +816,7 @@
   {
     "id": "ig-075",
     "url": "/galeria-ig/075.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 226,
@@ -827,7 +827,7 @@
   {
     "id": "ig-076",
     "url": "/galeria-ig/076.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 227,
@@ -860,7 +860,7 @@
   {
     "id": "ig-079",
     "url": "/galeria-ig/079.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 230,
@@ -871,7 +871,7 @@
   {
     "id": "ig-080",
     "url": "/galeria-ig/080.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 231,
@@ -882,7 +882,7 @@
   {
     "id": "ig-081",
     "url": "/galeria-ig/081.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 232,
@@ -893,7 +893,7 @@
   {
     "id": "ig-082",
     "url": "/galeria-ig/082.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 233,
@@ -904,7 +904,7 @@
   {
     "id": "ig-083",
     "url": "/galeria-ig/083.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 234,
@@ -959,7 +959,7 @@
   {
     "id": "ig-088",
     "url": "/galeria-ig/088.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 239,
@@ -970,7 +970,7 @@
   {
     "id": "ig-089",
     "url": "/galeria-ig/089.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 240,
@@ -981,7 +981,7 @@
   {
     "id": "ig-090",
     "url": "/galeria-ig/090.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 241,
@@ -992,7 +992,7 @@
   {
     "id": "ig-091",
     "url": "/galeria-ig/091.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 242,
@@ -1047,7 +1047,7 @@
   {
     "id": "ig-096",
     "url": "/galeria-ig/096.jpg",
-    "category": "otros",
+    "category": "mural",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 247,
@@ -1080,7 +1080,7 @@
   {
     "id": "ig-099",
     "url": "/galeria-ig/099.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 250,
@@ -1135,7 +1135,7 @@
   {
     "id": "ig-104",
     "url": "/galeria-ig/104.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 255,
@@ -1157,7 +1157,7 @@
   {
     "id": "ig-106",
     "url": "/galeria-ig/106.jpg",
-    "category": "otros",
+    "category": "paisaje",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 257,
@@ -1168,7 +1168,7 @@
   {
     "id": "ig-107",
     "url": "/galeria-ig/107.jpg",
-    "category": "otros",
+    "category": "paisaje",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 258,
@@ -1234,7 +1234,7 @@
   {
     "id": "ig-113",
     "url": "/galeria-ig/113.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 264,
@@ -1245,7 +1245,7 @@
   {
     "id": "ig-114",
     "url": "/galeria-ig/114.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 265,
@@ -1278,7 +1278,7 @@
   {
     "id": "ig-117",
     "url": "/galeria-ig/117.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 268,
@@ -1300,7 +1300,7 @@
   {
     "id": "ig-119",
     "url": "/galeria-ig/119.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 270,
@@ -1311,7 +1311,7 @@
   {
     "id": "ig-120",
     "url": "/galeria-ig/120.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 271,
@@ -1366,7 +1366,7 @@
   {
     "id": "ig-125",
     "url": "/galeria-ig/125.jpg",
-    "category": "otros",
+    "category": "escultura",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 276,
@@ -1377,7 +1377,7 @@
   {
     "id": "ig-126",
     "url": "/galeria-ig/126.jpg",
-    "category": "otros",
+    "category": "escultura",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 277,
@@ -1388,7 +1388,7 @@
   {
     "id": "ig-127",
     "url": "/galeria-ig/127.jpg",
-    "category": "otros",
+    "category": "escultura",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 278,
@@ -1399,7 +1399,7 @@
   {
     "id": "ig-128",
     "url": "/galeria-ig/128.jpg",
-    "category": "otros",
+    "category": "escultura",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 279,
@@ -1410,7 +1410,7 @@
   {
     "id": "ig-129",
     "url": "/galeria-ig/129.jpg",
-    "category": "otros",
+    "category": "escultura",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 280,
@@ -1421,7 +1421,7 @@
   {
     "id": "ig-130",
     "url": "/galeria-ig/130.jpg",
-    "category": "otros",
+    "category": "escultura",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 281,
@@ -1432,7 +1432,7 @@
   {
     "id": "ig-131",
     "url": "/galeria-ig/131.jpg",
-    "category": "otros",
+    "category": "escultura",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 282,
@@ -1498,7 +1498,7 @@
   {
     "id": "ig-137",
     "url": "/galeria-ig/137.jpg",
-    "category": "otros",
+    "category": "escultura",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 288,
@@ -1509,7 +1509,7 @@
   {
     "id": "ig-138",
     "url": "/galeria-ig/138.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 289,
@@ -1553,7 +1553,7 @@
   {
     "id": "ig-142",
     "url": "/galeria-ig/142.jpg",
-    "category": "otros",
+    "category": "escultura",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 293,
@@ -1564,7 +1564,7 @@
   {
     "id": "ig-143",
     "url": "/galeria-ig/143.jpg",
-    "category": "otros",
+    "category": "escultura",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 294,
@@ -1619,7 +1619,7 @@
   {
     "id": "ig-148",
     "url": "/galeria-ig/148.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 299,
@@ -1630,7 +1630,7 @@
   {
     "id": "ig-149",
     "url": "/galeria-ig/149.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 300,
@@ -1663,7 +1663,7 @@
   {
     "id": "ig-152",
     "url": "/galeria-ig/152.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 303,
@@ -1674,7 +1674,7 @@
   {
     "id": "ig-153",
     "url": "/galeria-ig/153.jpg",
-    "category": "otros",
+    "category": "bodegones",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 304,
@@ -1718,7 +1718,7 @@
   {
     "id": "ig-157",
     "url": "/galeria-ig/157.jpg",
-    "category": "otros",
+    "category": "paisaje",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 308,
@@ -1729,7 +1729,7 @@
   {
     "id": "ig-158",
     "url": "/galeria-ig/158.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 309,
@@ -1795,7 +1795,7 @@
   {
     "id": "ig-164",
     "url": "/galeria-ig/164.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 315,
@@ -1806,7 +1806,7 @@
   {
     "id": "ig-165",
     "url": "/galeria-ig/165.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 316,
@@ -1817,7 +1817,7 @@
   {
     "id": "ig-166",
     "url": "/galeria-ig/166.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 317,
@@ -1828,7 +1828,7 @@
   {
     "id": "ig-167",
     "url": "/galeria-ig/167.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 318,
@@ -1839,7 +1839,7 @@
   {
     "id": "ig-168",
     "url": "/galeria-ig/168.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 319,
@@ -1850,7 +1850,7 @@
   {
     "id": "ig-169",
     "url": "/galeria-ig/169.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 320,
@@ -1861,7 +1861,7 @@
   {
     "id": "ig-170",
     "url": "/galeria-ig/170.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 321,
@@ -1872,7 +1872,7 @@
   {
     "id": "ig-171",
     "url": "/galeria-ig/171.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 322,
@@ -1894,7 +1894,7 @@
   {
     "id": "ig-173",
     "url": "/galeria-ig/173.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 324,
@@ -1905,7 +1905,7 @@
   {
     "id": "ig-174",
     "url": "/galeria-ig/174.jpg",
-    "category": "otros",
+    "category": "animales",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 325,
@@ -1938,7 +1938,7 @@
   {
     "id": "ig-177",
     "url": "/galeria-ig/177.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 328,
@@ -1971,7 +1971,7 @@
   {
     "id": "ig-180",
     "url": "/galeria-ig/180.jpg",
-    "category": "otros",
+    "category": "mural",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 331,
@@ -2004,7 +2004,7 @@
   {
     "id": "ig-183",
     "url": "/galeria-ig/183.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 334,
@@ -2015,7 +2015,7 @@
   {
     "id": "ig-184",
     "url": "/galeria-ig/184.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 335,
@@ -2070,7 +2070,7 @@
   {
     "id": "ig-189",
     "url": "/galeria-ig/189.jpg",
-    "category": "otros",
+    "category": "mural",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 340,
@@ -2081,7 +2081,7 @@
   {
     "id": "ig-190",
     "url": "/galeria-ig/190.jpg",
-    "category": "otros",
+    "category": "mural",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 341,
@@ -2114,7 +2114,7 @@
   {
     "id": "ig-193",
     "url": "/galeria-ig/193.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 344,
@@ -2136,7 +2136,7 @@
   {
     "id": "ig-195",
     "url": "/galeria-ig/195.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 346,
@@ -2147,7 +2147,7 @@
   {
     "id": "ig-196",
     "url": "/galeria-ig/196.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 347,
@@ -2169,7 +2169,7 @@
   {
     "id": "ig-198",
     "url": "/galeria-ig/198.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 349,
@@ -2180,7 +2180,7 @@
   {
     "id": "ig-199",
     "url": "/galeria-ig/199.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 350,
@@ -2202,7 +2202,7 @@
   {
     "id": "ig-201",
     "url": "/galeria-ig/201.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 352,
@@ -2213,7 +2213,7 @@
   {
     "id": "ig-202",
     "url": "/galeria-ig/202.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 353,
@@ -2246,7 +2246,7 @@
   {
     "id": "ig-205",
     "url": "/galeria-ig/205.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 356,
@@ -2257,7 +2257,7 @@
   {
     "id": "ig-206",
     "url": "/galeria-ig/206.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 357,
@@ -2268,7 +2268,7 @@
   {
     "id": "ig-207",
     "url": "/galeria-ig/207.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 358,
@@ -2279,7 +2279,7 @@
   {
     "id": "ig-208",
     "url": "/galeria-ig/208.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 359,
@@ -2290,7 +2290,7 @@
   {
     "id": "ig-209",
     "url": "/galeria-ig/209.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 360,
@@ -2301,7 +2301,7 @@
   {
     "id": "ig-210",
     "url": "/galeria-ig/210.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 361,
@@ -2312,7 +2312,7 @@
   {
     "id": "ig-211",
     "url": "/galeria-ig/211.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 362,
@@ -2323,7 +2323,7 @@
   {
     "id": "ig-212",
     "url": "/galeria-ig/212.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 363,
@@ -2345,7 +2345,7 @@
   {
     "id": "ig-214",
     "url": "/galeria-ig/214.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 365,
@@ -2356,7 +2356,7 @@
   {
     "id": "ig-215",
     "url": "/galeria-ig/215.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 366,
@@ -2367,7 +2367,7 @@
   {
     "id": "ig-216",
     "url": "/galeria-ig/216.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 367,
@@ -2378,7 +2378,7 @@
   {
     "id": "ig-217",
     "url": "/galeria-ig/217.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 368,
@@ -2389,7 +2389,7 @@
   {
     "id": "ig-218",
     "url": "/galeria-ig/218.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 369,
@@ -2400,7 +2400,7 @@
   {
     "id": "ig-219",
     "url": "/galeria-ig/219.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 370,
@@ -2422,7 +2422,7 @@
   {
     "id": "ig-221",
     "url": "/galeria-ig/221.jpg",
-    "category": "otros",
+    "category": "bodegones",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 372,
@@ -2433,7 +2433,7 @@
   {
     "id": "ig-222",
     "url": "/galeria-ig/222.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 373,
@@ -2455,7 +2455,7 @@
   {
     "id": "ig-224",
     "url": "/galeria-ig/224.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 375,
@@ -2466,7 +2466,7 @@
   {
     "id": "ig-225",
     "url": "/galeria-ig/225.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 376,
@@ -2477,7 +2477,7 @@
   {
     "id": "ig-226",
     "url": "/galeria-ig/226.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 377,
@@ -2488,7 +2488,7 @@
   {
     "id": "ig-227",
     "url": "/galeria-ig/227.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 378,
@@ -2499,7 +2499,7 @@
   {
     "id": "ig-228",
     "url": "/galeria-ig/228.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 379,
@@ -2510,7 +2510,7 @@
   {
     "id": "ig-229",
     "url": "/galeria-ig/229.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 380,
@@ -2521,7 +2521,7 @@
   {
     "id": "ig-230",
     "url": "/galeria-ig/230.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 381,
@@ -2543,7 +2543,7 @@
   {
     "id": "ig-232",
     "url": "/galeria-ig/232.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 383,
@@ -2576,7 +2576,7 @@
   {
     "id": "ig-235",
     "url": "/galeria-ig/235.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 386,
@@ -2587,7 +2587,7 @@
   {
     "id": "ig-236",
     "url": "/galeria-ig/236.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 387,
@@ -2609,7 +2609,7 @@
   {
     "id": "ig-238",
     "url": "/galeria-ig/238.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 389,
@@ -2653,7 +2653,7 @@
   {
     "id": "ig-242",
     "url": "/galeria-ig/242.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 393,
@@ -2719,7 +2719,7 @@
   {
     "id": "ig-248",
     "url": "/galeria-ig/248.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 399,
@@ -2752,7 +2752,7 @@
   {
     "id": "ig-251",
     "url": "/galeria-ig/251.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 402,
@@ -2807,7 +2807,7 @@
   {
     "id": "ig-256",
     "url": "/galeria-ig/256.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 407,
@@ -2851,7 +2851,7 @@
   {
     "id": "ig-260",
     "url": "/galeria-ig/260.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 411,
@@ -2884,7 +2884,7 @@
   {
     "id": "ig-263",
     "url": "/galeria-ig/263.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 414,
@@ -2895,7 +2895,7 @@
   {
     "id": "ig-264",
     "url": "/galeria-ig/264.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 415,
@@ -2906,7 +2906,7 @@
   {
     "id": "ig-265",
     "url": "/galeria-ig/265.jpg",
-    "category": "otros",
+    "category": "paisaje",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 416,
@@ -2917,7 +2917,7 @@
   {
     "id": "ig-266",
     "url": "/galeria-ig/266.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 417,
@@ -2928,7 +2928,7 @@
   {
     "id": "ig-267",
     "url": "/galeria-ig/267.jpg",
-    "category": "otros",
+    "category": "animales",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 418,
@@ -2939,7 +2939,7 @@
   {
     "id": "ig-268",
     "url": "/galeria-ig/268.jpg",
-    "category": "otros",
+    "category": "animales",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 419,
@@ -2961,7 +2961,7 @@
   {
     "id": "ig-270",
     "url": "/galeria-ig/270.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 421,
@@ -3005,7 +3005,7 @@
   {
     "id": "ig-274",
     "url": "/galeria-ig/274.jpg",
-    "category": "otros",
+    "category": "paisaje",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 425,
@@ -3038,7 +3038,7 @@
   {
     "id": "ig-277",
     "url": "/galeria-ig/277.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 428,
@@ -3060,7 +3060,7 @@
   {
     "id": "ig-279",
     "url": "/galeria-ig/279.jpg",
-    "category": "otros",
+    "category": "bodegones",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 430,
@@ -3071,7 +3071,7 @@
   {
     "id": "ig-280",
     "url": "/galeria-ig/280.jpg",
-    "category": "otros",
+    "category": "animales",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 431,
@@ -3093,7 +3093,7 @@
   {
     "id": "ig-282",
     "url": "/galeria-ig/282.jpg",
-    "category": "otros",
+    "category": "bodegones",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 433,
@@ -3126,7 +3126,7 @@
   {
     "id": "ig-285",
     "url": "/galeria-ig/285.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 436,
@@ -3148,7 +3148,7 @@
   {
     "id": "ig-287",
     "url": "/galeria-ig/287.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 438,
@@ -3159,7 +3159,7 @@
   {
     "id": "ig-288",
     "url": "/galeria-ig/288.jpg",
-    "category": "otros",
+    "category": "escultura",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 439,
@@ -3225,7 +3225,7 @@
   {
     "id": "ig-294",
     "url": "/galeria-ig/294.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 445,
@@ -3247,7 +3247,7 @@
   {
     "id": "ig-296",
     "url": "/galeria-ig/296.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 447,
@@ -3258,7 +3258,7 @@
   {
     "id": "ig-297",
     "url": "/galeria-ig/297.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 448,
@@ -3324,7 +3324,7 @@
   {
     "id": "ig-303",
     "url": "/galeria-ig/303.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 454,
@@ -3346,7 +3346,7 @@
   {
     "id": "ig-305",
     "url": "/galeria-ig/305.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 456,
@@ -3357,7 +3357,7 @@
   {
     "id": "ig-306",
     "url": "/galeria-ig/306.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 457,
@@ -3368,7 +3368,7 @@
   {
     "id": "ig-307",
     "url": "/galeria-ig/307.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 458,
@@ -3379,7 +3379,7 @@
   {
     "id": "ig-308",
     "url": "/galeria-ig/308.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 459,
@@ -3401,7 +3401,7 @@
   {
     "id": "ig-310",
     "url": "/galeria-ig/310.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 461,
@@ -3412,7 +3412,7 @@
   {
     "id": "ig-311",
     "url": "/galeria-ig/311.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 462,
@@ -3445,7 +3445,7 @@
   {
     "id": "ig-314",
     "url": "/galeria-ig/314.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 465,
@@ -3467,7 +3467,7 @@
   {
     "id": "ig-316",
     "url": "/galeria-ig/316.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 467,
@@ -3478,7 +3478,7 @@
   {
     "id": "ig-317",
     "url": "/galeria-ig/317.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 468,
@@ -3500,7 +3500,7 @@
   {
     "id": "ig-319",
     "url": "/galeria-ig/319.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 470,
@@ -3511,7 +3511,7 @@
   {
     "id": "ig-320",
     "url": "/galeria-ig/320.jpg",
-    "category": "otros",
+    "category": "bodegones",
     "caption": "",
     "alt": "Obra de otras obras de Harold Lezcano",
     "order": 471,

@@ -29,7 +29,7 @@ function pintarLangTabs(host,hint){
  host.replaceChildren();
  for(const [code,name] of ADMIN_LANGS){
   const b=document.createElement('button');b.type='button';b.className='idioma-tab'+(adminLang===code?' active':'');b.textContent=name;
-  b.onclick=()=>{if(typeof flushTextosForm==='function') flushTextosForm();if(typeof flushCaptionsForm==='function') flushCaptionsForm();adminLang=code;renderSite();renderGallery();};
+  b.onclick=()=>{if(typeof flushTextosForm==='function') flushTextosForm();if(typeof flushCaptionsForm==='function') flushCaptionsForm();adminLang=code;renderSite();renderCategories();renderGallery();};
   host.append(b);
  }
  if(hint) hint.textContent=adminLang==='es'?'Estás editando el texto en español (el principal).':'Estás editando la traducción. Si un campo queda vacío, en el sitio se muestra el español.';
@@ -99,32 +99,119 @@ async function persistItem(item) {
   if(n>=0)gallery[n]=edit;else gallery.push(edit);
  }
 }
+function nombreAlbumAdmin(c){
+ if(!c) return '';
+ if(adminLang!=='es' && c.nombreI18n && typeof c.nombreI18n[adminLang]==='string' && c.nombreI18n[adminLang].trim()) return c.nombreI18n[adminLang].trim();
+ return c.name;
+}
 function fillCategorySelect(select, includeAll = false) {
  const previous=select.value;select.replaceChildren();
  if(includeAll) select.add(new Option('Todos los álbumes',''));
- for(const c of categories) select.add(new Option(c.name,c.id));
+ for(const c of categories) select.add(new Option(nombreAlbumAdmin(c),c.id));
  if([...select.options].some(o=>o.value===previous)) select.value=previous;
+}
+let adminAlbum=null;
+function hrefGaleriaNav(){
+ const a=document.querySelector('.admin-bottom-nav [data-screen="galeria-admin"]');
+ const want=adminAlbum?'#galeria-admin/'+adminAlbum:'#galeria-admin';
+ if(a) a.setAttribute('href',want);
+ return want;
+}
+function abrirAlbumAdmin(id){
+ adminAlbum=id;
+ const want=hrefGaleriaNav();
+ if(location.hash!==want) history.replaceState(null,'',want);
+ renderGallery();
+ window.scrollTo(0,0);
+}
+window.abrirAlbumAdmin=abrirAlbumAdmin;
+function cerrarAlbumAdmin(){
+ adminAlbum=null;
+ const want=hrefGaleriaNav();
+ if(location.hash.startsWith('#galeria-admin') && location.hash!==want) history.replaceState(null,'',want);
+ renderGallery();
+ window.scrollTo(0,0);
 }
 function renderCategories() {
  fillCategorySelect($('upload-category'));fillCategorySelect($('gallery-filter'),true);
+ pintarLangTabs($('category-lang-tabs'),$('category-lang-hint'));
+ if(!$('category-list')) return;
  $('category-list').replaceChildren();
  for(const c of categories) {
   const form=document.createElement('form');form.className='admin-category-row';
-  const input=document.createElement('input');input.id='category-'+c.id;input.value=c.name;input.maxLength=80;input.required=true;
+  const input=document.createElement('input');input.id='category-'+c.id;input.maxLength=80;input.required=true;
+  const trans=document.createElement('input');trans.id='category-tr-'+c.id;trans.maxLength=80;
   const small=document.createElement('small');small.textContent='Identificador: '+c.id;
   const save=document.createElement('button');save.className='admin-secondary';save.type='submit';save.textContent='Guardar nombre';
-  form.append(makeLabel('Nombre del álbum',input),input,small,save);
+  if(adminLang==='es'){
+   input.value=c.name;
+   form.append(makeLabel('Nombre del álbum',input),input,small,save);
+  } else {
+   input.value=c.name;input.readOnly=true;
+   trans.value=(c.nombreI18n&&c.nombreI18n[adminLang])||'';trans.placeholder=c.name;
+   form.append(makeLabel('Nombre en español',input),input,makeLabel('Traducción ('+adminLang+')',trans),trans,small,save);
+  }
   form.onsubmit=e=>{e.preventDefault();action(form,async()=>{
-   const next=D.validateCategories(categories.map(item=>item.id===c.id?{...item,name:input.value}:item));
+   const nextItem={...c};
+   if(adminLang==='es'){
+    nextItem.name=input.value.trim();
+    const auto=D.traducirNombreAlbum(nextItem.name);
+    const merged={...(c.nombreI18n||{})};
+    for(const [k,v] of Object.entries(auto||{})) if(!merged[k]) merged[k]=v;
+    nextItem.nombreI18n=merged;
+   } else {
+    const merged={...(c.nombreI18n||{})};
+    const val=trans.value.trim();
+    if(val) merged[adminLang]=val; else delete merged[adminLang];
+    nextItem.nombreI18n=merged;
+   }
+   const next=D.validateCategories(categories.map(item=>item.id===c.id?nextItem:item));
    await api.saveConfig('categorias',{items:next});categories=next;renderCategories();renderGallery();say('Nombre del álbum guardado.');
   });};$('category-list').append(form);
  }
 }
 function renderGallery() {
  pintarLangTabs($('gallery-lang-tabs'),$('gallery-lang-hint'));
- const filter=$('gallery-filter').value;
- const items=gallery.filter(item=>!filter || item.category===filter).sort((a,b)=>a.order-b.order);
- $('gallery-count').textContent=items.length+' fotos'+(filter?' en este álbum':' en total');
+ fillCategorySelect($('upload-category'));
+ const folders=$('galeria-folders');
+ const bar=$('galeria-folder-bar');
+ const itemsRoot=$('gallery-admin-items');
+ const tabs=$('gallery-lang-tabs');
+ const hint=$('gallery-lang-hint');
+ if(!adminAlbum){
+  if(bar) bar.hidden=true;
+  if(tabs) tabs.hidden=true;
+  if(hint) hint.hidden=true;
+  if(itemsRoot) itemsRoot.replaceChildren();
+  if(folders){
+   folders.hidden=false;folders.replaceChildren();
+   const allCategories=[...categories];
+   for(const item of gallery) if(!allCategories.some(c=>c.id===item.category)) allCategories.push({id:item.category,name:item.category});
+   for(const c of allCategories){
+    const visibles=gallery.filter(i=>i.category===c.id);
+    const cover=(visibles.find(i=>i.cover&&!i.hidden)||visibles.find(i=>!i.hidden)||visibles[0]);
+    const btn=document.createElement('button');btn.type='button';btn.className='admin-album-folder album-book';btn.dataset.album=c.id;
+    if(cover){const img=document.createElement('img');img.src=cover.url;img.alt=nombreAlbumAdmin(c);img.className='album-cover-img';img.loading='lazy';if(window.EstudioRecorte) window.EstudioRecorte.aplicar(img,cover.edit);btn.append(img);}
+    else {const empty=document.createElement('div');empty.className='album-cover-img album-cover-empty';empty.innerHTML='<i class="fas fa-images" aria-hidden="true"></i>';btn.append(empty);}
+    const title=document.createElement('div');title.className='album-title';title.textContent=nombreAlbumAdmin(c);
+    const count=document.createElement('span');count.className='album-count';count.textContent=visibles.length+' '+(visibles.length===1?'foto':'fotos');
+    btn.append(title,count);
+    btn.onclick=()=>abrirAlbumAdmin(c.id);
+    folders.append(btn);
+   }
+  }
+  $('gallery-count').textContent=categories.length+' álbumes · '+gallery.length+' fotos en total';
+  return;
+ }
+ if(folders) folders.hidden=true;
+ if(bar) bar.hidden=false;
+ if(tabs) tabs.hidden=false;
+ if(hint) hint.hidden=false;
+ const cat=categories.find(c=>c.id===adminAlbum)||{id:adminAlbum,name:adminAlbum};
+ if($('galeria-folder-title')) $('galeria-folder-title').textContent=nombreAlbumAdmin(cat);
+ if($('upload-category') && [...$('upload-category').options].some(o=>o.value===adminAlbum)) $('upload-category').value=adminAlbum;
+ const items=gallery.filter(item=>item.category===adminAlbum).sort((a,b)=>a.order-b.order);
+ $('gallery-count').textContent=items.length+' fotos en este álbum';
  $('gallery-admin-items').replaceChildren();
  for(const item of items) {
   const card=document.createElement('form');card.className='admin-image-card';
@@ -387,15 +474,25 @@ $('refresh-user').onclick=async()=>{
  }catch(error){say(api.explainError(error));}
 };
 $('gallery-filter').onchange=renderGallery;
+window.cerrarAlbumAdmin=cerrarAlbumAdmin;
+if($('galeria-volver')) $('galeria-volver').onclick=cerrarAlbumAdmin;
 // Pantallas tipo app: una sección por vez, menú inferior y scroll recordado por pantalla.
 const SCREENS={'galeria-admin':'galeria-admin',galeria:'galeria-admin','categorias-admin':'categorias-admin',albumes:'categorias-admin','precios-admin':'precios-admin',precios:'precios-admin','sitio-admin':'sitio-admin',textos:'sitio-admin',sitio:'sitio-admin'};
 const scrolls={};let currentScreen='';
 function showScreen(id){
- const next=SCREENS[id]||'galeria-admin';
+ const raw=String(id||'');
+ const parts=raw.split('/');
+ const next=SCREENS[parts[0]]||'galeria-admin';
+ if(next==='galeria-admin'){
+  if(parts[1] && (categories.some(c=>c.id===parts[1]) || gallery.some(i=>i.category===parts[1]))) adminAlbum=parts[1];
+  else adminAlbum=null;
+ }
+ hrefGaleriaNav();
  if(currentScreen) scrolls[currentScreen]=window.scrollY;
  for(const sec of document.querySelectorAll('.admin-screen')) sec.hidden=sec.id!==next;
  for(const a of document.querySelectorAll('.admin-bottom-nav .tab-btn')){const on=a.dataset.screen===next;a.classList.toggle('active',on);if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');}
  const changed=currentScreen!==next;currentScreen=next;document.body.dataset.pantalla=next;
+ if(typeof renderGallery==='function' && gallery) try{renderGallery();}catch(e){}
  if(changed) requestAnimationFrame(()=>window.scrollTo(0,scrolls[next]||0));
 }
 window.addEventListener('hashchange',()=>showScreen(location.hash.slice(1)));
@@ -414,6 +511,7 @@ $('gallery-upload-form').onsubmit=e=>{e.preventDefault();if(uploading) return;co
     setPending(path,false);completed++;
    }
    $('gallery-files').value='';$('upload-caption').value='';say('Fotos agregadas a la galería.');
+   if(category){ adminAlbum=category; const want=hrefGaleriaNav(); if(location.hash.startsWith('#galeria-admin') && location.hash!==want) history.replaceState(null,'',want); }
   } finally {
    uploading=false;renderGallery();$('gallery-upload-status').textContent=completed+' de '+files.length+' fotos guardadas. Si hubo un error, seleccioná solo las restantes para evitar duplicados.';
   }
@@ -423,7 +521,8 @@ $('category-form').onsubmit=e=>{e.preventDefault();const form=e.currentTarget;ac
  let id=name.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,32);
  if(!/^[a-z]/.test(id)) id=('album-'+id).slice(0,40);
  if(categories.some(c=>c.id===id)) id=id.slice(0,30)+'-'+api.newId().slice(0,6);
- const next=D.validateCategories([...categories,{id,name}]);await api.saveConfig('categorias',{items:next});categories=next;$('category-name').value='';renderCategories();renderGallery();say('Álbum creado. Ya aparece en la galería pública.');
+ const nombreI18n=D.traducirNombreAlbum(name);
+ const next=D.validateCategories([...categories,{id,name,nombreI18n}]);await api.saveConfig('categorias',{items:next});categories=next;$('category-name').value='';renderCategories();renderGallery();say('Álbum creado. Ya aparece en la galería pública.');
 });};
 $('prices-form').onsubmit=e=>{e.preventDefault();const form=e.currentTarget;action(form,async()=>{
  const next=D.clone(prices);

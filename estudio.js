@@ -265,7 +265,7 @@
   for (const cat of allCategories) {
    const items=visible.filter(item=>item.category===cat.id);
    const cover=items.find(item=>item.cover)||items[0];
-   const albumName=(window.EstudioI18n&&EstudioI18n.t&&EstudioI18n.t('album.'+cat.id) && EstudioI18n.t('album.'+cat.id)!=='album.'+cat.id)?EstudioI18n.t('album.'+cat.id):cat.name;
+   const albumName=(window.EstudioI18n&&EstudioI18n.nombreDeAlbum)?EstudioI18n.nombreDeAlbum(cat):((window.EstudioI18n&&EstudioI18n.t&&EstudioI18n.t('album.'+cat.id) && EstudioI18n.t('album.'+cat.id)!=='album.'+cat.id)?EstudioI18n.t('album.'+cat.id):cat.name);
    nombresAlbum[cat.id]=albumName;
    const button=document.createElement('button');button.type='button';button.className='album-book';button.dataset.album=cat.id;
    button.addEventListener('click',()=>openAlbum(cat.id,nombresAlbum[cat.id]||cat.name));
@@ -283,9 +283,15 @@
    if (cap) { const caption=document.createElement('span');caption.className='gallery-caption';caption.textContent=cap;button.append(caption); }
    button.addEventListener('click',()=>openModal(img.src));main.append(button);
   }
+  if (window.albumActual && nombresAlbum[window.albumActual]) {
+   const titulo=document.getElementById('titulo-album-abierto');
+   const hojas=document.getElementById('vista-hojas');
+   if (titulo && hojas && hojas.style.display==='block') titulo.textContent=nombresAlbum[window.albumActual];
+  }
   const route=location.hash.split('/');
   if (route[0]==='#galeria' && route[1] && nombresAlbum[route[1]]) restaurarRuta();
  }
+ window.renderGaleriaPublica=renderGallery;
  async function loadRemote() {
   // El catálogo local no depende de Firebase: también funciona sin conexión al SDK.
   try {

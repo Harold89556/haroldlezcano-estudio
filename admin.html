@@ -13,14 +13,22 @@
 <section id="verification-panel" class="form-card" hidden><h2>Verificá tu correo</h2><p>Para editar, confirmá la dirección henro89@gmail.com. Luego volvé a ingresar.</p><button id="verify-email" type="button" class="admin-secondary">Enviar enlace de verificación</button><button id="refresh-user" type="button" class="admin-secondary">Ya verifiqué mi correo</button></section>
 <div id="admin-workspace" hidden>
 
-<section id="galeria-admin" class="form-card admin-screen"><h2>Galería</h2><p>En cada foto podés tocar «Editar foto» para recortarla, girarla o cambiar la imagen, y «Eliminar» para sacarla del sitio. También podés cambiar su álbum, texto, orden y portada.</p><p>Las fotos originales del estudio se quitan del sitio pero quedan acá marcadas, y se pueden volver a mostrar. Las fotos que subiste vos se borran definitivamente, junto con su archivo.</p>
+<section id="galeria-admin" class="form-card admin-screen"><h2>Galería</h2><p>Los álbumes se ven como carpetas. Entrá a un álbum para recortar, girar, cambiar, mover o eliminar sus fotos. Las fotos originales del estudio se quitan del sitio pero quedan marcadas, y se pueden volver a mostrar. Las que subiste vos se borran definitivamente, junto con su archivo.</p>
+<div id="galeria-folder-bar" class="admin-folder-bar" hidden>
+<button type="button" id="galeria-volver" class="btn-volver"><i class="fas fa-arrow-left" aria-hidden="true"></i> Volver a los álbumes</button>
+<h3 id="galeria-folder-title">Álbum</h3>
+</div>
+<label for="gallery-filter" class="admin-sr-only">Filtrar álbum</label><select id="gallery-filter" hidden><option value="">Todos los álbumes</option></select>
+<div id="galeria-folders" class="admin-album-folders"></div>
+<div id="gallery-lang-tabs" class="idioma-tabs"></div><p id="gallery-lang-hint" class="admin-hint"></p><p id="gallery-count"></p><div id="gallery-admin-items" class="admin-gallery"></div>
 <form id="gallery-upload-form"><h3>Agregar fotos</h3><label for="gallery-files">Imágenes JPG, PNG, WEBP, GIF o AVIF (hasta 10 por carga, 8 MB cada una)</label><input type="file" id="gallery-files" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" multiple required/>
 <label for="upload-category">Álbum</label><select id="upload-category" required></select><label for="upload-caption">Texto breve opcional (se aplica a las fotos seleccionadas)</label><input id="upload-caption" maxlength="240" placeholder="Dejá vacío si no querés agregar texto"/>
 <button type="submit" class="btn-confirmar btn-block">Subir a la galería</button><p id="gallery-upload-status" role="status"></p></form>
 <details id="pending-files-panel" hidden><summary>Archivos pendientes de limpieza</summary><p>Estos archivos se subieron, pero no se pudieron guardar o borrar completamente. Solo se muestran los pendientes de este navegador.</p><div id="pending-files"></div></details>
-<label for="gallery-filter">Filtrar álbum</label><select id="gallery-filter"><option value="">Todos los álbumes</option></select>
-<div id="gallery-lang-tabs" class="idioma-tabs"></div><p id="gallery-lang-hint" class="admin-hint"></p><p id="gallery-count"></p><div id="gallery-admin-items" class="admin-gallery"></div></section>
-<section id="categorias-admin" class="form-card admin-screen"><h2>Álbumes</h2><p>El nombre puede cambiar sin mover las fotos. Un álbum nuevo aparece en la galería aunque todavía no tenga fotos. El identificador se mantiene para conservar los enlaces.</p><div id="category-list"></div>
+</section>
+<section id="categorias-admin" class="form-card admin-screen"><h2>Álbumes</h2><p>El nombre puede cambiar sin mover las fotos. Un álbum nuevo aparece en la galería aunque todavía no tenga fotos. El identificador se mantiene para conservar los enlaces. Las traducciones se pueden editar en las pestañas de idioma; si un idioma queda vacío, el sitio muestra el nombre en español.</p>
+<div id="category-lang-tabs" class="idioma-tabs"></div><p id="category-lang-hint" class="admin-hint"></p>
+<div id="category-list"></div>
 <form id="category-form"><h3>Nuevo álbum</h3><label for="category-name">Nombre del nuevo álbum</label><input id="category-name" maxlength="80" required/><button type="submit" class="admin-secondary">Crear álbum</button></form></section>
 <section id="precios-admin" class="form-card admin-screen"><h2>Precios y cotización</h2><p>Importes en guaraníes (ya con IVA incluido). Los factores son multiplicadores internos (1 mantiene el valor). No se muestran porcentajes en las opciones del cotizador. Murales sigue siempre «A consultar». Pedir factura en el cotizador no suma nada: solo pide los datos fiscales.</p><p>La matriz incluye óleo y carbonilla, personas extra y todos los marcos. En escultura: máximo entre el mínimo y (fijo + altura × precio por cm), redondeado al importe indicado. No incluye fundición.</p><p>Tamaños personalizados: el precio se calcula por área, en proporción a las filas de la matriz.</p>
 <form id="prices-form"><div id="price-fields"></div><button class="btn-confirmar btn-block" type="submit">Guardar precios</button><p id="prices-status" role="status"></p></form>

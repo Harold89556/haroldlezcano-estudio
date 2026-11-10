@@ -794,7 +794,7 @@
   {
     "id": "seed-073",
     "url": "https://i.postimg.cc/ZqrCMv9Z/1460758244301.jpg",
-    "category": "mural",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de murales de Harold Lezcano, imagen 1",
     "order": 72,
@@ -805,7 +805,7 @@
   {
     "id": "seed-074",
     "url": "https://i.postimg.cc/R0rWdL0q/2012-05-24-006.jpg",
-    "category": "mural",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de murales de Harold Lezcano, imagen 2",
     "order": 73,
@@ -816,7 +816,7 @@
   {
     "id": "seed-075",
     "url": "https://i.postimg.cc/ZqkWHxqR/2012-05-29-020.jpg",
-    "category": "mural",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de murales de Harold Lezcano, imagen 3",
     "order": 74,
@@ -827,7 +827,7 @@
   {
     "id": "seed-076",
     "url": "https://i.postimg.cc/8Chj0fFC/20160325-170441.jpg",
-    "category": "mural",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de murales de Harold Lezcano, imagen 4",
     "order": 75,
@@ -893,7 +893,7 @@
   {
     "id": "seed-082",
     "url": "https://i.postimg.cc/3RYd5rp6/20241226-203336.jpg",
-    "category": "mural",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de murales de Harold Lezcano, imagen 10",
     "order": 81,
@@ -904,7 +904,7 @@
   {
     "id": "seed-083",
     "url": "https://i.postimg.cc/TPrp45yw/FB-IMG-1584030278296.jpg",
-    "category": "mural",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de murales de Harold Lezcano, imagen 11",
     "order": 82,
@@ -915,7 +915,7 @@
   {
     "id": "seed-084",
     "url": "https://i.postimg.cc/jjzLFnWS/FB-IMG-1584030295754.jpg",
-    "category": "mural",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de murales de Harold Lezcano, imagen 12",
     "order": 83,
@@ -926,7 +926,7 @@
   {
     "id": "seed-085",
     "url": "https://i.postimg.cc/XvMrLkvv/FB-IMG-1584030330125.jpg",
-    "category": "mural",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de murales de Harold Lezcano, imagen 13",
     "order": 84,
@@ -1036,7 +1036,7 @@
   {
     "id": "seed-095",
     "url": "https://i.postimg.cc/JnMGV7J3/IMG-20241205-WA0072.jpg",
-    "category": "mural",
+    "category": "animales",
     "caption": "",
     "alt": "Obra de murales de Harold Lezcano, imagen 23",
     "order": 94,
@@ -1047,7 +1047,7 @@
   {
     "id": "seed-096",
     "url": "https://i.postimg.cc/wvg78xJL/IMG-20241205-WA0074.jpg",
-    "category": "mural",
+    "category": "animales",
     "caption": "",
     "alt": "Obra de murales de Harold Lezcano, imagen 24",
     "order": 95,
@@ -1058,7 +1058,7 @@
   {
     "id": "seed-097",
     "url": "https://i.postimg.cc/HxdVDW54/Picsart-24-12-05-07-35-35-618.jpg",
-    "category": "mural",
+    "category": "animales",
     "caption": "",
     "alt": "Obra de murales de Harold Lezcano, imagen 25",
     "order": 96,
@@ -1069,7 +1069,7 @@
   {
     "id": "seed-098",
     "url": "https://i.postimg.cc/mDBtfZMY/Picsart-25-01-13-14-50-15-800.jpg",
-    "category": "mural",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de murales de Harold Lezcano, imagen 26",
     "order": 97,
@@ -1091,7 +1091,7 @@
   {
     "id": "seed-100",
     "url": "https://i.postimg.cc/3wCxBM6m/20250327-112357.jpg",
-    "category": "abstracto",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de abstractos de Harold Lezcano, imagen 2",
     "order": 99,
@@ -1102,7 +1102,7 @@
   {
     "id": "seed-101",
     "url": "https://i.postimg.cc/8CBzH836/20250331-132943.jpg",
-    "category": "abstracto",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de abstractos de Harold Lezcano, imagen 3",
     "order": 100,
@@ -1113,7 +1113,7 @@
   {
     "id": "seed-102",
     "url": "https://i.postimg.cc/JhczqwgJ/20250722-093733.jpg",
-    "category": "abstracto",
+    "category": "otros",
     "caption": "",
     "alt": "Obra de abstractos de Harold Lezcano, imagen 4",
     "order": 101,
@@ -1124,7 +1124,7 @@
   {
     "id": "seed-103",
     "url": "https://i.postimg.cc/QMkdbLPg/IMG-20200329-WA0014(1).jpg",
-    "category": "abstracto",
+    "category": "otros",
     "caption": "",
     "alt": "Obra de abstractos de Harold Lezcano, imagen 5",
     "order": 102,
@@ -1135,7 +1135,7 @@
   {
     "id": "seed-104",
     "url": "https://i.postimg.cc/tgt450fn/IMG-20250430-WA0011.jpg",
-    "category": "abstracto",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de abstractos de Harold Lezcano, imagen 6",
     "order": 103,
@@ -1146,7 +1146,7 @@
   {
     "id": "seed-105",
     "url": "https://i.postimg.cc/7LMZVvcX/Pics-Art-06-05-11-45-20.jpg",
-    "category": "abstracto",
+    "category": "mural",
     "caption": "",
     "alt": "Obra de abstractos de Harold Lezcano, imagen 7",
     "order": 104,
@@ -1157,7 +1157,7 @@
   {
     "id": "seed-106",
     "url": "https://i.postimg.cc/jqGCthzK/2014-06-05-21-19-50.jpg",
-    "category": "otros",
+    "category": "animales",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 1",
     "order": 105,
@@ -1168,7 +1168,7 @@
   {
     "id": "seed-107",
     "url": "https://i.postimg.cc/SQXjBPzb/20140705-193329.jpg",
-    "category": "otros",
+    "category": "vehiculos",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 2",
     "order": 106,
@@ -1179,7 +1179,7 @@
   {
     "id": "seed-108",
     "url": "https://i.postimg.cc/FF21Nxjv/20140718-095757-1.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 3",
     "order": 107,
@@ -1190,7 +1190,7 @@
   {
     "id": "seed-109",
     "url": "https://i.postimg.cc/1Rg4kdN5/20201002-204415.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 4",
     "order": 108,
@@ -1201,7 +1201,7 @@
   {
     "id": "seed-110",
     "url": "https://i.postimg.cc/rz6B3sRc/20201012-160628.jpg",
-    "category": "otros",
+    "category": "bodegones",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 5",
     "order": 109,
@@ -1212,7 +1212,7 @@
   {
     "id": "seed-111",
     "url": "https://i.postimg.cc/5jchTyYh/20201205-135002.jpg",
-    "category": "otros",
+    "category": "bodegones",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 6",
     "order": 110,
@@ -1234,7 +1234,7 @@
   {
     "id": "seed-113",
     "url": "https://i.postimg.cc/BtWrkbPW/20210514-230041.jpg",
-    "category": "otros",
+    "category": "bodegones",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 8",
     "order": 112,
@@ -1245,7 +1245,7 @@
   {
     "id": "seed-114",
     "url": "https://i.postimg.cc/SRz0gCsw/2024-08-14-08-41-Office-Lens.jpg",
-    "category": "otros",
+    "category": "animales",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 9",
     "order": 113,
@@ -1256,7 +1256,7 @@
   {
     "id": "seed-115",
     "url": "https://i.postimg.cc/D0bVxLZ9/2024-11-01-21-13-Office-Lens-(1).jpg",
-    "category": "otros",
+    "category": "vehiculos",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 10",
     "order": 114,
@@ -1289,7 +1289,7 @@
   {
     "id": "seed-118",
     "url": "https://i.postimg.cc/14xk2XVw/20240402-010548.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 13",
     "order": 117,
@@ -1311,7 +1311,7 @@
   {
     "id": "seed-120",
     "url": "https://i.postimg.cc/Z0kG2nvJ/20240423-183959.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 15",
     "order": 119,
@@ -1322,7 +1322,7 @@
   {
     "id": "seed-121",
     "url": "https://i.postimg.cc/Jtwfv0HX/20240912-204637.jpg",
-    "category": "otros",
+    "category": "animales",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 16",
     "order": 120,
@@ -1333,7 +1333,7 @@
   {
     "id": "seed-122",
     "url": "https://i.postimg.cc/zvRmxKvz/20241030-012850.jpg",
-    "category": "otros",
+    "category": "vehiculos",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 17",
     "order": 121,
@@ -1344,7 +1344,7 @@
   {
     "id": "seed-123",
     "url": "https://i.postimg.cc/gr9CQjL3/20250725-180543.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 18",
     "order": 122,
@@ -1421,7 +1421,7 @@
   {
     "id": "seed-130",
     "url": "https://i.postimg.cc/mZchvnFg/299398-415744478475035-1923656891-n.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 25",
     "order": 129,
@@ -1432,7 +1432,7 @@
   {
     "id": "seed-131",
     "url": "https://i.postimg.cc/y6JWMG3t/68cf10ead9a424e580e6149f1538ff76-4.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 26",
     "order": 130,
@@ -1454,7 +1454,7 @@
   {
     "id": "seed-133",
     "url": "https://i.postimg.cc/y6JWMGS6/ABCD0009.jpg",
-    "category": "otros",
+    "category": "animales",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 28",
     "order": 132,
@@ -1465,7 +1465,7 @@
   {
     "id": "seed-134",
     "url": "https://i.postimg.cc/wxt3CrRG/ddad59136edffd4d1a66860ad985cf68-5.jpg",
-    "category": "otros",
+    "category": "paisaje",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 29",
     "order": 133,
@@ -1476,7 +1476,7 @@
   {
     "id": "seed-135",
     "url": "https://i.postimg.cc/7PCbFRTD/f0fe3fc9-16eb-4452-9a4f-f459d924ae4d.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 30",
     "order": 134,
@@ -1487,7 +1487,7 @@
   {
     "id": "seed-136",
     "url": "https://i.postimg.cc/h4JhkYQ3/f53ff4d1b9c77f350fe2b993f73af101-2.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 31",
     "order": 135,
@@ -1498,7 +1498,7 @@
   {
     "id": "seed-137",
     "url": "https://i.postimg.cc/dQ7DbfTY/FB-20150807-23-57-15-Saved-Picture.jpg",
-    "category": "otros",
+    "category": "bodegones",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 32",
     "order": 136,
@@ -1509,7 +1509,7 @@
   {
     "id": "seed-138",
     "url": "https://i.postimg.cc/WpDtByJN/FB-20150807-23-58-26-Saved-Picture.jpg",
-    "category": "otros",
+    "category": "bodegones",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 33",
     "order": 137,
@@ -1520,7 +1520,7 @@
   {
     "id": "seed-139",
     "url": "https://i.postimg.cc/44KnD0HM/FB-IMG-1510705337005.jpg",
-    "category": "otros",
+    "category": "bodegones",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 34",
     "order": 138,
@@ -1542,7 +1542,7 @@
   {
     "id": "seed-141",
     "url": "https://i.postimg.cc/gcwrC7Lg/IMG-20240125-WA0004.jpg",
-    "category": "otros",
+    "category": "paisaje",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 36",
     "order": 140,
@@ -1553,7 +1553,7 @@
   {
     "id": "seed-142",
     "url": "https://i.postimg.cc/sfB1kLGw/IMG-20240308-WA0080.jpg",
-    "category": "otros",
+    "category": "animales",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 37",
     "order": 141,
@@ -1575,7 +1575,7 @@
   {
     "id": "seed-144",
     "url": "https://i.postimg.cc/prnNszT3/IMG-20240813-WA0045.jpg",
-    "category": "otros",
+    "category": "animales",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 39",
     "order": 143,
@@ -1586,7 +1586,7 @@
   {
     "id": "seed-145",
     "url": "https://i.postimg.cc/rst6fxs6/IMG-20241030-WA0044.jpg",
-    "category": "otros",
+    "category": "vehiculos",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 40",
     "order": 144,
@@ -1608,7 +1608,7 @@
   {
     "id": "seed-147",
     "url": "https://i.postimg.cc/s1FkqxGg/IMG-20251219-WA0079.jpg",
-    "category": "otros",
+    "category": "bodegones",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 42",
     "order": 146,
@@ -1630,7 +1630,7 @@
   {
     "id": "seed-149",
     "url": "https://i.postimg.cc/WpDtByqy/Screenshot-20230224-121331-Instagram.jpg",
-    "category": "otros",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 44",
     "order": 148,
@@ -1641,7 +1641,7 @@
   {
     "id": "seed-150",
     "url": "https://i.postimg.cc/7bvFdhJ1/Screenshot-20240325-131015-Instagram.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 45",
     "order": 149,
@@ -1652,7 +1652,7 @@
   {
     "id": "seed-151",
     "url": "https://i.postimg.cc/BtWrkbPT/Screenshot-20240325-131056-Instagram.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 46",
     "order": 150,
@@ -1663,7 +1663,7 @@
   {
     "id": "seed-152",
     "url": "https://i.postimg.cc/rydzBHRj/Screenshot-20240325-131113-Instagram.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 47",
     "order": 151,

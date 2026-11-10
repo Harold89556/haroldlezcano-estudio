@@ -145,6 +145,10 @@
       "album.mural": "Murales",
       "album.abstracto": "Abstractos",
       "album.otros": "Otros",
+      "album.animales": "Animales",
+      "album.vehiculos": "Vehículos",
+      "album.bodegones": "Bodegones",
+      "album.personajes": "Personajes",
       "album.volver": "Volver a la Biblioteca",
       "pais.PY": "Paraguay",
       "pais.AR": "Argentina",
@@ -288,6 +292,10 @@
       "album.mural": "Murals",
       "album.abstracto": "Abstract",
       "album.otros": "Other",
+      "album.animales": "Animals",
+      "album.vehiculos": "Vehicles",
+      "album.bodegones": "Still lifes",
+      "album.personajes": "Characters",
       "album.volver": "Back to the library",
       "pais.PY": "Paraguay",
       "pais.AR": "Argentina",
@@ -431,6 +439,10 @@
       "album.mural": "Murais",
       "album.abstracto": "Abstratos",
       "album.otros": "Outros",
+      "album.animales": "Animais",
+      "album.vehiculos": "Veículos",
+      "album.bodegones": "Naturezas-mortas",
+      "album.personajes": "Personagens",
       "album.volver": "Voltar à biblioteca",
       "pais.PY": "Paraguai",
       "pais.AR": "Argentina",
@@ -574,6 +586,10 @@
       "album.mural": "Fresques",
       "album.abstracto": "Abstrait",
       "album.otros": "Autres",
+      "album.animales": "Animaux",
+      "album.vehiculos": "Véhicules",
+      "album.bodegones": "Natures mortes",
+      "album.personajes": "Personnages",
       "album.volver": "Retour à la bibliothèque",
       "pais.PY": "Paraguay",
       "pais.AR": "Argentine",
@@ -717,6 +733,10 @@
       "album.mural": "Murali",
       "album.abstracto": "Astratti",
       "album.otros": "Altri",
+      "album.animales": "Animali",
+      "album.vehiculos": "Veicoli",
+      "album.bodegones": "Nature morte",
+      "album.personajes": "Personaggi",
       "album.volver": "Torna alla biblioteca",
       "pais.PY": "Paraguay",
       "pais.AR": "Argentina",
@@ -860,6 +880,10 @@
       "album.mural": "Wandbilder",
       "album.abstracto": "Abstrakt",
       "album.otros": "Weitere",
+      "album.animales": "Tiere",
+      "album.vehiculos": "Fahrzeuge",
+      "album.bodegones": "Stillleben",
+      "album.personajes": "Figuren",
       "album.volver": "Zurück zur Bibliothek",
       "pais.PY": "Paraguay",
       "pais.AR": "Argentinien",
@@ -1052,6 +1076,7 @@
     }
     if (window.CotizadorVisual && typeof CotizadorVisual.refreshAll === 'function') { try { CotizadorVisual.refreshAll(); } catch (e) {} }
     if (typeof calcular === 'function') calcular();
+    if (typeof window.renderGaleriaPublica === 'function') { try { window.renderGaleriaPublica(); } catch (e) {} }
   }
 
   function registrar(packs) {
@@ -1083,6 +1108,16 @@
     if (typeof es === 'string') return es;
     const defEs = global.ESTUDIO_DEFAULTS && global.ESTUDIO_DEFAULTS.sitio && global.ESTUDIO_DEFAULTS.sitio.textos && global.ESTUDIO_DEFAULTS.sitio.textos[key];
     return typeof defEs === 'string' ? defEs : '';
+  }
+  function nombreDeAlbum(cat) {
+    const obj = typeof cat === 'string' ? { id: cat, name: cat } : (cat || {});
+    if (idioma !== 'es' && obj.nombreI18n && typeof obj.nombreI18n[idioma] === 'string' && obj.nombreI18n[idioma].trim()) {
+      return obj.nombreI18n[idioma].trim();
+    }
+    const key = 'album.' + (obj.id || '');
+    const tr = t(key);
+    if (tr && tr !== key) return tr;
+    return obj.name || obj.id || '';
   }
   function captionDe(item) {
     if (!item) return '';
@@ -1148,7 +1183,7 @@
 
   global.EstudioI18n = {
     claves: (lang) => Object.keys(STRINGS[lang] || {}),
-    t, locale, setIdioma, setPais, aplicar, iniciar, registrar, textoSitio, captionDe, PAISES, LANGS,
+    t, locale, setIdioma, setPais, aplicar, iniciar, registrar, textoSitio, captionDe, nombreDeAlbum, PAISES, LANGS,
     get idioma() { return idioma; },
     get pais() { return pais; },
     get moneda() { return paisInfo().moneda; }

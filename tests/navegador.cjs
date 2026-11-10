@@ -67,6 +67,12 @@ async function quote(page){
 }
 async function enviarPedido(page){ await page.evaluate(()=>window.enviarObra()); }
 async function elegirAsistente(page,value){ await page.locator('#asistente-opciones .guia-card[data-value="'+value+'"]').click(); }
+async function abrirCarpetaAdmin(page,id){
+ const folder=page.locator('.admin-album-folder[data-album="'+id+'"]');
+ if(await folder.count() && await folder.isVisible()) await folder.click();
+ else await page.evaluate(id=>{ if(typeof abrirAlbumAdmin==='function') abrirAlbumAdmin(id); },id);
+ await page.waitForSelector('#galeria-folder-bar:not([hidden])');
+}
 async function siguienteAsistente(page){ await page.locator('#asistente-siguiente').click(); }
 
 const photo=(name='foto.png',size)=>({name,mimeType:'image/png',buffer:size?Buffer.alloc(size):png});
@@ -156,11 +162,19 @@ let base;
   const {page,context,errors}=await session();await page.goto(base+'/admin.html');await page.fill('#admin-password','clave-simulada-local');await page.click('#login-button');await page.waitForSelector('#admin-workspace:not([hidden])');
   assert.deepEqual(await page.evaluate(()=>window.__mock.storageLogin),{email:'henro89@gmail.com',passwordPresent:true});
   assert.equal(await page.inputValue('#admin-password'),'');
-  assert.equal(await page.locator('.admin-image-card').count(),152);
+  assert.ok(await page.locator('.admin-album-folder').count()>=6);
+  assert.equal(await page.locator('.admin-image-card').count(),0);
+  await abrirCarpetaAdmin(page,'retrato');
+  assert.ok(await page.locator('.admin-image-card').count()>=1);
+  await page.locator('#galeria-volver').click();
+  await page.waitForSelector('#galeria-folders:not([hidden])');
   await page.click('.admin-bottom-nav [data-screen=precios-admin]');await page.locator('details').evaluateAll(items=>items.forEach(i=>i.open=true));await page.fill('#price-matriz-30x40-realista','900000');await page.locator('#prices-form button[type=submit]').click();await page.waitForFunction(()=>window.__mock.config.precios?.matriz['30x40'].realista===900000);
   await page.click('.admin-bottom-nav [data-screen=categorias-admin]');await page.fill('#category-name','Taller de prueba');await page.locator('#category-form button').click();await page.waitForFunction(()=>window.__mock.config.categorias?.items.some(i=>i.name==='Taller de prueba'));
   await page.click('.admin-bottom-nav [data-screen=galeria-admin]');await page.selectOption('#upload-category','taller-de-prueba');await page.setInputFiles('#gallery-files',photo('nueva.png'));await page.locator('#gallery-upload-form button[type=submit]').click();await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.storagePath?.startsWith('galeria/')));
-  assert.equal(await page.locator('.admin-image-card').count(),153);
+  await page.waitForSelector('#galeria-folder-bar:not([hidden])');
+  assert.equal(await page.locator('.admin-image-card').count(),1);
+  await page.locator('#galeria-volver').click();
+  await abrirCarpetaAdmin(page,'retrato');
   const first=page.locator('.admin-image-card').first();await first.locator('input[id^=caption]').fill('Texto ingresado en prueba');await first.locator('input[id^=hidden]').check();await first.locator('button[type=submit]').click();await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.id==='seed-001'&&i.hidden&&i.caption==='Texto ingresado en prueba'));
   const second=page.locator('form.admin-image-card:has(#caption-seed-002)');
   await second.getByRole('button',{name:'Editar foto'}).click();await page.waitForSelector('#photo-editor .editor-canvas');await page.waitForFunction(()=>!document.querySelector('#photo-editor .editor-save').disabled);
@@ -173,6 +187,8 @@ let base;
   const third=page.locator('form.admin-image-card:has(#caption-seed-003)');await third.getByRole('button',{name:'Eliminar'}).click();await page.waitForFunction(()=>window.__mock.gallery.some(i=>i.id==='seed-003'&&i.hidden));
   assert.equal(await third.locator('.admin-badge').textContent(),'Eliminada de la galería');assert.equal(await third.getByRole('button',{name:'Volver a mostrar'}).count(),1);
   assert.equal(await page.evaluate(()=>window.__mock.deleted.length),0);
+  await page.locator('#galeria-volver').click();
+  await abrirCarpetaAdmin(page,'taller-de-prueba');
   const nueva=page.locator('.admin-image-card').last();const oldPath=await page.evaluate(()=>window.__mock.gallery.find(i=>!/^(seed|ig)-/.test(i.id)).storagePath);
   await nueva.getByRole('button',{name:'Editar foto'}).click();await page.waitForSelector('#editor-file',{state:'attached'});await page.setInputFiles('#editor-file',photo('cambio.png'));
   await page.waitForFunction(()=>!document.querySelector('#photo-editor .editor-save').disabled);await page.locator('.editor-save').click();
@@ -182,7 +198,9 @@ let base;
   await page.locator('.editor-btn',{hasText:'Girar a la izquierda'}).click();await page.locator('.editor-save').click();await page.waitForFunction(p=>window.__mock.deleted.includes(p),changed.storagePath);
   assert.equal(await page.evaluate(()=>window.__mock.uploads.length),4);
   await page.click('.admin-bottom-nav [data-screen=sitio-admin]');await page.fill('#site-whatsapp','595971000000');await page.fill('#text-subtitulo','Texto local de prueba');await page.locator('#site-form button[type=submit]').click();await page.waitForFunction(()=>window.__mock.config.sitio?.whatsapp==='595971000000');
-  await page.click('.admin-bottom-nav [data-screen=galeria-admin]');const last=page.locator('.admin-image-card').last();await last.getByRole('button',{name:'Eliminar'}).click();await page.waitForFunction(()=>window.__mock.deleted.length===3);assert.equal(await page.locator('.admin-image-card').count(),152);
+  await page.click('.admin-bottom-nav [data-screen=galeria-admin]');
+  await abrirCarpetaAdmin(page,'taller-de-prueba');
+  const last=page.locator('.admin-image-card').last();await last.getByRole('button',{name:'Eliminar'}).click();await page.waitForFunction(()=>window.__mock.deleted.length===3);assert.equal(await page.locator('.admin-image-card').count(),0);
   await page.screenshot({path:'/workspace/harold-admin-desktop.png',fullPage:false});assert.deepEqual(errors,[]);await page.click('#logout');await page.waitForFunction(()=>window.__mock.storageSignedOut&&!document.getElementById('login-panel').hidden);await context.close();
  });
  await test('Administrador móvil: menú inferior con cuatro secciones, hash y botones visibles',async()=>{
@@ -194,12 +212,13 @@ let base;
   for(const t of await tabs.all()){const b=await t.boundingBox();assert.ok(b.height>=44&&b.width>=44);}
   assert.equal(await page.locator('.admin-bottom-nav .active').getAttribute('data-screen'),'precios-admin');assert.equal(await page.locator('#galeria-admin').isVisible(),false);
   await tabs.nth(0).click();await page.waitForFunction(()=>document.getElementById('precios-admin').hidden);assert.equal(new URL(page.url()).hash,'#galeria-admin');assert.equal(await page.locator('#precios-admin').isVisible(),false);
+  await abrirCarpetaAdmin(page,'retrato');
   const card=page.locator('form.admin-image-card:has(#caption-seed-001)');assert.equal(await card.getByRole('button',{name:'Editar foto'}).isVisible(),true);assert.equal(await card.getByRole('button',{name:'Eliminar'}).isVisible(),true);
   await page.evaluate(()=>window.scrollTo(0,2500));const y=await page.evaluate(()=>scrollY);await tabs.nth(1).click();await page.waitForFunction(()=>document.getElementById('galeria-admin').hidden);await tabs.nth(0).click();await page.waitForFunction(()=>!document.getElementById('galeria-admin').hidden);await page.waitForTimeout(150);assert.equal(await page.evaluate(()=>scrollY),y);
   await page.goto(base+'/admin.html#sitio-admin');await page.waitForSelector('#admin-workspace:not([hidden])');
   await page.locator('#site-form button[type=submit]').scrollIntoViewIfNeeded();await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
   const btn=await page.locator('#site-form button[type=submit]').boundingBox();const nav2=await page.locator('.admin-bottom-nav').boundingBox();assert.ok(btn.y+btn.height<=nav2.y,JSON.stringify([btn,nav2]));
-  await page.goto(base+'/admin.html#galeria-admin');await page.waitForSelector('#admin-workspace:not([hidden])');await page.locator('form.admin-image-card:has(#caption-seed-001)').getByRole('button',{name:'Editar foto'}).click();
+  await page.goto(base+'/admin.html#galeria-admin/retrato');await page.waitForSelector('#admin-workspace:not([hidden])');await abrirCarpetaAdmin(page,'retrato');await page.locator('form.admin-image-card:has(#caption-seed-001)').getByRole('button',{name:'Editar foto'}).click();
   await page.waitForSelector('#photo-editor .editor-canvas');assert.equal(await page.locator('.admin-bottom-nav').isVisible(),false);await page.screenshot({path:'/workspace/harold-admin-editor.png'});
   await page.locator('.editor-cancel').click();assert.equal(await page.locator('#photo-editor').count(),0);
   assert.deepEqual(errors,[]);await page.screenshot({path:'/workspace/harold-admin-mobile-nav.png'});await context.close();
@@ -209,6 +228,7 @@ let base;
   // Playwright sirve las imágenes interceptadas con CORS; se simula el canvas "tainted" de un host externo real.
   await page.addInitScript(()=>{const err=()=>new DOMException('Tainted canvas','SecurityError');const gid=CanvasRenderingContext2D.prototype.getImageData;CanvasRenderingContext2D.prototype.getImageData=function(...a){if(window.__taint)throw err();return gid.apply(this,a);};const tb=HTMLCanvasElement.prototype.toBlob;HTMLCanvasElement.prototype.toBlob=function(...a){if(window.__taint)throw err();return tb.apply(this,a);};window.__taint=true;});
   await page.goto(base+'/admin.html');await page.fill('#admin-password','clave-simulada-local');await page.click('#login-button');await page.waitForSelector('#admin-workspace:not([hidden])');
+  await abrirCarpetaAdmin(page,'retrato');
   const card=page.locator('form.admin-image-card:has(#caption-seed-001)');await card.getByRole('button',{name:'Editar foto'}).click();
   await page.waitForFunction(()=>document.querySelector('.editor-status')?.textContent.includes('ajuste de vista'));
   const handle=await page.locator('.editor-se').boundingBox();const wrap=await page.locator('.editor-wrap').boundingBox();
@@ -697,5 +717,35 @@ let base;
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await page.screenshot({path:'/workspace/harold-cotizador-mobile.png',fullPage:true});
   await page.goto(base+'/admin.html');await page.fill('#admin-password','clave-simulada-local');await page.click('#login-button');await page.waitForSelector('#admin-workspace:not([hidden])');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await page.screenshot({path:'/workspace/harold-admin-mobile.png',fullPage:false});await context.close();
  });
- console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(root,'resultados-navegador.json'),JSON.stringify(results,null,2));
+ 
+ await test('Álbumes como carpetas en admin y nombres traducidos en la galería pública',async()=>{
+  const {page,context}=await session();
+  await page.goto(base+'/index.html');
+  await page.waitForSelector('[data-album="retrato"] .album-title');
+  await page.evaluate(()=>{ if(window.EstudioI18n) EstudioI18n.setPais('US'); });
+  await page.waitForFunction(()=>document.querySelector('[data-album="retrato"] .album-title')?.textContent==='Portraits');
+  assert.ok(await page.locator('[data-album="animales"]').count());
+  assert.ok(await page.locator('[data-album="bodegones"]').count());
+  await page.locator('#vista-albumes').scrollIntoViewIfNeeded();
+  await page.locator('[data-album="retrato"]').scrollIntoViewIfNeeded();
+  await page.screenshot({path:'/workspace/galeria-albumes-en.png'});
+  await context.close();
+  const s=await session();
+  await s.page.goto(base+'/admin.html');await s.page.fill('#admin-password','clave-simulada-local');await s.page.click('#login-button');await s.page.waitForSelector('#admin-workspace:not([hidden])');
+  assert.ok(await s.page.locator('.admin-album-folder[data-album="retrato"]').count());
+  await s.page.locator('#galeria-folders').scrollIntoViewIfNeeded();
+  await s.page.screenshot({path:'/workspace/admin-albumes-carpetas.png'});
+  await abrirCarpetaAdmin(s.page,'retrato');
+  assert.equal(await s.page.locator('#galeria-folders').isVisible(),false);
+  assert.ok(await s.page.locator('.admin-image-card').count()>=1);
+  assert.ok(await s.page.locator('#galeria-volver').isVisible());
+  await s.page.locator('#galeria-folder-bar').scrollIntoViewIfNeeded();
+  await s.page.screenshot({path:'/workspace/admin-album-interior.png'});
+  await s.page.locator('#galeria-volver').click();
+  await s.page.waitForSelector('#galeria-folders:not([hidden])');
+  assert.equal(await s.page.locator('.admin-image-card').count(),0);
+  await s.context.close();
+ });
+
+console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(root,'resultados-navegador.json'),JSON.stringify(results,null,2));
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{await browser?.close();server.close();});

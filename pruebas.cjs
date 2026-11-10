@@ -20,7 +20,7 @@ test('7. Restauración digital y compleja: contado al aprobar muestra',()=>{cons
 test('8. CSS escritorio: flex solo para active; inactivos ocultos',()=>{const css=fs.readFileSync(path.join(base,'style.css'),'utf8');assert.match(css,/#tab-cotizacion\.active\s*\{\s*display:\s*flex/);assert.match(css,/#tab-curso\.active\s*\{\s*display:\s*flex/);assert.ok(!/#tab-(cotizacion|curso)\s*\{\s*display:\s*flex/.test(css));assert.match(css,/\.tab-content:not\(\.active\)\s*\{[^}]*display:\s*none\s*!important/);const a=iniciar();assert.equal(a.d.querySelectorAll('.bottom-nav .tab-btn').length,3);assert.equal(a.d.getElementById('tab-galeria'),null);a.w.switchTab('cotizacion');a.w.switchTab('galeria');assert.equal(a.d.getElementById('tab-cotizacion').hidden,true);assert.equal(a.d.getElementById('tab-inicio').hidden,false);assert.ok(a.d.querySelector('#tab-inicio #galeria-inicio #vista-albumes'));assert.ok(a.d.querySelector('#tab-inicio img.artista-foto'));assert.equal(a.w.location.hash,'#galeria');});
 test('9. Inscripción: bloquea vacío y edad menor de 8',()=>{const a=iniciar();a.w.enviarInscripcion();assert.equal(a.opens.length,0);a.set('c_nom','Alumno de prueba');a.set('c_edad',7);a.w.enviarInscripcion();assert.equal(a.opens.length,0);a.set('c_edad',8);a.w.enviarInscripcion();assert.equal(a.opens.length,1);});
 test('10. Alt, selectores nativos, labels y rutas persistentes',()=>{const a=iniciar('#galeria/retrato/2');assert.equal(a.d.querySelectorAll('img:not([alt])').length,0);assert.equal(a.d.querySelectorAll('.custom-select-trigger').length,0);assert.equal(a.d.getElementById('imageModal').hidden,false);assert.ok(a.d.getElementById('modalImg').src.includes('1715876237156'));a.w.closeModal();assert.equal(a.w.location.hash,'#galeria/retrato');assert.equal(a.d.getElementById('imageModal').hidden,true);for(const c of a.d.querySelectorAll('input[id]:not([type=checkbox]), select[id], textarea[id]'))assert.ok(a.d.querySelector('label[for="'+c.id+'"]'),'label '+c.id);});
-test('11. Conserva las 152 imágenes y los conteos por categoría',()=>{const a=iniciar();const seed=JSON.parse(fs.readFileSync(path.join(base,'galeria-seed.json'),'utf8'));assert.equal(seed.length,152);assert.equal(a.d.querySelectorAll('#mainGallery .gallery-item').length,152);for(const [cat,n] of Object.entries({retrato:42,paisaje:11,escultura:19,mural:26,abstracto:7,otros:47}))assert.equal(seed.filter(i=>i.category===cat).length,n);});
+test('11. Conserva las 152 imágenes y los conteos por categoría',()=>{const a=iniciar();const seed=JSON.parse(fs.readFileSync(path.join(base,'galeria-seed.json'),'utf8'));assert.equal(seed.length,152);assert.equal(a.d.querySelectorAll('#mainGallery .gallery-item').length,152);for(const [cat,n] of Object.entries({retrato:64,paisaje:13,escultura:19,mural:15,abstracto:1,animales:9,vehiculos:4,bodegones:7,personajes:3,otros:17}))assert.equal(seed.filter(i=>i.category===cat).length,n,cat);});
 test('12. Precios remotos válidos actualizan óleo, carbonilla, extras y esculturas',()=>{const a=iniciar();a.listo();const p=a.w.EstudioDatos.clone(a.w.ESTUDIO_DEFAULTS.precios);p.matriz['30x40'].realista=810000;a.w.aplicarPrecios(a.w.EstudioDatos.validatePrices(p));assert.equal(a.price(),'810.000 ₲');a.set('estilo','Escultura');a.w.onEstiloChange();a.set('tipo_escultura','Busto');a.w.onTipoEsculturaChange();a.w.calcular();assert.equal(a.price(),'8.000.000 ₲');a.set('estilo','Mural');a.w.onEstiloChange();a.w.setUnidad('m',{currentTarget:a.d.getElementById('btn-uni-m')});a.set('mural_ancho','3');a.set('mural_alto','2');a.w.calcular();assert.equal(a.price(),'A consultar');});
 test('13. Configuración malformada rechazada y mezcla de galería no pierde originales',()=>{const a=iniciar();const p=a.w.EstudioDatos.clone(a.w.ESTUDIO_DEFAULTS.precios);p.matriz['30x40'].realista=-1;assert.throws(()=>a.w.EstudioDatos.validatePrices(p));const seed=JSON.parse(fs.readFileSync(path.join(base,'galeria-seed.json'),'utf8'));const merged=a.w.EstudioDatos.mergeGallery(seed,[{id:'nueva',url:'https://example.com/foto.jpg',category:'otros',order:200,caption:''},{...seed[0],hidden:true}]);assert.equal(merged.length,153);assert.equal(merged.find(i=>i.id===seed[0].id).hidden,true);assert.ok(merged.some(i=>i.id==='nueva'));});
 test('14. Sin porcentajes en selects y picker múltiple disponible',()=>{const a=iniciar();for(const opt of a.d.querySelectorAll('select option'))assert.ok(!opt.textContent.includes('%'));assert.equal(a.d.getElementById('referencias_archivos').multiple,true);assert.equal(a.d.getElementById('referencias_archivos').accept,'image/*');});
@@ -546,6 +546,47 @@ test('33. Tamaño: Ancho/Alto y su nota solo se ven con "Personalizado" (todas l
     a.set('tamano_predefinido',estandar.value);a.w.handleTamanoChange();
     assert.equal(box.style.display,'none',tec);
   }
+});
+
+
+test('34. Nombres de álbum traducidos, fallback al español, y categorías con nombreI18n',()=>{
+  const a=iniciar();a.listo();
+  const D=a.w.EstudioDatos;
+  const cats=D.clone(a.w.ESTUDIO_DEFAULTS.categorias);
+  assert.ok(cats.some(c=>c.id==='animales'&&c.nombreI18n&&c.nombreI18n.en==='Animals'));
+  assert.ok(cats.some(c=>c.id==='vehiculos'));
+  assert.ok(cats.some(c=>c.id==='bodegones'));
+  assert.ok(cats.some(c=>c.id==='personajes'));
+  const ok=D.validateCategories(cats);
+  assert.equal(ok.find(c=>c.id==='retrato').nombreI18n.en,'Portraits');
+  const auto=D.traducirNombreAlbum('Bodegones');
+  assert.equal(auto.en,'Still lifes');
+  assert.equal(auto.fr,'Natures mortes');
+  const vacio=D.traducirNombreAlbum('Nombre inventado xyz');
+  assert.equal(Object.keys(vacio).length,0);
+  const I=a.w.EstudioI18n;
+  const retrato=ok.find(c=>c.id==='retrato');
+  I.setIdioma('es',{manual:true});
+  assert.equal(I.nombreDeAlbum(retrato),'Retratos');
+  I.setPais('US');
+  assert.equal(I.idioma,'en');
+  assert.equal(I.nombreDeAlbum(retrato),'Portraits');
+  const custom={id:'taller-x',name:'Taller de prueba',nombreI18n:{en:'Test studio'}};
+  I.setIdioma('en',{manual:true});
+  assert.equal(I.nombreDeAlbum(custom),'Test studio');
+  I.setIdioma('pt',{manual:true});
+  assert.equal(I.nombreDeAlbum(custom),'Taller de prueba');
+  I.setIdioma('es',{manual:true});
+  I.setPais('PY');
+  if(typeof a.w.renderGaleriaPublica==='function') a.w.renderGaleriaPublica();
+  const title=a.d.querySelector('[data-album="retrato"] .album-title');
+  assert.ok(title);
+  assert.equal(title.textContent,'Retratos');
+  I.setPais('US');
+  if(typeof a.w.renderGaleriaPublica==='function') a.w.renderGaleriaPublica();
+  assert.equal(a.d.querySelector('[data-album="retrato"] .album-title').textContent,'Portraits');
+  assert.ok(a.d.querySelector('[data-album="animales"]'));
+  I.setIdioma('es',{manual:true});I.setPais('PY');
 });
 
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));
