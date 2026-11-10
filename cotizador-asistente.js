@@ -72,7 +72,7 @@
     if (esPintura()) {
       s.push({ id: 'estilo', pregunta: trabajo === 'carbonilla' ? '¿Qué estilo de dibujo te gusta más?' : '¿Qué estilo te gusta más?', ayuda: trabajo === 'carbonilla'
         ? 'Son estilos de dibujo, no de pintura: un acabado realista, un grafito de detalle extremo, un boceto de trazo suelto o un abstracto a carbonilla.'
-        : 'El estilo es la forma en que se pinta: más natural, con más detalle, con textura, con aspecto de boceto o abstracto.' });
+        : 'El estilo es la forma en que se pinta: más natural, con más detalle, con textura, en un solo color (monocromático) o abstracto.' });
       s.push({ id: 'tema', pregunta: '¿Qué querés que se vea en la obra?', ayuda: 'Retrato es una persona, una pareja o un animal. También podés pedir un paisaje, objetos o algo más libre.' });
       if (valor('tema') === 'Retrato') {
         s.push({ id: 'sujetos', pregunta: '¿Quiénes van a aparecer?', ayuda: 'El precio base ya incluye a una persona. Si hay más personas o una mascota, se suma al pedido.' });
@@ -94,7 +94,7 @@
         : 'Es opcional. Podés dejarlo sin marco (listo para colgar) o elegir el estilo que más te guste. Las fotos muestran cómo se ve cada uno en la pared.' });
     } else if (trabajo === 'escultura') {
       s.push({ id: 'tipo_escultura', pregunta: '¿Qué tipo de escultura buscás?', ayuda: 'Busto es cabeza y parte del pecho. Medio cuerpo llega hasta la cintura. Figura completa es de cuerpo entero. Relieve son formas que sobresalen de un fondo.' });
-      s.push({ id: 'altura_escultura', pregunta: '¿Qué altura querés para la pieza?', ayuda: 'La altura se mide de la base al punto más alto. A la par ves una persona de 1,70 m para comparar.' });
+      s.push({ id: 'altura_escultura', pregunta: '¿Qué altura querés para la pieza?', ayuda: 'La altura se mide de la base al punto más alto. Al lado ves una persona de 1,70 m para comparar.' });
     } else if (trabajo === 'mural') {
       s.push({ id: 'estilo_mural', pregunta: '¿Qué estilo querés para el mural?', ayuda: 'Podés pedir un mural más realista, más ilustrado o con aspecto de boceto. El precio se acuerda según la pared.' });
       s.push({ id: 'tamano_mural', pregunta: '¿Qué tamaño tiene la pared?', ayuda: 'Indicá el ancho y el alto en metros. Si la pared es alta, puede hacer falta andamio. El valor final se consulta.' });
@@ -142,7 +142,7 @@
         { value: 'Hiperrealista', key: 'estilo:Hiperrealista', title: trabajo === 'carbonilla' ? 'Hiperrealista (grafito)' : 'Hiperrealista' }
       ];
       if (trabajo !== 'carbonilla') list.push({ value: 'Espatulado', key: 'estilo:Espatulado', title: 'Espatulado' });
-      list.push({ value: 'Bocetado', key: 'estilo:Bocetado', title: trabajo === 'carbonilla' ? 'Boceto (trazo suelto)' : 'Bocetado' });
+      list.push({ value: 'Bocetado', key: 'estilo:Bocetado', title: trabajo === 'carbonilla' ? 'Boceto (trazo suelto)' : 'Monocromático' });
       list.push({ value: 'Abstracto', key: 'estilo:Abstracto', title: 'Abstracto' });
       return list.map((o) => ({ ...o, text: guia(o.key).text, url: guia(o.key).url, selected: valor('estilo') === o.value }));
     }
@@ -207,7 +207,7 @@
       return [
         { value: 'Realista Mural', title: 'Realismo con detalles', text: 'Un mural con aspecto natural y detalle.', url: guia('estilo:Mural').url, selected: valor('estilo_mural') === 'Realista Mural' },
         { value: 'Ilustracion Mural', title: 'Ilustración / gráfico', text: 'Un mural más gráfico o ilustrado.', url: guia('estilo:Abstracto').url, selected: valor('estilo_mural') === 'Ilustracion Mural' },
-        { value: 'Bocetado', title: 'Bocetado', text: guia('estilo:Bocetado').text, url: guia('estilo:Bocetado').url, selected: valor('estilo_mural') === 'Bocetado' }
+        { value: 'Bocetado', title: 'Bocetado', text: 'Un mural con aspecto de boceto, más suelto y ligero.', url: 'img/guias/bocetado.webp', selected: valor('estilo_mural') === 'Bocetado' }
       ];
     }
     if (paso.id === 'tipo_restauracion') {
@@ -389,7 +389,7 @@
     if (te === 'Oleo') cands.push({ tecnica: 'Acrilico', estilo: est, title: 'Acrílico · ' + etiquetaTamano(st) });
     if (te === 'Acrilico') { /* óleo no es más barato */ }
     if (est !== 'Bocetado' && est !== 'Abstracto' && te !== 'Carbonilla') {
-      cands.push({ tecnica: te, estilo: 'Bocetado', title: 'Bocetado · ' + etiquetaTamano(st) });
+      cands.push({ tecnica: te, estilo: 'Bocetado', title: 'Monocromático · ' + etiquetaTamano(st) });
     }
     let best = null;
     cands.forEach((c) => {

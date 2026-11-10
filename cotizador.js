@@ -57,6 +57,25 @@ function configPorArea(d){
  c.marcos={};for(const m of Object.keys(filas[0].cfg.marcos||{}))c.marcos[m]=interpolarImporte(area,filas,cfg=>cfg.marcos?.[m],false);
  return c;
 }
+function precioEscultura(cfg,cm){
+ if(!cfg||!Number.isFinite(cm))return 0;
+ const pts=Object.entries(cfg.alturas||{}).map(([h,v])=>({h:Number(h),v:Number(v)})).filter(p=>Number.isFinite(p.h)&&p.h>0&&Number.isFinite(p.v)).sort((a,b)=>a.h-b.h);
+ let raw;
+ if(pts.length>=2){
+  let i=pts.findIndex(p=>p.h>=cm);if(i<=0)i=1;if(i<0||i>=pts.length)i=pts.length-1;
+  const p0=pts[i-1],p1=pts[i];
+  raw=p0.h===p1.h?p0.v:p0.v+(cm-p0.h)/(p1.h-p0.h)*(p1.v-p0.v);
+  if(cm<pts[0].h)raw=pts[0].v*cm/pts[0].h;
+  if(cm>pts[pts.length-1].h)raw=pts[pts.length-1].v*cm/pts[pts.length-1].h;
+ }else if(pts.length===1){
+  raw=pts[0].v*cm/pts[0].h;
+ }else{
+  raw=(Number(cfg.fijo)||0)+cm*(Number(cfg.porCm)||0);
+ }
+ if(Number.isFinite(Number(cfg.minimo)))raw=Math.max(Number(cfg.minimo),raw);
+ const step=Number(cfg.redondeo)||1;
+ return Math.max(0,Math.round(raw/step)*step);
+}
 function presupuesto(){
  const est=valor('estilo'),te=valor('tecnica');const t=['Mural','Escultura','Restauracion'].includes(est)?est:valor('tema');
  let base=0,extras=0,marco=0,fondo=0,andamio=0,dim=null;
@@ -66,8 +85,9 @@ function presupuesto(){
   return {t,dim:null,base:0,extras:0,marco:0,fondo:0,andamio:0,sub:0,recargo:0,iva:0,total:0,cuotas:false,digital:false,evaluar:false,consultar:true};
  }else if(t==='Escultura'){
   const tipo=valor('tipo_escultura'),cfg=ESCULTURA_TIPOS[tipo],cm=Number(valor('escultura_cm'));
-  if(!cfg||!Number.isFinite(cm)||cm<cfg.min||cm>cfg.max)return null;
-  base=Math.round(Math.max(cfg.minimo, cfg.fijo + cm*cfg.porCm)/cfg.redondeo)*cfg.redondeo;
+  if(!cfg||!Number.isFinite(cm)||cm<=0)return null;
+  const usado=Math.min(cfg.max,Math.max(cfg.min,cm));
+  base=precioEscultura(cfg,usado);
  }else if(t==='Restauracion'){
   const rest=valor('tipo_restauracion');if(!rest)return null;base=rest==='Digital'?AJUSTES.restauracionDigital:rest==='Digital Compleja'?AJUSTES.restauracionDigitalCompleja:0;
  }else{
@@ -133,6 +153,7 @@ function calcular(){
 }
 function actualizarVistasTamano(){
  if(window.CotizadorVisual){try{CotizadorVisual.updateEscala();CotizadorVisual.updateEscalaEscultura();CotizadorVisual.renderFondo();CotizadorVisual.renderSujetos();}catch(e){}}
+ if(window.AsistentePedido&&typeof AsistentePedido.actualizarBarra==='function'){try{AsistentePedido.actualizarBarra();}catch(e){}}
 }
 async function leerTasas(url){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),6000);try{const r=await fetch(url,{signal:controller.signal});if(!r.ok)throw Error('Sin respuesta válida');return await r.json();}finally{clearTimeout(timer);}}
 async function actualizarTasasCambio(){

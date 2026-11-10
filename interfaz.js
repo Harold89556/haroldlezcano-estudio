@@ -52,7 +52,7 @@
             'Realista': 'El estilo predilecto: fidelidad anatómica, transiciones tonales precisas y calidez.',
             'Hiperrealista': 'Nivel de detalle extremo y minucioso, casi idéntico a una fotografía.',
             'Espatulado': 'Pintura con espátula: textura y relieves visibles, de aire expresivo.',
-            'Bocetado': 'Trazo suelto y ligero, con aspecto de boceto o apunte.',
+            'Bocetado': 'Bosquejo pintado en un solo color, con luces y sombras (grisalla, bistre o ébauche), como se empezaba una pintura antes.',
             'Abstracto': 'Expresión visual mediante formas, colores y texturas, sin representar una escena literal.',
             'Mural': 'Arte pintado directamente sobre pared a gran escala. El valor se acuerda según la pared, el acceso y el detalle.',
             'Escultura': 'Pieza modelada a mano: busto, medio cuerpo, figura de cuerpo entero o relieve. No incluye fundición.',
@@ -124,6 +124,16 @@
         if(!e || !infoDiv) return;
         if(campo==='enmarcado' && valor('tecnica')==='Carbonilla' && e.value==='SinMarco'){infoDiv.textContent='Dibujo sobre papel, sin marco (lámina suelta).';infoDiv.style.display='block';return;}
         let val = e.value || 'default';
+        if(campo==='estilo' && val==='Bocetado' && valor('tecnica')==='Carbonilla'){
+            infoDiv.innerText='Boceto a lápiz o carbonilla: trazo suelto, de estudio o apunte.';
+            infoDiv.style.display='block';
+            return;
+        }
+        if(campo==='estilo' && val==='Bocetado' && valor('tecnica')==='Acrilico'){
+            infoDiv.innerText='Bosquejo en acrílico, en un solo color, con luces y sombras, al modo de una grisalla o ébauche.';
+            infoDiv.style.display='block';
+            return;
+        }
         if(descripciones[campo] && descripciones[campo][val]) {
             infoDiv.innerText = descripciones[campo][val];
             infoDiv.style.display = 'block';
@@ -165,10 +175,32 @@
         }
         let v = Number(input.value);
         if (!Number.isFinite(v) || v < cfg.min || v > cfg.max) input.value = String(cfg.def);
-        if (label) label.textContent = 'Altura (' + cfg.min + ' a ' + cfg.max + ' cm)';
+        input.min = String(cfg.min);
+        input.max = String(cfg.max);
+        input.step = String(cfg.step || 1);
+        if (label) label.textContent = 'Altura en centímetros';
+        const hint = document.getElementById('hint-altura-escultura');
+        if (hint) hint.textContent = 'Entre ' + cfg.min + ' y ' + cfg.max + ' cm.';
         if (grupo) grupo.style.display = '';
         mostrarInfo('tipo_escultura');
     }
+    function aplicarAlturaEscultura(v, clamp) {
+        const cfg = configEscultura();
+        const i = document.getElementById('escultura_cm');
+        if (!cfg || !i) return;
+        let n = Number(v);
+        if (!Number.isFinite(n)) {
+            if (clamp) i.value = String(cfg.def);
+        } else if (clamp) {
+            if (n < cfg.min) n = cfg.min;
+            if (n > cfg.max) n = cfg.max;
+            i.value = String(Math.round(n));
+        }
+        if (typeof calcular === 'function') calcular();
+        else if (window.CotizadorVisual) CotizadorVisual.updateEscalaEscultura();
+    }
+    function onEsculturaCmInput(){ aplicarAlturaEscultura(document.getElementById('escultura_cm')?.value, false); }
+    function onEsculturaCmBlur(){ aplicarAlturaEscultura(document.getElementById('escultura_cm')?.value, true); }
     function stepEsc(a) {
         const cfg = configEscultura();
         if (!cfg) return;
@@ -176,10 +208,7 @@
         let v = Number(i.value);
         if (!Number.isFinite(v)) v = cfg.def;
         v += a * cfg.step;
-        if (v < cfg.min) v = cfg.min;
-        if (v > cfg.max) v = cfg.max;
-        i.value = String(v);
-        calcular();
+        aplicarAlturaEscultura(v, true);
     }
 
     function setupSelect(s) {
@@ -254,6 +283,8 @@
         });
         const esp=document.querySelector('#estilo option[value="Espatulado"]');
         if(esp) esp.hidden=paperOnly;
+        const boc=document.querySelector('#estilo option[value="Bocetado"]');
+        if(boc) boc.textContent=paperOnly?'Boceto':'Monocromático';
         if(paperOnly){
             const enm=document.getElementById('enmarcado');
             if(enm && ['Cajon','SemiRelieve','GruesoRelieves'].includes(enm.value)){enm.value='Estandar';}
@@ -755,7 +786,7 @@
       return r;
     };
   }
-  ['onEstiloChange','onTecnicaChange','onTemaChange','onFormaChange','onTipoEsculturaChange','handleTamanoChange','setUnidad','step','stepEsc','updateUI'].forEach(hook);
+  ['onEstiloChange','onTecnicaChange','onTemaChange','onFormaChange','onTipoEsculturaChange','handleTamanoChange','setUnidad','step','stepEsc','onEsculturaCmInput','onEsculturaCmBlur','updateUI'].forEach(hook);
   const ready = () => { if (window.CotizadorVisual) CotizadorVisual.refreshAll(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(ready, 0));
   else setTimeout(ready, 0);

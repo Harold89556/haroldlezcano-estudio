@@ -135,12 +135,12 @@ function renderGallery() {
 }
 const numericLabels = {
  matriz:'Óleo, carbonilla, personas extra y marcos',escultura:'Escultura modelada a mano',ajustes:'Otros importes y factores de cotización',cursos:'Cursos',
- espatulado:'Espatulado',realista:'Realista',hiper:'Hiperrealista',boceto:'Bocetado',extraPersona:'Persona extra',marcos:'Marcos',base:'Base carbonilla',
+ espatulado:'Espatulado',realista:'Realista',hiper:'Hiperrealista',boceto:'Monocromático',extraPersona:'Persona extra',marcos:'Marcos',base:'Base carbonilla',
  Estandar:'Estándar',Cajon:'Cajón',Clasico:'Clásico',SemiRelieve:'Semi relieve',GruesoRelieves:'Grueso con relieves',
  min:'Altura mínima (cm)',max:'Altura máxima (cm)',step:'Paso de altura (cm)',def:'Altura inicial (cm)',minimo:'Precio mínimo',fijo:'Importe fijo',porCm:'Precio por cm',redondeo:'Redondear al múltiplo de',
  restauracionDigital:'Restauración digital simple',restauracionDigitalCompleja:'Restauración digital compleja',
  personalizadoMinRetrato:'Personalizado: mínimo retrato',personalizadoMinOtros:'Personalizado: mínimo otros temas',personalizadoCm2Retrato:'Personalizado: guaraníes por cm² (retrato)',personalizadoCm2Otros:'Personalizado: guaraníes por cm² (otros)',
- personalizadoEspatulado:'Personalizado: factor espatulado',personalizadoHiper:'Personalizado: factor hiperrealista',personalizadoBoceto:'Personalizado: factor bocetado',personalizadoExtraPersona:'Personalizado: persona extra',personalizadoMarcos:'Personalizado: marcos',
+ personalizadoEspatulado:'Personalizado: factor espatulado',personalizadoHiper:'Personalizado: factor hiperrealista',personalizadoBoceto:'Personalizado: factor monocromático',personalizadoExtraPersona:'Personalizado: persona extra',personalizadoMarcos:'Personalizado: marcos',
  carbonillaRespaldo:'Carbonilla: base de respaldo',carbonillaColor:'Factor carbonilla a color',acrilico:'Factor acrílico',circular:'Factor circular',ovalado:'Factor ovalado',mascota:'Factor mascota respecto a persona extra',fondo:'Factor de fondo complejo sobre base',cuotasMinimo:'Monto mínimo para tarjeta',tarjeta:'Factor recargo tarjeta',iva:'Factor IVA (no se usa: los precios ya incluyen IVA)',senaDivisor:'Divisor para seña',cuotasCantidad:'Cantidad de cuotas',cambioUSD:'Respaldo: guaraníes por USD',cambioEUR:'Respaldo: EUR por USD',cambioBRL:'Respaldo: BRL por USD',matricula:'Matrícula',mensualidad:'Mensualidad',claseSuelta:'Clase suelta'
 };
 function renderPrices() {
@@ -206,7 +206,7 @@ function renderFondo(){
 
 let guias = { items: {} };
 const GUIA_LABELS = {
- 'estilo:Realista':'Estilo · Realista','estilo:Hiperrealista':'Estilo · Hiperrealista','estilo:Espatulado':'Estilo · Espatulado','estilo:Bocetado':'Estilo · Bocetado','estilo:Abstracto':'Estilo · Abstracto','estilo:Mural':'Estilo · Mural','estilo:Escultura':'Estilo · Escultura','estilo:Restauracion':'Estilo · Restauración',
+ 'estilo:Realista':'Estilo · Realista','estilo:Hiperrealista':'Estilo · Hiperrealista','estilo:Espatulado':'Estilo · Espatulado','estilo:Bocetado':'Estilo · Monocromático','estilo:Abstracto':'Estilo · Abstracto','estilo:Mural':'Estilo · Mural','estilo:Escultura':'Estilo · Escultura','estilo:Restauracion':'Estilo · Restauración',
  'tecnica:Oleo':'Técnica · Óleo','tecnica:Acrilico':'Técnica · Acrílico','tecnica:Carbonilla':'Técnica · Carbonilla',
  'tema:Retrato':'Tema · Retrato','tema:Paisaje':'Tema · Paisaje','tema:Bodegon':'Tema · Bodegón','tema:Abstracto':'Tema · Abstracto',
  'fondo:simple':'Fondo · Simple','fondo:detallado':'Fondo · Detallado',
@@ -215,7 +215,7 @@ const GUIA_LABELS = {
  'tipo_escultura:Busto':'Escultura · Busto','tipo_escultura:Medio cuerpo':'Escultura · Medio cuerpo','tipo_escultura:Figura completa':'Escultura · Figura completa','tipo_escultura:Relieve':'Escultura · Relieve',
  'sujetos:1':'Sujetos · 1 persona','sujetos:2':'Sujetos · 2 personas','sujetos:mascota':'Sujetos · Con mascota',
  'estilo:Realista:Carbonilla':'Estilo · Realista (dibujo)','estilo:Hiperrealista:Carbonilla':'Estilo · Hiperrealista (grafito)','estilo:Bocetado:Carbonilla':'Estilo · Boceto (dibujo)','estilo:Abstracto:Carbonilla':'Estilo · Abstracto (dibujo)',
- 'estilo:Realista:Acrilico':'Estilo · Realista (acrílico)','estilo:Hiperrealista:Acrilico':'Estilo · Hiperrealista (acrílico)','estilo:Espatulado:Acrilico':'Estilo · Espatulado (acrílico)','estilo:Bocetado:Acrilico':'Estilo · Bocetado (acrílico)','estilo:Abstracto:Acrilico':'Estilo · Abstracto (acrílico)',
+ 'estilo:Realista:Acrilico':'Estilo · Realista (acrílico)','estilo:Hiperrealista:Acrilico':'Estilo · Hiperrealista (acrílico)','estilo:Espatulado:Acrilico':'Estilo · Espatulado (acrílico)','estilo:Bocetado:Oleo':'Estilo · Monocromático (óleo)','estilo:Bocetado:Acrilico':'Estilo · Monocromático (acrílico)','estilo:Abstracto:Acrilico':'Estilo · Abstracto (acrílico)',
  'tema:Retrato:Carbonilla':'Tema · Retrato (dibujo)','tema:Paisaje:Carbonilla':'Tema · Paisaje (dibujo)','tema:Bodegon:Carbonilla':'Tema · Bodegón (dibujo)',
  'fondo:simple:Carbonilla':'Fondo · Simple (dibujo)','fondo:detallado:Carbonilla':'Fondo · Detallado (dibujo)',
  'enmarcado:SinMarco:Carbonilla':'Marco · Sin marco (dibujo)','enmarcado:Estandar:Carbonilla':'Marco · Estándar (vidrio y paspartú)','enmarcado:Clasico:Carbonilla':'Marco · Clásico (vidrio y paspartú)',

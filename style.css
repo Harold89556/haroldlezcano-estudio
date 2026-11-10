@@ -139,6 +139,93 @@
         .stepper button:hover { background: rgba(212,175,55,0.1); color: #d4af37; }
         .stepper input { width: 35px; text-align: center; border: none; background: transparent; color: #fff; font-size: 14px; font-weight: 600; padding:0; margin:0;}
 
+        #grupo-altura-escultura.stepper-group,
+        #grupo-altura-escultura.altura-escultura {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+            gap: 6px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        #grupo-altura-escultura #label-altura-escultura {
+            display: block;
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #eee;
+            letter-spacing: 0.2px;
+        }
+        #grupo-altura-escultura .altura-escultura-rango {
+            margin: 0 0 4px;
+            font-size: 12px;
+            color: #bbb;
+            line-height: 1.4;
+        }
+        #grupo-altura-escultura .stepper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            background: transparent;
+            border: none;
+            overflow: visible;
+        }
+        #grupo-altura-escultura .stepper-btn,
+        #grupo-altura-escultura .stepper button {
+            flex: 0 0 48px;
+            width: 48px;
+            height: 48px;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            border-radius: 12px;
+            background-color: #d4af37;
+            background-image: linear-gradient(135deg, #d4af37, #b5952f);
+            color: #111;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+        }
+        #grupo-altura-escultura .stepper-btn:hover,
+        #grupo-altura-escultura .stepper button:hover {
+            background-color: #e5ca72;
+            background-image: linear-gradient(135deg, #e5ca72, #d4af37);
+            color: #111;
+        }
+        #grupo-altura-escultura .stepper-btn:disabled,
+        #grupo-altura-escultura .stepper button:disabled {
+            opacity: 0.45;
+            cursor: default;
+        }
+        #grupo-altura-escultura .stepper input,
+        #grupo-altura-escultura #escultura_cm {
+            flex: 1 1 auto;
+            width: auto;
+            min-width: 88px;
+            max-width: none;
+            height: 48px;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            background: rgba(0,0,0,0.45);
+            border: 1px solid rgba(212,175,55,0.55);
+            border-radius: 12px;
+            padding: 0 10px;
+            margin: 0;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+        #grupo-altura-escultura #escultura_cm::-webkit-outer-spin-button,
+        #grupo-altura-escultura #escultura_cm::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        #grupo-altura-escultura .field-error { margin-top: 2px; }
+
         /* STICKY FOOTER PÍLDORA */
         .sticky-footer { 
             display: none; flex-direction: row; align-items: center; justify-content: space-between;
@@ -533,7 +620,15 @@ body.editor-abierto .admin-bottom-nav, body:has(#admin-workspace[hidden]) .admin
 .asistente-progreso-bar { height: 100%; width: 10%; background: linear-gradient(90deg,#d4af37,#f0d77f); transition: width .25s ease; }
 .asistente-cuerpo { flex: 1 1 auto; overflow: auto; min-height: 0; padding: 8px 0 16px; -webkit-overflow-scrolling: touch; }
 .asistente-cuerpo h2 { margin: 4px 0 8px; font-size: 22px; font-weight: 600; letter-spacing: .3px; color: #fff; }
+#asistente-ayuda, .asistente-cuerpo h2, #asistente-pregunta, .vista-escala-nota {
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+  white-space: normal;
+  max-width: 100%;
+  box-sizing: border-box;
+}
 #asistente-ayuda { margin: 0 0 14px; font-size: 14px; line-height: 1.5; color: #cfcfcf; }
+
 .asistente-grid { grid-template-columns: 1fr; gap: 12px; }
 @media (min-width: 520px) { .asistente-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
 .asistente-grid .guia-media { aspect-ratio: 16/10; }

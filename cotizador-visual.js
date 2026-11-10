@@ -345,7 +345,9 @@
     const el = ensureEscalaEscultura();
     if (!el) return;
     const cont = document.getElementById('contenedor-escultura');
-    if (!cont || cont.style.display === 'none') { el.hidden = true; return; }
+    const grupo = document.getElementById('grupo-altura-escultura');
+    const enAsistente = !!(grupo && grupo.classList.contains('en-asistente'));
+    if (!enAsistente && (!cont || cont.style.display === 'none')) { el.hidden = true; return; }
     const tipo = document.getElementById('tipo_escultura')?.value;
     const cm = Number(document.getElementById('escultura_cm')?.value || 0);
     if (!tipo || !cm) { el.hidden = true; return; }

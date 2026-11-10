@@ -240,7 +240,7 @@
 <option value="Realista">Realista (recomendado)</option>
 <option value="Hiperrealista">Hiperrealista</option>
 <option value="Espatulado">Espatulado</option>
-<option value="Bocetado">Bocetado</option>
+<option value="Bocetado">Monocromático</option>
 <option value="Abstracto">Abstracto</option>
 <option value="Mural">Mural sobre pared</option>
 <option value="Escultura">Escultura</option>
@@ -371,7 +371,16 @@
 <option value="Relieve">Relieve</option>
 </select><div aria-live="polite" class="field-error" id="error-tipo_escultura"></div>
 <div class="info-text" id="info-tipo_escultura"></div>
-<div class="stepper-group" id="grupo-altura-escultura" style="margin-top: 15px; display:none;"><span id="label-altura-escultura">Altura</span><div class="stepper"><button onclick="stepEsc(-1)" type="button">-</button><label for="escultura_cm">Altura en centímetros</label><input aria-describedby="error-escultura_cm" id="escultura_cm" readonly="" value="50"/><div aria-live="polite" class="field-error" id="error-escultura_cm"></div><button onclick="stepEsc(1)" type="button">+</button></div></div>
+<div class="stepper-group altura-escultura" id="grupo-altura-escultura" style="margin-top: 15px; display:none;">
+<label for="escultura_cm" id="label-altura-escultura">Altura en centímetros</label>
+<p class="altura-escultura-rango" id="hint-altura-escultura">Entre 30 y 200 cm.</p>
+<div class="stepper">
+<button aria-label="Disminuir altura" class="stepper-btn" onclick="stepEsc(-1)" type="button">−</button>
+<input aria-describedby="hint-altura-escultura error-escultura_cm" id="escultura_cm" inputmode="numeric" max="200" min="30" onblur="onEsculturaCmBlur()" oninput="onEsculturaCmInput()" step="1" type="number" value="50"/>
+<button aria-label="Aumentar altura" class="stepper-btn" onclick="stepEsc(1)" type="button">+</button>
+</div>
+<div aria-live="polite" class="field-error" id="error-escultura_cm"></div>
+</div>
 <div class="info-text" style="margin-top:15px;">Precio para pieza modelada a mano. No incluye fundición en bronce ni otros metales. La altura se mide de la base al punto más alto. Para piezas de más de 2 metros, indicalo al enviar el pedido.</div>
 </div>
 <div class="form-card" id="step-fotos" style="display:none;">
