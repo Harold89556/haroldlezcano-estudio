@@ -1891,3 +1891,30 @@ EstudioI18n.registrar({
   it: {"guia.aria.fondo":"Sfondo del ritratto","guia.aria.sujetos":"Esempi di persone e animali"},
   de: {"guia.aria.fondo":"Porträthintergrund","guia.aria.sujetos":"Beispiele für Personen und Haustiere"}
 });
+
+EstudioI18n.registrar({
+  es: {
+    "guia.material_escultura:Chapa": "Chapa de hierro cortada, doblada y soldada, con tratamiento antióxido. No es fundición.",
+    "guia.material_escultura:Chatarra": "Ensamble soldado de objetos de chatarra (engranajes, cadenas u herramientas), con tratamiento antióxido. No es fundición."
+  },
+  en: {
+    "guia.material_escultura:Chapa": "Sheet steel cut, bent and welded, with rust-proof treatment. Not a casting.",
+    "guia.material_escultura:Chatarra": "A welded assemblage of scrap-metal objects (gears, chains or tools), with rust-proof treatment. Not a casting."
+  },
+  pt: {
+    "guia.material_escultura:Chapa": "Chapa de ferro cortada, dobrada e soldada, com tratamento antiferrugem. Não é fundição.",
+    "guia.material_escultura:Chatarra": "Conjunto soldado de objetos de sucata (engrenagens, correntes ou ferramentas), com tratamento antiferrugem. Não é fundição."
+  },
+  fr: {
+    "guia.material_escultura:Chapa": "Tôle de fer découpée, pliée et soudée, avec traitement antirouille. Ce n’est pas une fonte.",
+    "guia.material_escultura:Chatarra": "Assemblage soudé d’objets de ferraille (engrenages, chaînes ou outils), avec traitement antirouille. Ce n’est pas une fonte."
+  },
+  it: {
+    "guia.material_escultura:Chapa": "Lamiera di ferro tagliata, piegata e saldata, con trattamento antiruggine. Non è una fusione.",
+    "guia.material_escultura:Chatarra": "Assemblaggio saldato di oggetti di rottame (ingranaggi, catene o attrezzi), con trattamento antiruggine. Non è una fusione."
+  },
+  de: {
+    "guia.material_escultura:Chapa": "Zugeschnittenes, gebogenes und geschweißtes Eisenblech mit Rostschutzbehandlung. Kein Guss.",
+    "guia.material_escultura:Chatarra": "Geschweißte Anordnung aus Schrottteilen (Zahnräder, Ketten oder Werkzeuge) mit Rostschutzbehandlung. Kein Guss."
+  }
+});

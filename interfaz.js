@@ -239,7 +239,15 @@
         if (typeof calcular === 'function') calcular();
         else if (window.CotizadorVisual) CotizadorVisual.updateEscalaEscultura();
     }
+    function actualizarNotaMaterialEscultura(){
+        const nota=document.getElementById('nota-tejido-metalico');
+        if(!nota)return;
+        const i18=(k,fb)=>window.EstudioI18n&&EstudioI18n.t?EstudioI18n.t(k):fb;
+        const mat=(typeof valor==='function'?valor('material_escultura'):'')||'';
+        nota.textContent=(mat==='Chapa'||mat==='Chatarra')?i18('escultura.hierroNota','Piezas soldadas, con tratamiento antióxido.'):i18('escultura.tejido','El cemento, la fibra de vidrio y la arcilla llevan tejido metálico en el interior.');
+    }
     function actualizarPesoEscultura(){
+        actualizarNotaMaterialEscultura();
         const el=document.getElementById('escultura-peso-estimado');
         if(!el)return;
         const i18=(k,fb)=>window.EstudioI18n&&EstudioI18n.t?EstudioI18n.t(k):fb;

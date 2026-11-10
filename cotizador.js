@@ -97,12 +97,14 @@ function pesoEsculturaKg(tipo,cm,material){
  const factorTipo=tipo==='Busto'?(Number(p.factorBusto)||0.38):tipo==='Medio cuerpo'?(Number(p.factorMedio)||0.62):tipo==='Relieve'?(Number(p.factorRelieve)||0.55):1;
  const escala=Math.max(0.05,cm/h0);
  const area=a0*escala*escala*factorTipo;
- const espesor=material==='Cemento'?(Number(p.espesorCemento)||2.2):material==='Arcilla'?(Number(p.espesorArcilla)||2.5):(Number(p.espesorFibra)||0.5);
- const dens=material==='Cemento'?(Number(p.densidadCemento)||2.3):material==='Arcilla'?(Number(p.densidadArcilla)||2.4):(Number(p.densidadFibra)||1.8);
- const hierro0=tipo==='Busto'?(Number(p.hierroBusto)||6):tipo==='Medio cuerpo'?(Number(p.hierroMedio)||12):tipo==='Relieve'?(Number(p.hierroRelieve)||8):(Number(p.hierroFigura)||18);
+ const esHierro=material==='Chapa'||material==='Chatarra';
+ const espesor=esHierro?(material==='Chatarra'?(Number(p.espesorChatarra)||0.75):(Number(p.espesorChapa)||0.5)):material==='Cemento'?(Number(p.espesorCemento)||2.2):material==='Arcilla'?(Number(p.espesorArcilla)||2.5):(Number(p.espesorFibra)||0.5);
+ const dens=esHierro?(Number(p.densidadAcero)||7.85):material==='Cemento'?(Number(p.densidadCemento)||2.3):material==='Arcilla'?(Number(p.densidadArcilla)||2.4):(Number(p.densidadFibra)||1.8);
+ const hierro0=esHierro?0:(tipo==='Busto'?(Number(p.hierroBusto)||6):tipo==='Medio cuerpo'?(Number(p.hierroMedio)||12):tipo==='Relieve'?(Number(p.hierroRelieve)||8):(Number(p.hierroFigura)||18));
  const kg=(area*espesor*dens)/1000+hierro0*escala*escala;
  return Math.max(0.5,Math.round(kg*10)/10);
 }
+function esMaterialHierro(mat){ mat=mat||(typeof valor==='function'?valor('material_escultura'):''); return mat==='Chapa'||mat==='Chatarra'; }
 function tasasRespaldo(){
  const t=(preciosActuales&&preciosActuales.tasasRespaldo)||{};
  const out={PYG:1};

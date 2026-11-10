@@ -58,10 +58,13 @@
       "escultura.entre": "Entre",
       "escultura.peso": "Peso estimado: aprox. {n} kg",
       "escultura.material": "Material",
-      "escultura.tejido": "Todas incluyen tejido metálico en el interior.",
+      "escultura.tejido": "El cemento, la fibra de vidrio y la arcilla llevan tejido metálico en el interior.",
       "escultura.cemento": "Cemento hueco con estructura de hierro",
       "escultura.fibra": "Fibra de vidrio con estructura de hierro",
       "escultura.arcilla": "Arcilla con cemento con estructura de hierro",
+      "escultura.chapa": "Chapa de hierro",
+      "escultura.chatarra": "Objetos de chatarra",
+      "escultura.hierroNota": "Piezas soldadas, con tratamiento antióxido.",
       "escultura.tipo": "Tipo de escultura",
       "escultura.elegiTipo": "Seleccioná el tipo...",
       "escultura.busto": "Busto",
@@ -105,7 +108,7 @@
       "wizard.tipoEscultura.pregunta": "¿Qué tipo de escultura buscás?",
       "wizard.tipoEscultura.ayuda": "Busto es cabeza y parte del pecho. Medio cuerpo llega hasta la cintura. Figura completa es de cuerpo entero. Relieve son formas que sobresalen de un fondo. Si es un animal, un objeto o algo abstracto, el valor se consulta con el artista.",
       "wizard.material.pregunta": "¿De qué material querés la pieza?",
-      "wizard.material.ayuda": "Todas las opciones van con estructura de hierro y tejido metálico en el interior. No hacemos fundición en bronce ni en otros metales.",
+      "wizard.material.ayuda": "El cemento, la fibra de vidrio y la arcilla van con estructura de hierro y tejido metálico en el interior. La chapa y la chatarra son piezas soldadas, con tratamiento antióxido. No hacemos fundición en bronce ni en otros metales.",
       "wizard.altura.pregunta": "¿Qué altura querés para la pieza?",
       "wizard.altura.ayuda": "La altura se mide de la base al punto más alto. Al lado ves una persona de 1,70 m para comparar. Podés indicar la medida en centímetros, metros o pulgadas.",
       "wizard.estiloMural.pregunta": "¿Qué estilo querés para el mural?",
@@ -190,10 +193,13 @@
       "escultura.entre": "From",
       "escultura.peso": "Estimated weight: approx. {n} kg",
       "escultura.material": "Material",
-      "escultura.tejido": "All options include a metal mesh inside.",
+      "escultura.tejido": "Cement, fibreglass and clay include a metal mesh inside.",
       "escultura.cemento": "Hollow cement with an iron structure",
       "escultura.fibra": "Fibreglass with an iron structure",
       "escultura.arcilla": "Clay with cement and an iron structure",
+      "escultura.chapa": "Sheet steel",
+      "escultura.chatarra": "Scrap-metal objects",
+      "escultura.hierroNota": "Welded pieces, with rust-proof treatment.",
       "escultura.tipo": "Type of sculpture",
       "escultura.elegiTipo": "Choose the type...",
       "escultura.busto": "Bust",
@@ -237,7 +243,7 @@
       "wizard.tipoEscultura.pregunta": "What type of sculpture are you looking for?",
       "wizard.tipoEscultura.ayuda": "A bust is the head and upper chest. Half body goes down to the waist. A full figure is the whole body. Relief is forms that stand out from a flat background. If it is an animal, an object or something abstract, the price is confirmed with the artist.",
       "wizard.material.pregunta": "What material would you like the piece in?",
-      "wizard.material.ayuda": "Every option has an iron structure and a metal mesh inside. We do not offer bronze or other metal casting.",
+      "wizard.material.ayuda": "Cement, fibreglass and clay have an iron structure and a metal mesh inside. Sheet steel and scrap metal are welded pieces, with rust-proof treatment. We do not offer bronze or other metal casting.",
       "wizard.altura.pregunta": "What height would you like for the piece?",
       "wizard.altura.ayuda": "Height is measured from the base to the highest point. Beside it you see a person 1.70 m tall for comparison. You can enter the size in centimetres, metres or inches.",
       "wizard.estiloMural.pregunta": "What style would you like for the mural?",
@@ -322,10 +328,13 @@
       "escultura.entre": "Entre",
       "escultura.peso": "Peso estimado: aprox. {n} kg",
       "escultura.material": "Material",
-      "escultura.tejido": "Todas incluem malha metálica no interior.",
+      "escultura.tejido": "O cimento, a fibra de vidro e a argila levam tecido metálico no interior.",
       "escultura.cemento": "Cimento oco com estrutura de ferro",
       "escultura.fibra": "Fibra de vidro com estrutura de ferro",
       "escultura.arcilla": "Argila com cimento e estrutura de ferro",
+      "escultura.chapa": "Chapa de ferro",
+      "escultura.chatarra": "Objetos de sucata",
+      "escultura.hierroNota": "Peças soldadas, com tratamento antiferrugem.",
       "escultura.tipo": "Tipo de escultura",
       "escultura.elegiTipo": "Selecione o tipo...",
       "escultura.busto": "Busto",
@@ -369,7 +378,7 @@
       "wizard.tipoEscultura.pregunta": "Que tipo de escultura procura?",
       "wizard.tipoEscultura.ayuda": "O busto é a cabeça e parte do peito. O meio corpo chega à cintura. A figura completa é de corpo inteiro. O relevo são formas que saem de um fundo. Se for um animal, um objeto ou algo abstrato, o valor consulta-se com o artista.",
       "wizard.material.pregunta": "De que material quer a peça?",
-      "wizard.material.ayuda": "Todas as opções levam estrutura de ferro e malha metálica no interior. Não fazemos fundição em bronze nem noutros metais.",
+      "wizard.material.ayuda": "O cimento, a fibra de vidro e a argila levam estrutura de ferro e malha metálica no interior. A chapa e a sucata são peças soldadas, com tratamento antiferrugem. Não fazemos fundição em bronze nem noutros metais.",
       "wizard.altura.pregunta": "Que altura quer para a peça?",
       "wizard.altura.ayuda": "A altura mede-se da base ao ponto mais alto. Ao lado vê uma pessoa de 1,70 m para comparar. Pode indicar a medida em centímetros, metros ou polegadas.",
       "wizard.estiloMural.pregunta": "Que estilo quer para o mural?",
@@ -454,10 +463,13 @@
       "escultura.entre": "Entre",
       "escultura.peso": "Poids estimé : env. {n} kg",
       "escultura.material": "Matériau",
-      "escultura.tejido": "Toutes les options comprennent un treillis métallique à l'intérieur.",
+      "escultura.tejido": "Le ciment, la fibre de verre et l'argile comportent un treillis métallique à l'intérieur.",
       "escultura.cemento": "Ciment creux avec structure en fer",
       "escultura.fibra": "Fibre de verre avec structure en fer",
       "escultura.arcilla": "Argile avec ciment et structure en fer",
+      "escultura.chapa": "Tôle de fer",
+      "escultura.chatarra": "Objets de ferraille",
+      "escultura.hierroNota": "Pièces soudées, avec traitement antirouille.",
       "escultura.tipo": "Type de sculpture",
       "escultura.elegiTipo": "Choisissez le type...",
       "escultura.busto": "Buste",
@@ -501,7 +513,7 @@
       "wizard.tipoEscultura.pregunta": "Quel type de sculpture recherchez-vous ?",
       "wizard.tipoEscultura.ayuda": "Le buste est la tête et le haut du torse. Le mi-corps va jusqu'à la taille. La figure en pied est le corps entier. Le relief, ce sont des formes qui se détachent d'un fond. S'il s'agit d'un animal, d'un objet ou d'une forme abstraite, le tarif se confirme avec l'artiste.",
       "wizard.material.pregunta": "Dans quel matériau souhaitez-vous la pièce ?",
-      "wizard.material.ayuda": "Toutes les options comportent une structure en fer et un treillis métallique à l'intérieur. Nous ne proposons pas de fonte en bronze ni en d'autres métaux.",
+      "wizard.material.ayuda": "Le ciment, la fibre de verre et l'argile ont une structure en fer et un treillis métallique à l'intérieur. La tôle et la ferraille sont des pièces soudées, avec traitement antirouille. Nous ne proposons pas de fonte en bronze ni en d'autres métaux.",
       "wizard.altura.pregunta": "Quelle hauteur souhaitez-vous pour la pièce ?",
       "wizard.altura.ayuda": "La hauteur se mesure de la base au point le plus haut. À côté, vous voyez une personne de 1,70 m pour comparer. Vous pouvez indiquer la mesure en centimètres, mètres ou pouces.",
       "wizard.estiloMural.pregunta": "Quel style souhaitez-vous pour la fresque ?",
@@ -586,10 +598,13 @@
       "escultura.entre": "Tra",
       "escultura.peso": "Peso stimato: circa {n} kg",
       "escultura.material": "Materiale",
-      "escultura.tejido": "Tutte includono una rete metallica all'interno.",
+      "escultura.tejido": "Il cemento, la vetroresina e l'argilla hanno una rete metallica all'interno.",
       "escultura.cemento": "Cemento cavo con struttura in ferro",
       "escultura.fibra": "Vetroresina con struttura in ferro",
       "escultura.arcilla": "Argilla con cemento e struttura in ferro",
+      "escultura.chapa": "Lamiera di ferro",
+      "escultura.chatarra": "Oggetti di rottame",
+      "escultura.hierroNota": "Pezzi saldati, con trattamento antiruggine.",
       "escultura.tipo": "Tipo di scultura",
       "escultura.elegiTipo": "Seleziona il tipo...",
       "escultura.busto": "Busto",
@@ -633,7 +648,7 @@
       "wizard.tipoEscultura.pregunta": "Che tipo di scultura stai cercando?",
       "wizard.tipoEscultura.ayuda": "Il busto è la testa e parte del petto. Il mezzo busto arriva alla vita. La figura intera è a corpo pieno. Il rilievo sono forme che sporgono da uno sfondo. Se è un animale, un oggetto o qualcosa di astratto, il valore si consulta con l'artista.",
       "wizard.material.pregunta": "In quale materiale vuoi il pezzo?",
-      "wizard.material.ayuda": "Tutte le opzioni hanno una struttura in ferro e una rete metallica all'interno. Non facciamo fusioni in bronzo né in altri metalli.",
+      "wizard.material.ayuda": "Il cemento, la vetroresina e l'argilla hanno una struttura in ferro e una rete metallica all'interno. La lamiera e il rottame sono pezzi saldati, con trattamento antiruggine. Non facciamo fusioni in bronzo né in altri metalli.",
       "wizard.altura.pregunta": "Che altezza vuoi per il pezzo?",
       "wizard.altura.ayuda": "L'altezza si misura dalla base al punto più alto. Accanto vedi una persona di 1,70 m per confrontare. Puoi indicare la misura in centimetri, metri o pollici.",
       "wizard.estiloMural.pregunta": "Che stile vuoi per il murale?",
@@ -718,10 +733,13 @@
       "escultura.entre": "Zwischen",
       "escultura.peso": "Geschätztes Gewicht: ca. {n} kg",
       "escultura.material": "Material",
-      "escultura.tejido": "Alle Varianten haben innen ein Metallgewebe.",
+      "escultura.tejido": "Zement, Glasfaser und Ton haben innen ein Metallgewebe.",
       "escultura.cemento": "Hohler Zement mit Eisenstruktur",
       "escultura.fibra": "Glasfaser mit Eisenstruktur",
       "escultura.arcilla": "Ton mit Zement und Eisenstruktur",
+      "escultura.chapa": "Eisenblech",
+      "escultura.chatarra": "Schrottteile",
+      "escultura.hierroNota": "Geschweißte Stücke mit Rostschutzbehandlung.",
       "escultura.tipo": "Art der Skulptur",
       "escultura.elegiTipo": "Art wählen...",
       "escultura.busto": "Büste",
@@ -765,7 +783,7 @@
       "wizard.tipoEscultura.pregunta": "Welche Art von Skulptur suchst du?",
       "wizard.tipoEscultura.ayuda": "Eine Büste ist Kopf und oberer Brustkorb. Die Halbfigur reicht bis zur Taille. Die Ganzfigur ist der ganze Körper. Ein Relief sind Formen, die aus einem flachen Grund hervortreten. Handelt es sich um ein Tier, ein Objekt oder etwas Abstraktes, wird der Preis mit dem Künstler abgestimmt.",
       "wizard.material.pregunta": "Aus welchem Material soll das Stück sein?",
-      "wizard.material.ayuda": "Alle Optionen haben eine Eisenstruktur und innen ein Metallgewebe. Wir bieten keinen Guss in Bronze oder anderen Metallen an.",
+      "wizard.material.ayuda": "Zement, Glasfaser und Ton haben eine Eisenstruktur und innen ein Metallgewebe. Blech und Schrott sind geschweißte Stücke mit Rostschutzbehandlung. Wir bieten keinen Guss in Bronze oder anderen Metallen an.",
       "wizard.altura.pregunta": "Welche Höhe soll das Stück haben?",
       "wizard.altura.ayuda": "Die Höhe wird von der Basis bis zum höchsten Punkt gemessen. Daneben siehst du eine 1,70 m große Person zum Vergleich. Du kannst das Maß in Zentimetern, Metern oder Zoll angeben.",
       "wizard.estiloMural.pregunta": "Welchen Stil möchtest du für das Wandbild?",
@@ -958,11 +976,18 @@
       }
       mon.value = info.moneda;
     }
-    if (!(opts && opts.sinIdioma) && !idiomaManual && info.lang && info.lang !== idioma) {
+    if (!(opts && opts.sinIdioma) && info.lang) {
       idioma = info.lang;
+      idiomaManual = false;
     }
     persist();
-    if (!(opts && opts.silent)) aplicar();
+    if (!(opts && opts.silent)) {
+      aplicar();
+      if (typeof calcular === 'function') { try { calcular(); } catch (e) {} }
+      if (window.AsistentePedido && typeof AsistentePedido.actualizarBarra === 'function') {
+        try { AsistentePedido.actualizarBarra(); } catch (e) {}
+      }
+    }
   }
   function iniciar() {
     try {

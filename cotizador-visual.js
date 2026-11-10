@@ -9,6 +9,7 @@
     forma_lienzo: { select: 'forma_lienzo', label: 'Formato' },
     enmarcado: { select: 'enmarcado', label: 'Enmarcado' },
     tipo_escultura: { select: 'tipo_escultura', label: 'Tipo de escultura' },
+    material_escultura: { select: 'material_escultura', label: 'Material' },
     sujetos: { select: null, label: 'Personas y mascotas' }
   };
 
@@ -378,6 +379,7 @@
     fillSelect('forma_lienzo');
     fillSelect('enmarcado');
     fillSelect('tipo_escultura');
+    fillSelect('material_escultura');
     renderFondo();
     renderSujetos();
     updateEscala();

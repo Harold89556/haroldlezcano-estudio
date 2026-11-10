@@ -322,5 +322,98 @@ test('27. Traducciones restantes, textos del sitio y validación de textosI18n',
   a.w.EstudioI18n.setPais('PY');
 });
 
+
+test('28. Guías distintas por tipo de escultura, hierro soldado y peso de chapa',()=>{
+  const a=iniciar();a.listo();
+  const items=a.w.ESTUDIO_GUIAS_DEFAULT.items;
+  const tipos=['Busto','Medio cuerpo','Figura completa','Relieve','Animal','Abstracto','Objeto','Otro'];
+  const urls=tipos.map(k=>items['tipo_escultura:'+k].url);
+  assert.equal(new Set(urls).size,8);
+  assert.ok(urls.every(u=>u.startsWith('img/guias/')&&u.endsWith('.webp')));
+  assert.equal(items['tipo_escultura:Busto'].url,'img/guias/escultura-busto.webp');
+  assert.equal(items['tipo_escultura:Relieve'].url,'img/guias/escultura-relieve.webp');
+  for(const k of ['Animal','Abstracto','Objeto','Otro']){
+    assert.notEqual(items['tipo_escultura:'+k].url,items['tipo_escultura:Busto'].url);
+    assert.ok(!/estilo-escultura/.test(items['tipo_escultura:'+k].url),k);
+  }
+  assert.ok(items['material_escultura:Chapa'].url.includes('chapa'));
+  assert.ok(items['material_escultura:Chatarra'].url.includes('chatarra'));
+  const precios=a.w.ESTUDIO_DEFAULTS.precios;
+  assert.equal(precios.materialesEscultura.Chapa,1.25);
+  assert.equal(precios.materialesEscultura.Chatarra,1.15);
+  assert.equal(precios.pesosEscultura.densidadAcero,7.85);
+  const pChapa=a.w.pesoEsculturaKg('Figura completa',170,'Chapa');
+  const pChat=a.w.pesoEsculturaKg('Figura completa',170,'Chatarra');
+  assert.ok(pChapa>=60&&pChapa<=150,String(pChapa));
+  assert.ok(pChat>=60&&pChat<=150,String(pChat));
+  assert.ok(pChat!==pChapa);
+  a.set('estilo','Escultura');a.w.onEstiloChange();
+  a.set('tipo_escultura','Figura completa');a.w.onTipoEsculturaChange();
+  a.set('material_escultura','Chapa');a.w.onMaterialEsculturaChange();
+  a.set('escultura_cm','170');a.w.onEsculturaCmInput();
+  const conChapa=a.w.presupuesto();
+  assert.ok(conChapa&&!conChapa.consultar);
+  assert.equal(conChapa.base,Math.round(20400000*1.25/50000)*50000);
+  assert.match(a.d.getElementById('nota-tejido-metalico').textContent,/soldadas|antióxido|antioxido/i);
+  assert.ok(!/Todas incluyen tejido/i.test(a.d.getElementById('nota-tejido-metalico').textContent));
+  a.set('tipo_escultura','Animal');a.w.onTipoEsculturaChange();
+  a.set('material_escultura','Chatarra');a.w.onMaterialEsculturaChange();
+  a.w.calcular();
+  const noH=a.w.presupuesto();
+  assert.ok(noH&&noH.consultar&&noH.consultarArtista);
+  assert.match(a.price(),/A consultar con el artista/);
+  const mats=[...a.d.querySelectorAll('#material_escultura option')].map(o=>o.value);
+  assert.ok(mats.includes('Chapa')&&mats.includes('Chatarra'));
+  assert.ok(!/%/.test(a.d.getElementById('tab-cotizacion').textContent));
+  const ok=a.w.EstudioDatos.validatePrices(a.w.EstudioDatos.clone(precios));
+  assert.equal(ok.materialesEscultura.Chapa,1.25);
+});
+
+
+test('29. El país aplica idioma y moneda al momento, y el idioma manual se puede cambiar después',()=>{
+  const a=iniciar();a.listo();
+  a.w.EstudioI18n.setIdioma('en',{manual:true});
+  a.w.EstudioI18n.setPais('BR');
+  assert.equal(a.w.EstudioI18n.idioma,'pt');
+  assert.equal(a.w.EstudioI18n.pais,'BR');
+  assert.equal(a.d.getElementById('moneda').value,'BRL');
+  assert.equal(a.d.getElementById('selector-idioma').value,'pt');
+  assert.equal(a.d.getElementById('selector-pais').value,'BR');
+  a.w.calcular();
+  const txt=a.price();
+  assert.ok(/R\$|BRL/.test(txt),txt);
+  a.w.AsistentePedido.abrir();
+  const oleo=a.d.querySelector('#asistente-opciones .guia-card[data-value="oleo"]');
+  if(oleo) oleo.click();
+  if(typeof a.w.AsistentePedido.actualizarBarra==='function') a.w.AsistentePedido.actualizarBarra();
+  const barra=(a.d.getElementById('asistente-precio-vivo')||{}).textContent||'';
+  assert.ok(/R\$|BRL/.test(barra),barra);
+  const sugs=[...a.d.querySelectorAll('#asistente-sugerencias-grid, #asistente-sugerencias')].map(el=>el.textContent).join(' ');
+  if(sugs.trim()) assert.ok(!/₲/.test(sugs)||/R\$|BRL/.test(sugs),sugs);
+  a.w.EstudioI18n.setIdioma('es',{manual:true});
+  assert.equal(a.w.EstudioI18n.idioma,'es');
+  assert.equal(a.d.getElementById('moneda').value,'BRL');
+  a.w.EstudioI18n.setPais('FR');
+  assert.equal(a.w.EstudioI18n.idioma,'fr');
+  assert.equal(a.d.getElementById('moneda').value,'EUR');
+  a.w.EstudioI18n.setPais('US');
+  assert.equal(a.w.EstudioI18n.idioma,'en');
+  assert.equal(a.d.getElementById('moneda').value,'USD');
+  a.w.EstudioI18n.setPais('PY');
+  assert.equal(a.w.EstudioI18n.idioma,'es');
+  assert.equal(a.d.getElementById('moneda').value,'PYG');
+  a.w.EstudioI18n.setPais('AR');
+  assert.equal(a.w.EstudioI18n.idioma,'es');
+  assert.equal(a.d.getElementById('moneda').value,'ARS');
+  a.w.EstudioI18n.setPais('IT');
+  assert.equal(a.w.EstudioI18n.idioma,'it');
+  assert.equal(a.d.getElementById('moneda').value,'EUR');
+  a.w.EstudioI18n.setPais('DE');
+  assert.equal(a.w.EstudioI18n.idioma,'de');
+  assert.equal(a.d.getElementById('moneda').value,'EUR');
+  a.w.EstudioI18n.setIdioma('es',{manual:true});
+  a.w.EstudioI18n.setPais('PY');
+});
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));
 

@@ -215,10 +215,12 @@
     }
     if (paso.id === 'material_escultura') {
       return [
-        { value: 'Fibra', key: 'material_escultura:Fibra', title: i18n('escultura.fibra') },
-        { value: 'Cemento', key: 'material_escultura:Cemento', title: i18n('escultura.cemento') },
-        { value: 'Arcilla', key: 'material_escultura:Arcilla', title: i18n('escultura.arcilla') }
-      ].map((o) => ({ ...o, text: i18n('escultura.tejido') + ' ' + textoGuia(o.key), url: guia(o.key).url, selected: valor('material_escultura') === o.value }));
+        { value: 'Fibra', key: 'material_escultura:Fibra', title: i18n('escultura.fibra'), hierro:false },
+        { value: 'Cemento', key: 'material_escultura:Cemento', title: i18n('escultura.cemento'), hierro:false },
+        { value: 'Arcilla', key: 'material_escultura:Arcilla', title: i18n('escultura.arcilla'), hierro:false },
+        { value: 'Chapa', key: 'material_escultura:Chapa', title: i18n('escultura.chapa'), hierro:true },
+        { value: 'Chatarra', key: 'material_escultura:Chatarra', title: i18n('escultura.chatarra'), hierro:true }
+      ].map((o) => ({ ...o, text: (o.hierro?i18n('escultura.hierroNota'):i18n('escultura.tejido')) + ' ' + textoGuia(o.key), url: guia(o.key).url, selected: valor('material_escultura') === o.value }));
     }
     if (paso.id === 'estilo_mural') {
       return [
