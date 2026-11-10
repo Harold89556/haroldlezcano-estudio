@@ -164,13 +164,29 @@ function renderPrices() {
 
 function fondoUrl(){ return site.fondoImagen || window.ESTUDIO_FONDO_DEFAULT; }
 function fondoOp(){ return Number.isFinite(site.fondoOpacidad) ? site.fondoOpacidad : window.ESTUDIO_FONDO_OPACIDAD_DEFAULT; }
+function ventanasOp(){ return Number.isFinite(site.ventanasOpacidad) ? site.ventanasOpacidad : window.ESTUDIO_VENTANAS_OPACIDAD_DEFAULT; }
+function fondoBlur(){ return Number.isFinite(site.fondoDesenfoque) ? site.fondoDesenfoque : window.ESTUDIO_FONDO_DESENFOQUE_DEFAULT; }
+function previewFondo(){
+ const op=Number($('fondo-opacidad').value)/100;
+ const blur=Number($('fondo-desenfoque').value);
+ const vent=Number($('ventanas-opacidad').value)/100;
+ const img=$('fondo-preview-img');
+ img.style.opacity=String(Number.isFinite(op)?op:fondoOp());
+ img.style.filter=blur>0?('blur('+blur+'px)'):'none';
+ const pane=$('fondo-preview-ventana');
+ if(pane) pane.style.background='rgba(18,18,18,'+(Number.isFinite(vent)?vent:ventanasOp())+')';
+}
 function renderFondo(){
- const url=fondoUrl(), op=fondoOp();
- $('fondo-preview-img').style.backgroundImage='url("'+url.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'")';
- $('fondo-preview-img').style.opacity=String(op);
+ const url=fondoUrl(), op=fondoOp(), vent=ventanasOp(), blur=fondoBlur();
+  $('fondo-preview-img').style.backgroundImage='url("'+url.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'")';
  $('fondo-opacidad').value=String(Math.round(op*100));
  $('fondo-opacidad-valor').textContent=Math.round(op*100)+' %';
+ $('fondo-desenfoque').value=String(Math.round(blur));
+ $('fondo-desenfoque-valor').textContent=Math.round(blur)+' px';
+ $('ventanas-opacidad').value=String(Math.round(vent*100));
+ $('ventanas-opacidad-valor').textContent=Math.round(vent*100)+' %';
  $('fondo-quitar').hidden=!(site.fondoImagen||site.fondoImagenPath);
+ previewFondo();
 }
 
 let guias = { items: {} };
@@ -340,7 +356,7 @@ $('foto-inicio-editar').onclick=()=>{const out=t=>{$('foto-inicio-status').textC
   const path='sitio/artista-'+Date.now().toString(36)+'.'+ext;
   setPending(path,true);
   const url=await api.uploadImage(file,path,p=>progress('Subiendo: '+p+'%'));
-  const next=D.validateSite({...site,fotoArtista:url,fotoArtistaPath:path,fondoImagen:site.fondoImagen,fondoImagenPath:site.fondoImagenPath,fondoOpacidad:site.fondoOpacidad});await api.saveConfig('sitio',next);site=next;setPending(path,false);
+  const next=D.validateSite({...site,fotoArtista:url,fotoArtistaPath:path,fondoImagen:site.fondoImagen,fondoImagenPath:site.fondoImagenPath,fondoOpacidad:site.fondoOpacidad,ventanasOpacidad:site.ventanasOpacidad,fondoDesenfoque:site.fondoDesenfoque});await api.saveConfig('sitio',next);site=next;setPending(path,false);
   if(previous&&previous!==path&&previous.startsWith('sitio/')){try{await api.deleteStorageFile(previous);}catch{setPending(previous,true);}}
   $('foto-inicio-preview').src=url;out('Foto de Inicio guardada. Ya se ve en el sitio.');
  }}).catch(e=>out(api.explainError(e)));
@@ -354,6 +370,7 @@ async function saveSite(extra={}, statusEl=$('site-status'), msg='Textos y conta
   textos,
   fotoArtista:site.fotoArtista, fotoArtistaPath:site.fotoArtistaPath,
   fondoImagen:site.fondoImagen, fondoImagenPath:site.fondoImagenPath, fondoOpacidad:site.fondoOpacidad,
+  ventanasOpacidad:site.ventanasOpacidad, fondoDesenfoque:site.fondoDesenfoque,
   ...extra
  });
  await api.saveConfig('sitio',next);site=next;statusEl.textContent=msg;renderFondo();
@@ -377,18 +394,34 @@ $('fondo-quitar').onclick=()=>action($('fondo-admin'),async()=>{
  if(!confirm('¿Volver a la imagen de fondo original del sitio?')) return;
  const previous=site.fondoImagenPath||'';
  const textos={...site.textos}; for(const input of document.querySelectorAll('#site-form [data-text-key]')) textos[input.dataset.textKey]=input.value;
- const cleared={whatsapp:site.whatsapp,mapaCurso:site.mapaCurso,textos,fondoOpacidad:fondoOp()};
+ const cleared={whatsapp:site.whatsapp,mapaCurso:site.mapaCurso,textos,fondoOpacidad:fondoOp(),ventanasOpacidad:ventanasOp(),fondoDesenfoque:fondoBlur()};
  if(site.fotoArtista){cleared.fotoArtista=site.fotoArtista;cleared.fotoArtistaPath=site.fotoArtistaPath||'';}
  const next=D.validateSite(cleared);await api.saveConfig('sitio',next);site=next;renderFondo();$('fondo-status').textContent='Se restauró la imagen original.';
  if(previous.startsWith('sitio/')){try{await api.deleteStorageFile(previous);}catch{setPending(previous,true);}}
 },t=>$('fondo-status').textContent=t);
 $('fondo-opacidad').oninput=()=>{
  const pct=Number($('fondo-opacidad').value);$('fondo-opacidad-valor').textContent=pct+' %';
- $('fondo-preview-img').style.opacity=String(pct/100);
+ previewFondo();
 };
 $('fondo-opacidad').onchange=()=>action($('fondo-admin'),async()=>{
  const pct=Number($('fondo-opacidad').value);
- await saveSite({fondoOpacidad:pct/100}, $('fondo-status'), 'Opacidad guardada.');
+ await saveSite({fondoOpacidad:pct/100}, $('fondo-status'), 'Opacidad del fondo guardada.');
+},t=>$('fondo-status').textContent=t);
+$('fondo-desenfoque').oninput=()=>{
+ const px=Number($('fondo-desenfoque').value);$('fondo-desenfoque-valor').textContent=px+' px';
+ previewFondo();
+};
+$('fondo-desenfoque').onchange=()=>action($('fondo-admin'),async()=>{
+ const px=Number($('fondo-desenfoque').value);
+ await saveSite({fondoDesenfoque:px}, $('fondo-status'), 'Desenfoque guardado.');
+},t=>$('fondo-status').textContent=t);
+$('ventanas-opacidad').oninput=()=>{
+ const pct=Number($('ventanas-opacidad').value);$('ventanas-opacidad-valor').textContent=pct+' %';
+ previewFondo();
+};
+$('ventanas-opacidad').onchange=()=>action($('fondo-admin'),async()=>{
+ const pct=Number($('ventanas-opacidad').value);
+ await saveSite({ventanasOpacidad:pct/100}, $('fondo-status'), 'Opacidad de las ventanas guardada.');
 },t=>$('fondo-status').textContent=t);
 try {
  services=await api.getServices();

@@ -191,12 +191,16 @@
   }
   $('bioText').textContent=window.sitioActual.textos.biografia;
   const foto=document.querySelector('img.artista-foto');if(foto&&window.sitioActual.fotoArtista){foto.src=window.sitioActual.fotoArtista;foto.classList.add('artista-foto-propia');}
-  const bg=document.querySelector('.page-background');
+    const bg=document.querySelector('.page-background');
   if(bg){
    const url=window.sitioActual.fondoImagen||window.ESTUDIO_FONDO_DEFAULT;
    const op=Number.isFinite(window.sitioActual.fondoOpacidad)?window.sitioActual.fondoOpacidad:window.ESTUDIO_FONDO_OPACIDAD_DEFAULT;
+   const vent=Number.isFinite(window.sitioActual.ventanasOpacidad)?window.sitioActual.ventanasOpacidad:window.ESTUDIO_VENTANAS_OPACIDAD_DEFAULT;
+   const blur=Number.isFinite(window.sitioActual.fondoDesenfoque)?window.sitioActual.fondoDesenfoque:window.ESTUDIO_FONDO_DESENFOQUE_DEFAULT;
    bg.style.setProperty('--fondo-url','url("'+url.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'")');
    bg.style.setProperty('--fondo-opacidad',String(op));
+   bg.style.setProperty('--fondo-desenfoque',blur+'px');
+   document.documentElement.style.setProperty('--ventanas-opacidad',String(vent));
   }
   if($('bioCurso')){$('bioCurso').textContent=window.sitioActual.textos.introduccionCurso;$('bioCurso').dataset.listo='1';}
   for (const a of document.querySelectorAll('a[href^="https://wa.me/595972173847"]')) a.href='https://wa.me/'+window.sitioActual.whatsapp;

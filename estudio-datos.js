@@ -1,6 +1,8 @@
 'use strict';
 window.ESTUDIO_FONDO_DEFAULT = 'https://i.postimg.cc/NMk5wJ1T/Picsart-26-04-28-08-03-58-251.jpg';
 window.ESTUDIO_FONDO_OPACIDAD_DEFAULT = 0.45;
+window.ESTUDIO_VENTANAS_OPACIDAD_DEFAULT = 0.55;
+window.ESTUDIO_FONDO_DESENFOQUE_DEFAULT = 0;
 window.ESTUDIO_GUIAS_DEFAULT = { items: {
   "estilo:Realista": { url: "https://i.postimg.cc/KjmcV060/1715876237156.jpg", text: "Parecido natural, como una foto bien pintada.", kind: "foto" },
   "estilo:Hiperrealista": { url: "https://i.postimg.cc/prPV7sww/20190823-174532.jpg", text: "Detalle extremo: piel, tela y brillos casi fotográficos.", kind: "foto" },
@@ -433,6 +435,16 @@ window.EstudioDatos = (() => {
    const op = Number(value.fondoOpacidad);
    if (!Number.isFinite(op) || op < 0 || op > 1) throw Error('La opacidad del fondo debe estar entre 0 y 1.');
    out.fondoOpacidad = Math.round(op * 1000) / 1000;
+  }
+  if (value.ventanasOpacidad !== undefined && value.ventanasOpacidad !== null && value.ventanasOpacidad !== '') {
+   const vo = Number(value.ventanasOpacidad);
+   if (!Number.isFinite(vo) || vo < 0 || vo > 1) throw Error('La opacidad de las ventanas debe estar entre 0 y 1.');
+   out.ventanasOpacidad = Math.round(vo * 1000) / 1000;
+  }
+  if (value.fondoDesenfoque !== undefined && value.fondoDesenfoque !== null && value.fondoDesenfoque !== '') {
+   const bl = Number(value.fondoDesenfoque);
+   if (!Number.isFinite(bl) || bl < 0 || bl > 20) throw Error('El desenfoque del fondo debe estar entre 0 y 20.');
+   out.fondoDesenfoque = Math.round(bl * 10) / 10;
   }
   return out;
  }

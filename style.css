@@ -7,6 +7,7 @@
         ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #b5952f; }
 
+        :root { --ventanas-opacidad: 0.55; }
         body { 
             font-family: 'Montserrat', sans-serif; 
             margin: 0; padding: 0; display: flex; justify-content: center; 
@@ -17,22 +18,25 @@
         /* FONDO TOTALMENTE ESTÁTICO CON FILTRO ELEGANTE */
         .page-background {
             position: fixed; inset: 0; z-index: -1; pointer-events: none;
-            background-color: #121212;
+            background-color: #121212; overflow: hidden;
             --fondo-url: url('https://i.postimg.cc/NMk5wJ1T/Picsart-26-04-28-08-03-58-251.jpg');
             --fondo-opacidad: 0.45;
+            --fondo-desenfoque: 0px;
         }
         .page-background::before {
-            content: ''; position: absolute; inset: 0;
+            content: ''; position: absolute; inset: -48px;
             background-image: var(--fondo-url);
             background-size: cover; background-position: center; background-repeat: no-repeat;
             opacity: var(--fondo-opacidad);
-            will-change: opacity;
+            filter: blur(var(--fondo-desenfoque, 0px));
+            transform: scale(1.08);
+            will-change: opacity, filter;
         }
 
         /* CONTENEDOR PRINCIPAL GLASSMORPHISM */
         .container { 
             width: 100%; max-width: 480px; 
-            background: rgba(18, 18, 18, 0.55); 
+            background: rgba(18, 18, 18, var(--ventanas-opacidad)); 
             border: 1px solid rgba(255, 255, 255, 0.05); 
             padding: 30px 20px; box-sizing: border-box; min-height: 100vh;
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); position: relative;
@@ -63,7 +67,7 @@
         .bio-section {
             text-align: center; color: #ddd; font-size: 13px; line-height: 1.7; 
             margin-bottom: 30px; padding: 25px 20px; font-weight: 300;
-            background: rgba(10, 10, 10, 0.4); border-radius: 16px; 
+            background: rgba(10, 10, 10, max(0.22, calc(var(--ventanas-opacidad) * 0.73))); border-radius: 16px; 
             border: 1px solid rgba(212, 175, 55, 0.1); transition: opacity 0.4s ease;
             box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
         }
@@ -72,7 +76,7 @@
         /* NAVEGACIÓN TABS */
         .tab-container { 
             display: flex; justify-content: center; gap: 8px; margin-bottom: 30px; 
-            background: rgba(15,15,15,0.7); padding: 6px; border-radius: 40px; 
+            background: rgba(15,15,15, min(1, calc(var(--ventanas-opacidad) + 0.15))); padding: 6px; border-radius: 40px; 
             border: 1px solid rgba(255,255,255,0.05); 
             position: sticky; top: 15px; z-index: 1000;
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -100,7 +104,7 @@
 
         /* SISTEMA DE TARJETAS (CARDS) */
         .section-box, .form-card { 
-            background: rgba(20, 20, 20, 0.7); 
+            background: rgba(20, 20, 20, min(1, calc(var(--ventanas-opacidad) + 0.15))); 
             padding: 22px 18px; border-radius: 16px; 
             border: 1px solid rgba(255,255,255,0.06); 
             margin-bottom: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
@@ -139,7 +143,7 @@
         .sticky-footer { 
             display: none; flex-direction: row; align-items: center; justify-content: space-between;
             position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 440px; background: rgba(15, 15, 15, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            width: 90%; max-width: 440px; background: rgba(15, 15, 15, min(1, calc(var(--ventanas-opacidad) + 0.30))); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             padding: 12px 20px; border-radius: 50px; border: 1px solid rgba(212,175,55,0.3); z-index: 1000;
             box-shadow: 0 15px 40px rgba(0,0,0,0.9), 0 0 20px rgba(212,175,55,0.15);
             animation: slideUp 0.5s cubic-bezier(0.23, 1, 0.32, 1);
@@ -169,7 +173,9 @@
             color: #888; padding: 12px; border-radius: 10px; font-size: 10px; font-weight: 600;
             cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s;
         }
-        .filter-btn.active { background: rgba(212,175,55,0.1); border-color: rgba(212,175,55,0.4); color: #d4af37; }
+        .filter-btn { position: relative; transition: all 0.3s; }
+        .filter-btn.active { background: rgba(212,175,55,0.22); border: 2px solid #d4af37; color: #f0d77f; box-shadow: 0 0 0 2px rgba(212,175,55,.4), 0 0 14px rgba(212,175,55,.45); transform: scale(1.04); z-index: 1; }
+        .filter-btn.active::after { content: "✓"; margin-left: 6px; font-weight: 800; color: #d4af37; }
         
         /* GALERÍA EN ÁLBUMES */
         .album-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; padding: 10px 0; animation: fadeIn 0.5s; }
@@ -235,12 +241,12 @@
         /* CURSOS */
         .course-header-info { 
             text-align: center; color: #ddd; margin-bottom: 25px; line-height: 1.6; 
-            background: rgba(15,15,15,0.6); padding: 25px 20px; border-radius: 16px; 
+            background: rgba(15,15,15, min(1, calc(var(--ventanas-opacidad) + 0.05))); padding: 25px 20px; border-radius: 16px; 
             border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .course-header-info h2 { margin: 0 0 5px 0; font-size: 18px; letter-spacing: 3px; color: #fff;}
         .course-card { 
-            background: rgba(20,20,20,0.5); border-left: 4px solid #444; border-radius: 12px; 
+            background: rgba(20,20,20, max(0.22, calc(var(--ventanas-opacidad) * 0.91))); border-left: 4px solid #444; border-radius: 12px; 
             padding: 20px; margin-bottom: 15px; text-align: left; transition: all 0.3s; 
             border: 1px solid rgba(255,255,255,0.03); border-left-width: 4px;
         }
@@ -403,7 +409,7 @@ body[data-pantalla="cotizacion"] .app-shell { padding-bottom: calc(var(--nav-h) 
 #tab-inicio.active, #tab-cotizacion.active, #tab-curso.active { min-height: calc(100vh - var(--nav-h) - var(--nav-safe)); }
 .bottom-nav { position: fixed !important; top: auto !important; left: 50%; bottom: 0; transform: translateX(-50%); width: 100%; max-width: 720px; margin: 0 !important; z-index: 1100;
   display: flex; gap: 0; justify-content: space-around; padding: 6px 6px calc(6px + var(--nav-safe)); border-radius: 18px 18px 0 0;
-  background: rgba(12,12,12,0.94); border: 1px solid rgba(212,175,55,0.18); border-bottom: 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.7); }
+  background: rgba(12,12,12, min(1, max(0.45, calc(var(--ventanas-opacidad) + 0.39)))); border: 1px solid rgba(212,175,55,0.18); border-bottom: 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.7); }
 .bottom-nav .tab-btn { flex: 1 1 0; min-height: 52px; min-width: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
   padding: 6px 2px; border-radius: 12px; border: 1px solid transparent; font-size: 11px; letter-spacing: 0.3px; text-transform: none; color: #a8a8a8; transform: none !important; }
 .bottom-nav .tab-btn i { font-size: 19px; }
@@ -465,27 +471,31 @@ body.editor-abierto .admin-bottom-nav, body:has(#admin-workspace[hidden]) .admin
 
 /* Fondo de la página: vista previa en el administrador. */
 .admin-fondo-card { margin-bottom: 22px; }
-.admin-fondo-preview { position: relative; height: 140px; border-radius: 12px; overflow: hidden; background: #121212; border: 1px solid #444; margin: 10px 0 14px; }
-.admin-fondo-preview-img { position: absolute; inset: 0; background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0.45; }
-.admin-fondo-preview-label { position: absolute; left: 10px; bottom: 8px; font-size: 11px; color: #eee; text-shadow: 0 1px 4px #000; }
+.admin-fondo-preview { position: relative; height: 160px; border-radius: 12px; overflow: hidden; background: #121212; border: 1px solid #444; margin: 10px 0 14px; }
+.admin-fondo-preview-img { position: absolute; inset: -28px; background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0.45; transform: scale(1.06); }
+.admin-fondo-preview-ventana { position: absolute; left: 16px; right: 16px; top: 28px; bottom: 36px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); background: rgba(18,18,18,.55); color: #eee; display: flex; align-items: center; justify-content: center; font-size: 12px; letter-spacing: .4px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 8px 20px rgba(0,0,0,.45); }
+.admin-fondo-preview-label { position: absolute; left: 10px; bottom: 8px; font-size: 11px; color: #eee; text-shadow: 0 1px 4px #000; z-index: 2; }
 .admin-fondo-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .admin-fondo-actions button { min-height: 46px; margin: 0 !important; }
 .admin-fondo-opacidad { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; margin-top: 12px; }
-.admin-fondo-opacidad input[type=range] { width: 100%; accent-color: #d4af37; }
+.admin-fondo-opacidad input[type=range], #fondo-admin input[type=range] { width: 100%; accent-color: #d4af37; display: block; margin: 6px 0 0; }
 .admin-fondo-opacidad output { min-width: 3.5em; text-align: right; color: #e5ca72; font-size: 13px; }
 .admin-fondo-hint { color: #aaa; font-size: 11px; margin-top: 6px; }
 
 /* Guías visuales del cotizador */
 .guia-select-nativo { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; border: 0 !important; }
-.guia-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin: 10px 0 14px; }
-.guia-card { display: flex; flex-direction: column; text-align: left; padding: 0; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: #141414; color: #eee; cursor: pointer; overflow: hidden; font: inherit; min-height: 44px; }
-.guia-card.active { border-color: #d4af37; box-shadow: 0 0 0 1px rgba(212,175,55,.35); background: rgba(212,175,55,.08); }
+.guia-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin: 10px 0 14px; padding: 4px; }
+.guia-card { position: relative; display: flex; flex-direction: column; text-align: left; padding: 0; border: 2px solid rgba(255,255,255,.12); border-radius: 12px; background: #141414; color: #eee; cursor: pointer; overflow: hidden; font: inherit; min-height: 44px; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease, opacity .2s ease, filter .2s ease; }
+.guia-grid:has(.guia-card.active) .guia-card:not(.active),
+.guia-grid:has(.guia-card[aria-selected="true"]) .guia-card:not(.active) { opacity: .62; filter: saturate(.75); }
+.guia-card.active, .guia-card[aria-selected="true"] { border: 3px solid #d4af37; box-shadow: 0 0 0 2px rgba(212,175,55,.55), 0 0 22px rgba(212,175,55,.55); background: rgba(212,175,55,.2); transform: scale(1.03); z-index: 1; opacity: 1; filter: none; }
+.guia-card.active::after, .guia-card[aria-selected="true"]::after { content: "✓"; position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d4af37; color: #111; font-size: 13px; font-weight: 800; line-height: 22px; text-align: center; z-index: 2; box-shadow: 0 2px 8px rgba(0,0,0,.5); }
 .guia-media { aspect-ratio: 16/11; background: #0c0c0c; overflow: hidden; }
 .guia-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .guia-cap { padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 3px; }
 .guia-cap strong { font-size: 12px; color: #f0d77f; }
 .guia-cap span { font-size: 11px; color: #bdbdbd; line-height: 1.35; }
-.vista-escala { margin: 14px 0 6px; padding: 12px; border-radius: 12px; border: 1px solid rgba(212,175,55,.2); background: rgba(0,0,0,.35); min-height: 220px; }
+.vista-escala { margin: 14px 0 6px; padding: 12px; border-radius: 12px; border: 1px solid rgba(212,175,55,.2); background: rgba(0,0,0, max(0.2, calc(var(--ventanas-opacidad) * 0.64))); min-height: 220px; }
 .vista-escala svg { width: 100%; height: auto; display: block; }
 .vista-escala-nota { margin: 8px 0 0; font-size: 11px; color: #aaa; }
 .admin-guia-row { display: grid; grid-template-columns: 88px 1fr; gap: 12px; align-items: start; padding: 12px 0; border-bottom: 1px solid #333; }
