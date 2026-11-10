@@ -206,14 +206,21 @@ function renderFondo(){
 
 let guias = { items: {} };
 const GUIA_LABELS = {
- 'estilo:Realista':'Estilo · Realista','estilo:Hiperrealista':'Estilo · Hiperrealista','estilo:Espatulado':'Estilo · Espatulado','estilo:Bocetado':'Estilo · Bocetado','estilo:Mural':'Estilo · Mural','estilo:Escultura':'Estilo · Escultura','estilo:Restauracion':'Estilo · Restauración',
+ 'estilo:Realista':'Estilo · Realista','estilo:Hiperrealista':'Estilo · Hiperrealista','estilo:Espatulado':'Estilo · Espatulado','estilo:Bocetado':'Estilo · Bocetado','estilo:Abstracto':'Estilo · Abstracto','estilo:Mural':'Estilo · Mural','estilo:Escultura':'Estilo · Escultura','estilo:Restauracion':'Estilo · Restauración',
  'tecnica:Oleo':'Técnica · Óleo','tecnica:Acrilico':'Técnica · Acrílico','tecnica:Carbonilla':'Técnica · Carbonilla',
  'tema:Retrato':'Tema · Retrato','tema:Paisaje':'Tema · Paisaje','tema:Bodegon':'Tema · Bodegón','tema:Abstracto':'Tema · Abstracto',
  'fondo:simple':'Fondo · Simple','fondo:detallado':'Fondo · Detallado',
  'forma_lienzo:Estandar':'Forma · Rectangular','forma_lienzo:Circular':'Forma · Circular','forma_lienzo:Ovalado':'Forma · Ovalado','forma_lienzo:Hexagonal':'Forma · Hexagonal',
- 'enmarcado:SinMarco':'Marco · Sin marco','enmarcado:Estandar':'Marco · Estándar','enmarcado:Cajon':'Marco · Cajón','enmarcado:Clasico':'Marco · Clásico','enmarcado:SemiRelieve':'Marco · Semi relieve','enmarcado:GruesoRelieves':'Marco · Grueso',
+ 'enmarcado:SinMarco':'Marco · Sin marco','enmarcado:Estandar':'Marco · Estándar','enmarcado:Cajon':'Marco · Cajón','enmarcado:Clasico':'Marco · Clásico','enmarcado:SemiRelieve':'Marco · Semirrelieve','enmarcado:GruesoRelieves':'Marco · Grueso',
  'tipo_escultura:Busto':'Escultura · Busto','tipo_escultura:Medio cuerpo':'Escultura · Medio cuerpo','tipo_escultura:Figura completa':'Escultura · Figura completa','tipo_escultura:Relieve':'Escultura · Relieve',
- 'sujetos:1':'Sujetos · 1 persona','sujetos:2':'Sujetos · 2 personas','sujetos:mascota':'Sujetos · Con mascota'
+ 'sujetos:1':'Sujetos · 1 persona','sujetos:2':'Sujetos · 2 personas','sujetos:mascota':'Sujetos · Con mascota',
+ 'estilo:Realista:Carbonilla':'Estilo · Realista (dibujo)','estilo:Hiperrealista:Carbonilla':'Estilo · Hiperrealista (grafito)','estilo:Bocetado:Carbonilla':'Estilo · Boceto (dibujo)','estilo:Abstracto:Carbonilla':'Estilo · Abstracto (dibujo)',
+ 'estilo:Realista:Acrilico':'Estilo · Realista (acrílico)','estilo:Hiperrealista:Acrilico':'Estilo · Hiperrealista (acrílico)','estilo:Espatulado:Acrilico':'Estilo · Espatulado (acrílico)','estilo:Bocetado:Acrilico':'Estilo · Bocetado (acrílico)','estilo:Abstracto:Acrilico':'Estilo · Abstracto (acrílico)',
+ 'tema:Retrato:Carbonilla':'Tema · Retrato (dibujo)','tema:Paisaje:Carbonilla':'Tema · Paisaje (dibujo)','tema:Bodegon:Carbonilla':'Tema · Bodegón (dibujo)',
+ 'fondo:simple:Carbonilla':'Fondo · Simple (dibujo)','fondo:detallado:Carbonilla':'Fondo · Detallado (dibujo)',
+ 'enmarcado:SinMarco:Carbonilla':'Marco · Sin marco (dibujo)','enmarcado:Estandar:Carbonilla':'Marco · Estándar (vidrio y paspartú)','enmarcado:Clasico:Carbonilla':'Marco · Clásico (vidrio y paspartú)',
+ 'sujetos:1:Carbonilla':'Sujetos · 1 persona (dibujo)','sujetos:2:Carbonilla':'Sujetos · 2 personas (dibujo)','sujetos:mascota:Carbonilla':'Sujetos · Con mascota (dibujo)',
+
 };
 function guiaItem(key){
  const base=(window.ESTUDIO_GUIAS_DEFAULT.items||{})[key]||{};

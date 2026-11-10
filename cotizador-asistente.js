@@ -5,12 +5,28 @@
   let indice = 0;
   let trabajo = '';
 
+  function tecnicaGuia() {
+    return valor('tecnica') || (trabajo === 'oleo' ? 'Oleo' : trabajo === 'acrilico' ? 'Acrilico' : trabajo === 'carbonilla' ? 'Carbonilla' : '');
+  }
   function guia(key) {
-    if (window.CotizadorVisual && typeof CotizadorVisual.item === 'function') return CotizadorVisual.item(key);
+    const te = tecnicaGuia();
+    const special = /Mural|Escultura|Restauracion/.test(key);
+    const keys = [];
+    if (te && !special && /^(estilo|tema|fondo|enmarcado|sujetos):/.test(key)) keys.push(key + ':' + te);
+    keys.push(key);
+    if (window.CotizadorVisual && typeof CotizadorVisual.item === 'function') {
+      for (const k of keys) {
+        const src = CotizadorVisual.item(k);
+        if (src && (src.url || src.text)) return { url: src.url || '', text: src.text || '' };
+      }
+    }
     const d = (window.ESTUDIO_GUIAS_DEFAULT && window.ESTUDIO_GUIAS_DEFAULT.items) || {};
     const o = (window.guiasActual && window.guiasActual.items) || {};
-    const src = o[key] || d[key] || {};
-    return { url: src.url || '', text: src.text || '' };
+    for (const k of keys) {
+      const src = o[k] || d[k];
+      if (src && (src.url || src.text)) return { url: src.url || '', text: src.text || '' };
+    }
+    return { url: '', text: '' };
   }
 
   function setVal(id, value) {
@@ -54,7 +70,9 @@
   function pasos() {
     const s = [{ id: 'trabajo', pregunta: '¿Qué tipo de trabajo buscás?', ayuda: 'Elegí la opción que más se parezca a lo que querés. En el siguiente paso te pedimos más detalles, siempre con imágenes de guía.' }];
     if (esPintura()) {
-      s.push({ id: 'estilo', pregunta: '¿Qué estilo te gusta más?', ayuda: 'El estilo es la forma en que se pinta: más natural, con más detalle, con textura, con aspecto de boceto o abstracto.' });
+      s.push({ id: 'estilo', pregunta: trabajo === 'carbonilla' ? '¿Qué estilo de dibujo te gusta más?' : '¿Qué estilo te gusta más?', ayuda: trabajo === 'carbonilla'
+        ? 'Son estilos de dibujo, no de pintura: un acabado realista, un grafito de detalle extremo, un boceto de trazo suelto o un abstracto a carbonilla.'
+        : 'El estilo es la forma en que se pinta: más natural, con más detalle, con textura, con aspecto de boceto o abstracto.' });
       s.push({ id: 'tema', pregunta: '¿Qué querés que se vea en la obra?', ayuda: 'Retrato es una persona, una pareja o un animal. También podés pedir un paisaje, objetos o algo más libre.' });
       if (valor('tema') === 'Retrato') {
         s.push({ id: 'sujetos', pregunta: '¿Quiénes van a aparecer?', ayuda: 'El precio base ya incluye a una persona. Si hay más personas o una mascota, se suma al pedido.' });
@@ -68,8 +86,12 @@
       if (trabajo === 'oleo' || trabajo === 'acrilico') {
         s.push({ id: 'forma', pregunta: '¿Qué forma tiene el lienzo?', ayuda: 'Lo más habitual es rectangular. También hay formatos redondos, ovalados o de seis lados.' });
       }
-      s.push({ id: 'tamano', pregunta: '¿De qué tamaño lo querés?', ayuda: 'A la izquierda ves a una persona de 1,70 m para darte una idea del tamaño real. Si no está en la lista, elegí una medida personalizada.' });
-      s.push({ id: 'marco', pregunta: '¿Lo querés con marco?', ayuda: 'Es opcional. Podés dejarlo sin marco (listo para colgar) o elegir el estilo que más te guste. Las fotos muestran cómo se ve cada uno en la pared.' });
+      s.push({ id: 'tamano', pregunta: '¿De qué tamaño lo querés?', ayuda: trabajo === 'carbonilla'
+        ? 'Las medidas son de papel de dibujo (tamaños tipo A). A la izquierda ves a una persona de 1,70 m para comparar.'
+        : 'A la izquierda ves a una persona de 1,70 m para darte una idea del tamaño real. Si no está en la lista, elegí una medida personalizada.' });
+      s.push({ id: 'marco', pregunta: '¿Lo querés con marco?', ayuda: trabajo === 'carbonilla'
+        ? 'En el dibujo sobre papel, el marco suele llevar vidrio y paspartú para proteger la obra. También podés pedir solo la lámina, sin marco.'
+        : 'Es opcional. Podés dejarlo sin marco (listo para colgar) o elegir el estilo que más te guste. Las fotos muestran cómo se ve cada uno en la pared.' });
     } else if (trabajo === 'escultura') {
       s.push({ id: 'tipo_escultura', pregunta: '¿Qué tipo de escultura buscás?', ayuda: 'Busto es cabeza y parte del pecho. Medio cuerpo llega hasta la cintura. Figura completa es de cuerpo entero. Relieve son formas que sobresalen de un fondo.' });
       s.push({ id: 'altura_escultura', pregunta: '¿Qué altura querés para la pieza?', ayuda: 'La altura se mide de la base al punto más alto. A la par ves una persona de 1,70 m para comparar.' });
@@ -77,11 +99,15 @@
       s.push({ id: 'estilo_mural', pregunta: '¿Qué estilo querés para el mural?', ayuda: 'Podés pedir un mural más realista, más ilustrado o con aspecto de boceto. El precio se acuerda según la pared.' });
       s.push({ id: 'tamano_mural', pregunta: '¿Qué tamaño tiene la pared?', ayuda: 'Indicá el ancho y el alto en metros. Si la pared es alta, puede hacer falta andamio. El valor final se consulta.' });
     } else if (trabajo === 'restauracion') {
-      s.push({ id: 'tipo_restauracion', pregunta: '¿Qué tipo de restauración necesitás?', ayuda: 'Digital es sobre una foto o archivo. Física es sobre una obra real, y se evalúa en persona.' });
+      s.push({ id: 'tipo_restauracion', pregunta: '¿Qué tipo de restauración necesitás?', ayuda: 'Digital es sobre una foto o un archivo. Física es sobre una obra real y se evalúa en persona.' });
     }
     if (trabajo) {
-      s.push({ id: 'fotos', pregunta: '¿Tenés una foto de guía?', ayuda: 'Si tenés la foto que querés pintar o modelos de inspiración, cargala acá. Si no, pedimos asesoramiento y lo vemos juntos.' });
-      s.push({ id: 'datos', pregunta: 'Tus datos para el pedido', ayuda: 'Con tu nombre preparamos el pedido. Si necesitás factura, completá también esos datos.' });
+      s.push({ id: 'fotos', pregunta: trabajo === 'restauracion' ? '¿Tenés una foto de la obra?' : '¿Tenés una foto de guía?', ayuda: trabajo === 'restauracion'
+        ? 'Cargá una foto de la obra o de la imagen a restaurar, lo más nítida que puedas. Si no tenés, pedimos asesoramiento y lo vemos juntos.'
+        : 'Si tenés la foto de guía o modelos de inspiración, cargala acá. Si no, pedimos asesoramiento y lo vemos juntos.' });
+      s.push({ id: 'datos', pregunta: 'Tus datos para el pedido', ayuda: trabajo === 'restauracion'
+        ? 'Completá tu nombre y, si podés, describí el daño o lo que querés recuperar. Si necesitás factura, completá también esos datos.'
+        : 'Con tu nombre preparamos el pedido. Si necesitás factura, completá también esos datos.' });
       s.push({ id: 'resumen', pregunta: 'Revisá tu pedido', ayuda: 'Este es el resumen y el precio estimado, con IVA incluido. Al enviar se arma el mensaje con todos los detalles para confirmarlo.' });
     }
     return s;
@@ -112,11 +138,11 @@
     if (paso.id === 'trabajo') return TRABAJOS.map((t) => ({ value: t.id, title: t.title, text: t.text, url: guia(t.key).url, selected: trabajo === t.id }));
     if (paso.id === 'estilo') {
       const list = [
-        { value: 'Realista', key: 'estilo:Realista', title: 'Realista' },
-        { value: 'Hiperrealista', key: 'estilo:Hiperrealista', title: 'Hiperrealista' }
+        { value: 'Realista', key: 'estilo:Realista', title: trabajo === 'carbonilla' ? 'Realista (acabado detallado)' : 'Realista' },
+        { value: 'Hiperrealista', key: 'estilo:Hiperrealista', title: trabajo === 'carbonilla' ? 'Hiperrealista (grafito)' : 'Hiperrealista' }
       ];
       if (trabajo !== 'carbonilla') list.push({ value: 'Espatulado', key: 'estilo:Espatulado', title: 'Espatulado' });
-      list.push({ value: 'Bocetado', key: 'estilo:Bocetado', title: 'Bocetado' });
+      list.push({ value: 'Bocetado', key: 'estilo:Bocetado', title: trabajo === 'carbonilla' ? 'Boceto (trazo suelto)' : 'Bocetado' });
       list.push({ value: 'Abstracto', key: 'estilo:Abstracto', title: 'Abstracto' });
       return list.map((o) => ({ ...o, text: guia(o.key).text, url: guia(o.key).url, selected: valor('estilo') === o.value }));
     }
@@ -158,14 +184,16 @@
       ].map((o) => ({ ...o, text: guia(o.key).text, url: guia(o.key).url, selected: valor('forma_lienzo') === o.value }));
     }
     if (paso.id === 'marco') {
-      return [
-        { value: 'SinMarco', key: 'enmarcado:SinMarco', title: 'Sin marco' },
-        { value: 'Estandar', key: 'enmarcado:Estandar', title: 'Marco estándar' },
+      let list = [
+        { value: 'SinMarco', key: 'enmarcado:SinMarco', title: trabajo === 'carbonilla' ? 'Sin marco (lámina)' : 'Sin marco' },
+        { value: 'Estandar', key: 'enmarcado:Estandar', title: trabajo === 'carbonilla' ? 'Marco estándar, con vidrio y paspartú' : 'Marco estándar' },
         { value: 'Cajon', key: 'enmarcado:Cajon', title: 'Marco cajón' },
-        { value: 'Clasico', key: 'enmarcado:Clasico', title: 'Marco clásico' },
-        { value: 'SemiRelieve', key: 'enmarcado:SemiRelieve', title: 'Semi relieve' },
-        { value: 'GruesoRelieves', key: 'enmarcado:GruesoRelieves', title: 'Grueso con relieves' }
-      ].map((o) => ({ ...o, text: guia(o.key).text, url: guia(o.key).url, selected: valor('enmarcado') === o.value }));
+        { value: 'Clasico', key: 'enmarcado:Clasico', title: trabajo === 'carbonilla' ? 'Marco clásico, con vidrio y paspartú' : 'Marco clásico' },
+        { value: 'SemiRelieve', key: 'enmarcado:SemiRelieve', title: 'Marco con semirrelieve' },
+        { value: 'GruesoRelieves', key: 'enmarcado:GruesoRelieves', title: 'Marco grueso con relieves' }
+      ];
+      if (trabajo === 'carbonilla') list = list.filter((o) => ['SinMarco', 'Estandar', 'Clasico'].includes(o.value));
+      return list.map((o) => ({ ...o, text: guia(o.key).text, url: guia(o.key).url, selected: valor('enmarcado') === o.value }));
     }
     if (paso.id === 'tipo_escultura') {
       return [
@@ -611,8 +639,25 @@
       }
     }
     if (paso.id === 'tamano_mural') take($('contenedor-murales'));
-    if (paso.id === 'fotos') take($('step-fotos'));
-    if (paso.id === 'datos') take($('step-envio'));
+    if (paso.id === 'fotos') {
+      take($('step-fotos'));
+      const lab = document.querySelector('#step-fotos label[for="fotos_referencia"]');
+      if (lab) lab.textContent = trabajo === 'restauracion' ? 'Foto de la obra' : 'Imágenes de referencia';
+      const optSi = document.querySelector('#fotos_referencia option[value="Sí, quiero cargar fotos de guía"]');
+      if (optSi) optSi.textContent = trabajo === 'restauracion' ? 'Sí, quiero cargar una foto de la obra' : 'Sí, quiero cargar fotos de guía';
+      const up = document.querySelector('#step-fotos label[for="referencias_archivos"]');
+      if (up) up.textContent = trabajo === 'restauracion' ? 'Cargá una foto de la obra o de la imagen a restaurar' : 'Cargá la foto de guía o la imagen de referencia';
+    }
+    if (paso.id === 'datos') {
+      take($('step-envio'));
+      take($('step-idea'));
+      const ideaLab = document.querySelector('#step-idea label[for="idea_cliente"]');
+      const idea = $('idea_cliente');
+      if (ideaLab) ideaLab.textContent = trabajo === 'restauracion' ? 'Describí el daño o lo que querés recuperar' : 'Contame tu idea (opcional)';
+      if (idea) idea.placeholder = trabajo === 'restauracion'
+        ? 'Por ejemplo: rotura, manchas, decoloración, partes faltantes…'
+        : 'Describí detalles, la paleta de colores o la emoción que buscás...';
+    }
     if (paso.id === 'resumen') {
       extra.innerHTML = resumenHtml();
       take($('whatsapp-continuar'));

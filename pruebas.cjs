@@ -116,5 +116,46 @@ test('20. Asistente: precio en vivo, chips y sugerencias de presupuesto',()=>{
   assert.equal(/%/.test(a.d.getElementById('asistente-pedido').textContent),false);
 });
 
+
+test('21. Carbonilla muestra guías de dibujo, sin espatulado ni marcos de lienzo, y conserva la tarifa de la tabla',()=>{
+  const a=iniciar();a.listo();
+  a.set('tecnica','Carbonilla');a.w.onTecnicaChange();
+  const estilosVis=[...a.d.querySelectorAll('#estilo option')].filter(o=>o.value&&!o.hidden).map(o=>o.value);
+  assert.ok(estilosVis.includes('Realista'));
+  assert.ok(estilosVis.includes('Hiperrealista'));
+  assert.ok(estilosVis.includes('Bocetado'));
+  assert.ok(!estilosVis.includes('Espatulado'),JSON.stringify(estilosVis));
+  const cards=[...a.d.querySelectorAll('#guias-estilo .guia-card')].map(c=>c.getAttribute('data-value'));
+  assert.ok(!cards.includes('Espatulado'),JSON.stringify(cards));
+  const real=a.d.querySelector('#guias-estilo .guia-card[data-value="Realista"] img');
+  assert.ok(real&&/carbonilla-estilo-realista/.test(real.getAttribute('src')),real&&real.getAttribute('src'));
+  const hiper=a.d.querySelector('#guias-estilo .guia-card[data-value="Hiperrealista"] img');
+  assert.ok(hiper&&/carbonilla-estilo-hiperrealista/.test(hiper.getAttribute('src')));
+  const marcos=[...a.d.querySelectorAll('#enmarcado option')].filter(o=>o.value&&!o.hidden).map(o=>o.value);
+  assert.deepEqual(marcos,['SinMarco','Estandar','Clasico']);
+  assert.match(a.d.querySelector('#enmarcado option[value="Estandar"]').textContent,/paspartú|vidrio/i);
+  a.set('estilo','Hiperrealista');a.w.onEstiloChange();
+  a.set('color_lapiz','Sin color');
+  a.set('tamano_predefinido','21x30');a.w.handleTamanoChange();a.w.calcular();
+  const p=a.w.presupuesto();
+  assert.ok(p&&!p.consultar);
+  assert.match(a.price(),/\d/);
+  const items=a.w.ESTUDIO_GUIAS_DEFAULT.items;
+  assert.ok(items['estilo:Realista:Carbonilla'].url.startsWith('img/guias/carbonilla-'));
+  assert.ok(items['estilo:Realista:Acrilico'].url.startsWith('img/guias/acrilico-'));
+  for(const [k,v] of Object.entries(items)){
+    assert.ok(v.url.startsWith('img/guias/'),k);
+    assert.ok(!/postimg|instagram|img\/galeria|\/galeria\//i.test(v.url),k);
+  }
+  // el asistente resuelve la guía de dibujo
+  a.w.AsistentePedido.abrir();
+  a.d.querySelector('#asistente-opciones .guia-card[data-value="carbonilla"]').click();
+  a.w.AsistentePedido.irA('estilo');
+  const asImgs=[...a.d.querySelectorAll('#asistente-opciones .guia-card img')].map(i=>i.getAttribute('src')).join(' ');
+  assert.match(asImgs,/carbonilla-estilo-realista/);
+  assert.ok(!/img\/guias\/estilo-realista\.webp/.test(asImgs),asImgs);
+  assert.ok(!a.d.querySelector('#asistente-opciones .guia-card[data-value="Espatulado"]'));
+});
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));
 

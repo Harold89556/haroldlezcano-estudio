@@ -48,21 +48,21 @@
 
     const descripciones = {
         estilo: {
-            'default': 'Seleccioná el nivel de detalle, la pincelada, o el tipo de obra principal.',
+            'default': 'Seleccioná el estilo, el acabado o el tipo de obra.',
             'Realista': 'El estilo predilecto: fidelidad anatómica, transiciones tonales precisas y calidez.',
-            'Hiperrealista': 'Nivel de detalle extremo y minucioso, casi idéntico a una fotografía. Un verdadero artículo de lujo.',
-            'Espatulado': 'Textura gruesa y pintura en relieve aplicada con espátula. Estilo impresionista.',
-            'Bocetado': 'Trazo suelto, rápido y artístico que muestra el proceso creativo y la esencia.',
+            'Hiperrealista': 'Nivel de detalle extremo y minucioso, casi idéntico a una fotografía.',
+            'Espatulado': 'Pintura con espátula: textura y relieves visibles, de aire expresivo.',
+            'Bocetado': 'Trazo suelto y ligero, con aspecto de boceto o apunte.',
             'Abstracto': 'Expresión visual mediante formas, colores y texturas, sin representar una escena literal.',
             'Mural': 'Arte pintado directamente sobre pared a gran escala. El valor se acuerda según la pared, el acceso y el detalle.',
-            'Escultura': 'Pieza modelada a mano: busto, medio cuerpo, figura de cuerpo entero o relieve. No realizo fundición.',
+            'Escultura': 'Pieza modelada a mano: busto, medio cuerpo, figura de cuerpo entero o relieve. No incluye fundición.',
             'Restauracion': 'Tratamiento profesional para devolver a su estado original obras desgastadas o antiguas.'
         },
         tecnica: {
-            'default': 'Escogé el material de la pintura, esto define su textura, acabado y durabilidad en el tiempo.',
-            'Oleo': 'La técnica reina de las artes plásticas. Garantiza una durabilidad de siglos, colores vibrantes y transiciones inigualables.',
-            'Acrilico': 'Excelente durabilidad (décadas). Secado rápido y colores de acabado mate/satinado.',
-            'Carbonilla': 'Técnica clásica sobre papel de arte.'
+            'default': 'Elegí la técnica: óleo, acrílico, o dibujo a lápiz y carbonilla.',
+            'Oleo': 'Pintura al óleo: colores profundos, transiciones suaves y un acabado muy duradero.',
+            'Acrilico': 'Pintura acrílica: colores vivos, secado más rápido y buena durabilidad.',
+            'Carbonilla': 'Dibujo a lápiz o carbonilla sobre papel de arte, en blanco y negro o a color.'
         },
         tema: {
             'default': 'Elegí la temática que mejor se adapte a tu idea.',
@@ -83,12 +83,12 @@
             'Hexagonal': 'Hexágono regular: la medida indica el ancho máximo entre vértices opuestos.'
         },
         enmarcado: {
-            'default': 'Seleccioná si deseas la obra lista para colgar o con un marco decorativo a medida.',
-            'SinMarco': 'El lienzo se entrega pintado finamente en los bordes, listo para colgar directamente.',
+            'default': 'Seleccioná si la querés lista para colgar o con un marco a medida.',
+            'SinMarco': 'El lienzo se entrega con los bordes pintados, listo para colgar.',
             'Estandar': 'Perfil de madera moderno y limpio. Monto fijo según tamaño.',
             'Cajon': 'Diseño profundo tipo cajón donde la obra queda inmersa.',
             'Clasico': 'Moldura tradicional de madera noble, elegante y atemporal.',
-            'SemiRelieve': 'Moldura elaborada con detalles sutiles.',
+            'SemiRelieve': 'Moldura elaborada, con un relieve suave.',
             'GruesoRelieves': 'Máximo lujo con moldura ancha de presencia imponente.'
         },
         tipo_restauracion: {
@@ -122,7 +122,7 @@
         let e = document.getElementById(campo);
         let infoDiv = document.getElementById('info-' + campo);
         if(!e || !infoDiv) return;
-        if(campo==='enmarcado' && valor('tecnica')==='Carbonilla' && e.value==='SinMarco'){infoDiv.textContent='Obra sobre papel, sin marco.';infoDiv.style.display='block';return;}
+        if(campo==='enmarcado' && valor('tecnica')==='Carbonilla' && e.value==='SinMarco'){infoDiv.textContent='Dibujo sobre papel, sin marco (lámina suelta).';infoDiv.style.display='block';return;}
         let val = e.value || 'default';
         if(descripciones[campo] && descripciones[campo][val]) {
             infoDiv.innerText = descripciones[campo][val];
@@ -242,9 +242,31 @@
         
         let te = document.getElementById('tecnica').value;
         const sinMarco=document.querySelector('#enmarcado option[value="SinMarco"]');
-        if(sinMarco)sinMarco.textContent=te==='Carbonilla'?'Sin marco (obra sobre papel)':'Sin marco (Bordes pintados listos para colgar)';
-        if(te==='Carbonilla' && document.getElementById('enmarcado').value==='SinMarco') document.getElementById('info-enmarcado').textContent='Obra sobre papel, sin marco.';
+        if(sinMarco)sinMarco.textContent=te==='Carbonilla'?'Sin marco (lámina sobre papel)':'Sin marco (bordes pintados, listo para colgar)';
+        const estOpt=document.querySelector('#enmarcado option[value="Estandar"]');
+        if(estOpt)estOpt.textContent=te==='Carbonilla'?'Marco estándar (vidrio y paspartú)':'Marco estándar';
+        const claOpt=document.querySelector('#enmarcado option[value="Clasico"]');
+        if(claOpt)claOpt.textContent=te==='Carbonilla'?'Marco clásico (vidrio y paspartú)':'Marco clásico';
+        const paperOnly=te==='Carbonilla';
+        ['Cajon','SemiRelieve','GruesoRelieves'].forEach(v=>{
+            const o=document.querySelector('#enmarcado option[value="'+v+'"]');
+            if(o) o.hidden=paperOnly;
+        });
+        const esp=document.querySelector('#estilo option[value="Espatulado"]');
+        if(esp) esp.hidden=paperOnly;
+        if(paperOnly){
+            const enm=document.getElementById('enmarcado');
+            if(enm && ['Cajon','SemiRelieve','GruesoRelieves'].includes(enm.value)){enm.value='Estandar';}
+            const est=document.getElementById('estilo');
+            if(est && est.value==='Espatulado'){est.value='Realista';}
+        }
+        if(te==='Carbonilla' && document.getElementById('enmarcado').value==='SinMarco') document.getElementById('info-enmarcado').textContent='Dibujo sobre papel, sin marco (lámina suelta).';
         document.getElementById('formato-lienzo-container').style.display = (t!=='Mural' && t!=='Restauracion' && t!=='Escultura' && (te==='Oleo'||te==='Acrilico')) ? 'block' : 'none';
+        const labForm=document.querySelector('label[for="forma_lienzo"]');
+        if(labForm && !paperOnly) labForm.textContent='Formato del lienzo';
+        const labTam=document.querySelector('#step-tamano .card-title, #step-tamano h3, label[for="tamano_predefinido"]');
+        const labTamEl=document.querySelector('label[for="tamano_predefinido"]');
+        if(labTamEl) labTamEl.textContent=paperOnly?'Tamaño del papel':'Tamaño';
     }
 
     function onEstiloChange() {
@@ -377,7 +399,7 @@
         if (!validarObra()) return;
         calcular();
         
-        let texto = "¡Hola Harold! 👋 Quiero consultar por una obra. Aquí están los detalles:\n\n";
+        let texto = "¡Hola, Harold! 👋 Quiero consultar por una obra. Estos son los detalles:\n\n";
         
         if (t !== 'Restauracion' && t !== 'Escultura') {
             if (t === 'Mural') {
@@ -392,7 +414,7 @@
                 
                 if (tec.value === 'Carbonilla') {
                     let col = document.getElementById('color_lapiz');
-                    if (col.value) texto += "🌈 *Opción de Color:* " + col.options[col.selectedIndex].text + "\n";
+                    if (col.value) texto += "🌈 *Opción de color:* " + col.options[col.selectedIndex].text + "\n";
                 }
             }
         }
@@ -430,8 +452,8 @@
         if (t !== 'Restauracion' && t !== 'Escultura') {
             if (t === 'Mural') {
                 let m_h = document.getElementById('mural_alto').value;
-                texto += "📏 *Tamaño Mural:* " + document.getElementById('mural_ancho').value + "m de ancho x " + m_h + "m de alto\n";
-                if(parseFloat(m_h) >= 2.5) texto += "⚠️ *(Incluye andamios y seguridad)*\n";
+                texto += "📏 *Tamaño del mural:* " + document.getElementById('mural_ancho').value + "m de ancho x " + m_h + "m de alto\n";
+                if(parseFloat(m_h) >= 2.5) texto += "⚠️ *Pared de 2,5 m o más de alto: puede requerir andamio (se acuerda al consultar).*\n";
             } else {
                 let tec = document.getElementById('tecnica');
                 if (tec.value === 'Oleo' || tec.value === 'Acrilico') {
@@ -521,11 +543,11 @@
         let niv = document.getElementById('c_niv');
         let pag = document.getElementById('c_pag');
         
-        let texto = "¡Hola Harold! 👋 Me gustaría inscribirme al Curso de Dibujo y Pintura.\n\n";
+        let texto = "¡Hola, Harold! 👋 Me gustaría inscribirme al curso de dibujo y pintura.\n\n";
         texto += "👤 *Nombre:* " + nom + "\n";
         texto += "🎂 *Edad:* " + edad + (edad !== "No especificada" ? " años" : "") + "\n";
         if(niv.value) texto += "📈 *Nivel:* " + niv.options[niv.selectedIndex].text + "\n";
-        if(pag.value) texto += "💲 *Pago de Matrícula (" + preciosActuales.cursos.matricula.toLocaleString('es-PY') + " Gs.):* " + pag.options[pag.selectedIndex].text + "\n";
+        if(pag.value) texto += "💲 *Pago de matrícula (" + preciosActuales.cursos.matricula.toLocaleString('es-PY') + " Gs.):* " + pag.options[pag.selectedIndex].text + "\n";
         
         window.open(`https://wa.me/${window.sitioActual?.whatsapp || '595972173847'}?text=${encodeURIComponent(texto)}`, '_blank', 'noopener,noreferrer');
     }

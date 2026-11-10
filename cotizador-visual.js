@@ -18,10 +18,32 @@
   function current() {
     return window.guiasActual || defaults();
   }
+  function tecnicaActual() {
+    return document.getElementById('tecnica')?.value || '';
+  }
+  function clavesGuia(key) {
+    const te = tecnicaActual();
+    const special = /Mural|Escultura|Restauracion/.test(key);
+    const yaTecnica = /:(Oleo|Acrilico|Carbonilla)$/.test(key);
+    const keys = [];
+    if (te && !special && !yaTecnica && /^(estilo|tema|fondo|enmarcado|sujetos):/.test(key)) keys.push(key + ':' + te);
+    keys.push(key);
+    return keys;
+  }
   function item(key) {
-    const d = defaults().items[key] || {};
-    const o = (current().items || {})[key] || {};
-    return { url: o.url || d.url || '', text: o.text || d.text || '', kind: o.kind || d.kind || 'foto', storagePath: o.storagePath || '' };
+    const dAll = defaults().items || {};
+    const oAll = (current().items || {});
+    const acc = { url: '', text: '', kind: 'foto', storagePath: '' };
+    for (const k of clavesGuia(key)) {
+      const d = dAll[k] || {};
+      const o = oAll[k] || {};
+      if (!acc.url) acc.url = o.url || d.url || '';
+      if (!acc.text) acc.text = o.text || d.text || '';
+      if (!acc.storagePath) acc.storagePath = o.storagePath || d.storagePath || '';
+      if (o.kind || d.kind) acc.kind = o.kind || d.kind || acc.kind;
+      if (acc.url && acc.text) break;
+    }
+    return acc;
   }
 
   function svgData(svg) {
@@ -81,7 +103,7 @@
     const host = ensureHost(selectId);
     if (!sel || !host) return;
     host.replaceChildren();
-    const options = [...sel.options].filter(o => o.value);
+    const options = [...sel.options].filter(o => o.value && !o.hidden);
     for (const o of options) {
       const title = mapValueTitle?.[o.value] || o.text.replace(/\s*\(.*?\)\s*$/, '').trim();
       const key = selectId + ':' + o.value;
