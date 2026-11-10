@@ -251,9 +251,9 @@
       "guia.tipo_escultura:Abstracto": "Una forma abstracta o libre. El valor se consulta con el artista.",
       "guia.tipo_escultura:Objeto": "Un objeto u otra pieza que no es figura humana. El valor se consulta con el artista.",
       "guia.tipo_escultura:Otro": "Otro tipo de escultura. El valor se consulta con el artista.",
-      "guia.material_escultura:Cemento": "Cemento hueco con estructura de hierro y tejido metálico en el interior.",
-      "guia.material_escultura:Fibra": "Fibra de vidrio con estructura de hierro y tejido metálico en el interior.",
-      "guia.material_escultura:Arcilla": "Arcilla con cemento, estructura de hierro y tejido metálico en el interior.",
+      "guia.material_escultura:Cemento": "Cemento hueco con estructura de hierro.",
+      "guia.material_escultura:Fibra": "Fibra de vidrio con estructura de hierro.",
+      "guia.material_escultura:Arcilla": "Arcilla con cemento y estructura de hierro.",
       "guia.sujetos:1": "Una sola persona (ya incluida en el precio base).",
       "guia.sujetos:2": "Dos personas: se suma el valor de un sujeto extra.",
       "guia.sujetos:mascota": "Sumá una mascota junto a la persona.",
@@ -531,9 +531,9 @@
       "guia.tipo_escultura:Abstracto": "An abstract or free form. The price is agreed with the artist.",
       "guia.tipo_escultura:Objeto": "An object or another piece that is not a human figure. The price is agreed with the artist.",
       "guia.tipo_escultura:Otro": "Another kind of sculpture. The price is agreed with the artist.",
-      "guia.material_escultura:Cemento": "Hollow cement with an iron structure and metal mesh inside.",
-      "guia.material_escultura:Fibra": "Fibreglass with an iron structure and metal mesh inside.",
-      "guia.material_escultura:Arcilla": "Clay with cement, an iron structure and metal mesh inside.",
+      "guia.material_escultura:Cemento": "Hollow cement with an iron structure.",
+      "guia.material_escultura:Fibra": "Fibreglass with an iron structure.",
+      "guia.material_escultura:Arcilla": "Clay with cement and an iron structure.",
       "guia.sujetos:1": "A single person (already included in the base price).",
       "guia.sujetos:2": "Two people: the value of an extra subject is added.",
       "guia.sujetos:mascota": "Add a pet together with the person.",
@@ -811,9 +811,9 @@
       "guia.tipo_escultura:Abstracto": "Uma forma abstrata ou livre. O valor se consulta com o artista.",
       "guia.tipo_escultura:Objeto": "Um objeto ou outra peça que não é figura humana. O valor se consulta com o artista.",
       "guia.tipo_escultura:Otro": "Outro tipo de escultura. O valor se consulta com o artista.",
-      "guia.material_escultura:Cemento": "Cimento oco com estrutura de ferro e tecido metálico no interior.",
-      "guia.material_escultura:Fibra": "Fibra de vidro com estrutura de ferro e tecido metálico no interior.",
-      "guia.material_escultura:Arcilla": "Argila com cimento, estrutura de ferro e tecido metálico no interior.",
+      "guia.material_escultura:Cemento": "Cimento oco com estrutura de ferro.",
+      "guia.material_escultura:Fibra": "Fibra de vidro com estrutura de ferro.",
+      "guia.material_escultura:Arcilla": "Argila com cimento e estrutura de ferro.",
       "guia.sujetos:1": "Uma só pessoa (já incluída no preço base).",
       "guia.sujetos:2": "Duas pessoas: soma-se o valor de um sujeito extra.",
       "guia.sujetos:mascota": "Inclua um pet junto com a pessoa.",
@@ -1091,9 +1091,9 @@
       "guia.tipo_escultura:Abstracto": "Une forme abstraite ou libre. La valeur se convient avec l’artiste.",
       "guia.tipo_escultura:Objeto": "Un objet ou une autre pièce qui n’est pas une figure humaine. La valeur se convient avec l’artiste.",
       "guia.tipo_escultura:Otro": "Un autre type de sculpture. La valeur se convient avec l’artiste.",
-      "guia.material_escultura:Cemento": "Ciment creux avec une structure de fer et un treillis métallique à l’intérieur.",
-      "guia.material_escultura:Fibra": "Fibre de verre avec une structure de fer et un treillis métallique à l’intérieur.",
-      "guia.material_escultura:Arcilla": "Argile avec du ciment, une structure de fer et un treillis métallique à l’intérieur.",
+      "guia.material_escultura:Cemento": "Ciment creux avec une structure de fer.",
+      "guia.material_escultura:Fibra": "Fibre de verre avec une structure de fer.",
+      "guia.material_escultura:Arcilla": "Argile avec du ciment et une structure de fer.",
       "guia.sujetos:1": "Une seule personne (déjà incluse dans le prix de base).",
       "guia.sujetos:2": "Deux personnes : la valeur d’un sujet supplémentaire s’ajoute.",
       "guia.sujetos:mascota": "Ajoute un animal aux côtés de la personne.",
@@ -1371,9 +1371,9 @@
       "guia.tipo_escultura:Abstracto": "Una forma astratta o libera. Il valore si consulta con l’artista.",
       "guia.tipo_escultura:Objeto": "Un oggetto o un altro pezzo che non è una figura umana. Il valore si consulta con l’artista.",
       "guia.tipo_escultura:Otro": "Un altro tipo di scultura. Il valore si consulta con l’artista.",
-      "guia.material_escultura:Cemento": "Cemento cavo con struttura di ferro e rete metallica all’interno.",
-      "guia.material_escultura:Fibra": "Vetroresina con struttura di ferro e rete metallica all’interno.",
-      "guia.material_escultura:Arcilla": "Argilla con cemento, struttura di ferro e rete metallica all’interno.",
+      "guia.material_escultura:Cemento": "Cemento cavo con struttura di ferro.",
+      "guia.material_escultura:Fibra": "Vetroresina con struttura di ferro.",
+      "guia.material_escultura:Arcilla": "Argilla con cemento e struttura di ferro.",
       "guia.sujetos:1": "Una sola persona (già inclusa nel prezzo base).",
       "guia.sujetos:2": "Due persone: si aggiunge il valore di un soggetto extra.",
       "guia.sujetos:mascota": "Aggiungi un animale accanto alla persona.",
@@ -1651,9 +1651,9 @@
       "guia.tipo_escultura:Abstracto": "Eine abstrakte oder freie Form. Der Wert wird mit dem Künstler abgesprochen.",
       "guia.tipo_escultura:Objeto": "Ein Gegenstand oder ein anderes Stück, das keine menschliche Figur ist. Der Wert wird mit dem Künstler abgesprochen.",
       "guia.tipo_escultura:Otro": "Eine andere Art von Skulptur. Der Wert wird mit dem Künstler abgesprochen.",
-      "guia.material_escultura:Cemento": "Hohler Zement mit Eisenstruktur und Metallgewebe im Inneren.",
-      "guia.material_escultura:Fibra": "Glasfaser mit Eisenstruktur und Metallgewebe im Inneren.",
-      "guia.material_escultura:Arcilla": "Ton mit Zement, Eisenstruktur und Metallgewebe im Inneren.",
+      "guia.material_escultura:Cemento": "Hohler Zement mit Eisenstruktur.",
+      "guia.material_escultura:Fibra": "Glasfaser mit Eisenstruktur.",
+      "guia.material_escultura:Arcilla": "Ton mit Zement und Eisenstruktur.",
       "guia.sujetos:1": "Eine einzelne Person (bereits im Grundpreis enthalten).",
       "guia.sujetos:2": "Zwei Personen: der Wert eines zusätzlichen Motivs wird hinzugerechnet.",
       "guia.sujetos:mascota": "Füge ein Haustier zur Person hinzu.",
@@ -1894,27 +1894,27 @@ EstudioI18n.registrar({
 
 EstudioI18n.registrar({
   es: {
-    "guia.material_escultura:Chapa": "Chapa de hierro cortada, doblada y soldada, con tratamiento antióxido. No es fundición.",
-    "guia.material_escultura:Chatarra": "Ensamble soldado de objetos de chatarra (engranajes, cadenas u herramientas), con tratamiento antióxido. No es fundición."
+    "guia.material_escultura:Chapa": "Chapa de hierro cortada, doblada y soldada.",
+    "guia.material_escultura:Chatarra": "Ensamble soldado de engranajes, cadenas u herramientas."
   },
   en: {
-    "guia.material_escultura:Chapa": "Sheet steel cut, bent and welded, with rust-proof treatment. Not a casting.",
-    "guia.material_escultura:Chatarra": "A welded assemblage of scrap-metal objects (gears, chains or tools), with rust-proof treatment. Not a casting."
+    "guia.material_escultura:Chapa": "Sheet steel cut, bent and welded.",
+    "guia.material_escultura:Chatarra": "A welded assemblage of gears, chains or tools."
   },
   pt: {
-    "guia.material_escultura:Chapa": "Chapa de ferro cortada, dobrada e soldada, com tratamento antiferrugem. Não é fundição.",
-    "guia.material_escultura:Chatarra": "Conjunto soldado de objetos de sucata (engrenagens, correntes ou ferramentas), com tratamento antiferrugem. Não é fundição."
+    "guia.material_escultura:Chapa": "Chapa de ferro cortada, dobrada e soldada.",
+    "guia.material_escultura:Chatarra": "Conjunto soldado de engrenagens, correntes ou ferramentas."
   },
   fr: {
-    "guia.material_escultura:Chapa": "Tôle de fer découpée, pliée et soudée, avec traitement antirouille. Ce n’est pas une fonte.",
-    "guia.material_escultura:Chatarra": "Assemblage soudé d’objets de ferraille (engrenages, chaînes ou outils), avec traitement antirouille. Ce n’est pas une fonte."
+    "guia.material_escultura:Chapa": "Tôle de fer découpée, pliée et soudée.",
+    "guia.material_escultura:Chatarra": "Assemblage soudé d’engrenages, de chaînes ou d’outils."
   },
   it: {
-    "guia.material_escultura:Chapa": "Lamiera di ferro tagliata, piegata e saldata, con trattamento antiruggine. Non è una fusione.",
-    "guia.material_escultura:Chatarra": "Assemblaggio saldato di oggetti di rottame (ingranaggi, catene o attrezzi), con trattamento antiruggine. Non è una fusione."
+    "guia.material_escultura:Chapa": "Lamiera di ferro tagliata, piegata e saldata.",
+    "guia.material_escultura:Chatarra": "Assemblaggio saldato di ingranaggi, catene o attrezzi."
   },
   de: {
-    "guia.material_escultura:Chapa": "Zugeschnittenes, gebogenes und geschweißtes Eisenblech mit Rostschutzbehandlung. Kein Guss.",
-    "guia.material_escultura:Chatarra": "Geschweißte Anordnung aus Schrottteilen (Zahnräder, Ketten oder Werkzeuge) mit Rostschutzbehandlung. Kein Guss."
+    "guia.material_escultura:Chapa": "Zugeschnittenes, gebogenes und geschweißtes Eisenblech.",
+    "guia.material_escultura:Chatarra": "Geschweißte Anordnung aus Zahnrädern, Ketten oder Werkzeugen."
   }
 });

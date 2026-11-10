@@ -220,7 +220,7 @@
         { value: 'Arcilla', key: 'material_escultura:Arcilla', title: i18n('escultura.arcilla'), hierro:false },
         { value: 'Chapa', key: 'material_escultura:Chapa', title: i18n('escultura.chapa'), hierro:true },
         { value: 'Chatarra', key: 'material_escultura:Chatarra', title: i18n('escultura.chatarra'), hierro:true }
-      ].map((o) => ({ ...o, text: (o.hierro?i18n('escultura.hierroNota'):i18n('escultura.tejido')) + ' ' + textoGuia(o.key), url: guia(o.key).url, selected: valor('material_escultura') === o.value }));
+      ].map((o) => ({ ...o, text: textoGuia(o.key), url: guia(o.key).url, selected: valor('material_escultura') === o.value }));
     }
     if (paso.id === 'estilo_mural') {
       return [

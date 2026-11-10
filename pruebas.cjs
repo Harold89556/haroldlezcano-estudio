@@ -415,5 +415,52 @@ test('29. El país aplica idioma y moneda al momento, y el idioma manual se pued
   a.w.EstudioI18n.setPais('PY');
 });
 
+
+test('30. Textos de material únicos, sin repetir la nota compartida',()=>{
+  const a=iniciar();a.listo();
+  const keys=['Cemento','Fibra','Arcilla','Chapa','Chatarra'];
+  const fundicion=/No es fundición|We do not offer bronze|Não fazemos fundição|Nous ne proposons pas de fonte|Non facciamo fusioni|Wir bieten keinen Guss/i;
+  const hierroNota=/Piezas soldadas|Welded pieces, with rust-proof|Peças soldadas, com tratamento|Pièces soudées, avec traitement|Pezzi saldati, con trattamento|Geschweißte Stücke mit Rostschutz/i;
+  const tejido=/tejido metálico en el interior|metal mesh inside|malha metálica no interior|treillis métallique à l'intérieur|rete metallica all'interno|innen ein Metallgewebe/i;
+  for(const lang of ['es','en','pt','fr','it','de']){
+    a.w.EstudioI18n.setIdioma(lang,{manual:true});
+    for(const k of keys){
+      const txt=a.w.EstudioI18n.t('guia.material_escultura:'+k);
+      assert.ok(txt&&txt.length>8,lang+' '+k+' '+txt);
+      assert.ok(!fundicion.test(txt),lang+' '+txt);
+      if(k==='Chapa'||k==='Chatarra') assert.ok(!hierroNota.test(txt),lang+' '+txt);
+      else assert.ok(!tejido.test(txt),lang+' '+txt);
+    }
+    const ayuda=a.w.EstudioI18n.t('wizard.material.ayuda');
+    assert.ok(ayuda&&ayuda.length>40,lang+' ayuda');
+    assert.ok(/soldad|weld|antiferrugem|antirouille|antiruggine|Rostschutz|antióxido|rust-proof/i.test(ayuda),lang+' '+ayuda);
+  }
+  a.w.EstudioI18n.setIdioma('es',{manual:true});
+  a.w.AsistentePedido.abrir();
+  const esc=a.d.querySelector('#asistente-opciones .guia-card[data-value="escultura"]');
+  if(esc) esc.click();
+  if(typeof a.w.AsistentePedido.irA==='function'){
+    try{a.w.AsistentePedido.irA('material_escultura');}catch(e){}
+  }
+  if(typeof a.w.AsistentePedido.pintar==='function') a.w.AsistentePedido.pintar();
+  const cards=[...a.d.querySelectorAll('#asistente-opciones .guia-card')];
+  assert.ok(cards.length>=5,String(cards.length));
+  for(const el of cards){
+    const title=(el.querySelector('strong')||{}).textContent||'';
+    const desc=(el.querySelector('span')||{}).textContent||'';
+    assert.ok(title.trim(),el.textContent);
+    assert.ok(desc.trim(),el.textContent);
+    assert.notEqual(title.replace(/\.$/,'').trim().toLowerCase(),desc.replace(/\.$/,'').trim().toLowerCase(),el.textContent);
+    assert.ok(!/Piezas soldadas|No es fundición|tejido metálico/i.test(title+' '+desc),el.textContent);
+  }
+  const chapa=cards.find(el=>/Chapa de hierro cortada/i.test(el.textContent));
+  assert.ok(chapa,cards.map(el=>el.textContent).join(' | '));
+  const ayudaEl=a.d.getElementById('asistente-ayuda');
+  assert.ok(ayudaEl);
+  assert.match(ayudaEl.textContent,/tejido metálico/i);
+  assert.match(ayudaEl.textContent,/tratamiento antióxido|antioxido/i);
+  assert.match(ayudaEl.textContent,/fundición|fundicion/i);
+});
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));
 
