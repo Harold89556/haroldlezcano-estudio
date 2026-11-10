@@ -22,6 +22,52 @@ async function action(form, callback, output = say) {
  catch(error) { output(api.explainError(error)); }
  finally { busy(form,false); }
 }
+let adminLang='es';
+const ADMIN_LANGS=[['es','Español'],['en','English'],['pt','Português'],['fr','Français'],['it','Italiano'],['de','Deutsch']];
+function pintarLangTabs(host,hint){
+ if(!host) return;
+ host.replaceChildren();
+ for(const [code,name] of ADMIN_LANGS){
+  const b=document.createElement('button');b.type='button';b.className='idioma-tab'+(adminLang===code?' active':'');b.textContent=name;
+  b.onclick=()=>{if(typeof flushTextosForm==='function') flushTextosForm();if(typeof flushCaptionsForm==='function') flushCaptionsForm();adminLang=code;renderSite();renderGallery();};
+  host.append(b);
+ }
+ if(hint) hint.textContent=adminLang==='es'?'Estás editando el texto en español (el principal).':'Estás editando la traducción. Si un campo queda vacío, en el sitio se muestra el español.';
+}
+function valorTexto(key){
+ const es=(site.textos&&site.textos[key])||'';
+ if(adminLang==='es') return es;
+ const has=site.textosI18n&&site.textosI18n[adminLang]&&Object.prototype.hasOwnProperty.call(site.textosI18n[adminLang],key);
+ if(has) return site.textosI18n[adminLang][key];
+ const def=window.ESTUDIO_DEFAULTS&&ESTUDIO_DEFAULTS.sitio&&ESTUDIO_DEFAULTS.sitio.textosI18n&&ESTUDIO_DEFAULTS.sitio.textosI18n[adminLang]&&ESTUDIO_DEFAULTS.sitio.textosI18n[adminLang][key];
+ return typeof def==='string'?def:'';
+}
+function flushTextosForm(){
+ if(!site) return;
+ if(!site.textos) site.textos={};
+ if(!site.textosI18n) site.textosI18n={};
+ for(const input of document.querySelectorAll('#site-form [data-text-key]')){
+  const key=input.dataset.textKey, lang=input.dataset.textLang||'es';
+  if(lang==='es') site.textos[key]=input.value;
+  else { if(!site.textosI18n[lang]) site.textosI18n[lang]={}; site.textosI18n[lang][key]=input.value; }
+ }
+}
+function flushCaptionsForm(){
+ if(!Array.isArray(gallery)) return;
+ for(const input of document.querySelectorAll('#gallery-admin-items input[id^="caption-"]')){
+  const id=input.id.slice('caption-'.length);
+  const item=gallery.find(i=>i.id===id);
+  if(!item) continue;
+  const val=input.value.trim();
+  if(adminLang==='es') item.caption=val;
+  else { item.captions=item.captions||{}; if(val) item.captions[adminLang]=val; else delete item.captions[adminLang]; }
+ }
+}
+function captionValor(item){
+ if(adminLang==='es') return item.caption||'';
+ const c=item.captions&&item.captions[adminLang];
+ return typeof c==='string'?c:'';
+}
 function makeLabel(text, control) { const label=document.createElement('label');label.htmlFor=control.id;label.textContent=text;return label; }
 function setPending(path, add) {
  if(add) pending.add(path);else pending.delete(path);
@@ -37,7 +83,9 @@ function renderPending() {
  }
 }
 function galleryRecord(item) {
- return { url:item.url, category:item.category, caption:item.caption || '', alt:item.alt || '', order:Number(item.order), cover:Boolean(item.cover), hidden:Boolean(item.hidden), storagePath:item.storagePath || '', ...(window.EstudioRecorte.valido(item.edit)?{edit:{x:item.edit.x,y:item.edit.y,w:item.edit.w,h:item.edit.h,r:item.edit.r}}:{}) };
+ const rec={ url:item.url, category:item.category, caption:item.caption || '', alt:item.alt || '', order:Number(item.order), cover:Boolean(item.cover), hidden:Boolean(item.hidden), storagePath:item.storagePath || '', ...(window.EstudioRecorte.valido(item.edit)?{edit:{x:item.edit.x,y:item.edit.y,w:item.edit.w,h:item.edit.h,r:item.edit.r}}:{}) };
+ if(item.captions&&typeof item.captions==='object'&&!Array.isArray(item.captions)) rec.captions=item.captions;
+ return rec;
 }
 async function persistItem(item) {
  const edits = [];
@@ -73,6 +121,7 @@ function renderCategories() {
  }
 }
 function renderGallery() {
+ pintarLangTabs($('gallery-lang-tabs'),$('gallery-lang-hint'));
  const filter=$('gallery-filter').value;
  const items=gallery.filter(item=>!filter || item.category===filter).sort((a,b)=>a.order-b.order);
  $('gallery-count').textContent=items.length+' fotos'+(filter?' en este álbum':' en total');
@@ -81,7 +130,7 @@ function renderGallery() {
   const card=document.createElement('form');card.className='admin-image-card';
   const img=document.createElement('img');img.src=item.url;img.alt=item.caption || item.alt || 'Obra de Harold Lezcano';img.loading='lazy';
   const cat=document.createElement('select');cat.id='cat-'+item.id;fillCategorySelect(cat);cat.value=item.category;
-  const caption=document.createElement('input');caption.id='caption-'+item.id;caption.maxLength=240;caption.value=item.caption || '';
+  const caption=document.createElement('input');caption.id='caption-'+item.id;caption.maxLength=240;caption.value=captionValor(item);if(adminLang!=='es') caption.placeholder=item.caption||'';
   const order=document.createElement('input');order.id='order-'+item.id;order.type='number';order.step='1';order.min='0';order.max='1000000';order.value=String(item.order);
   const cover=document.createElement('input');cover.id='cover-'+item.id;cover.type='checkbox';cover.checked=item.cover;
   const hidden=document.createElement('input');hidden.id='hidden-'+item.id;hidden.type='checkbox';hidden.checked=item.hidden;
@@ -124,10 +173,14 @@ function renderGallery() {
    gallery=gallery.filter(i=>i.id!==item.id);renderGallery();say('Foto eliminada.');
   },text=>{note.textContent=text;});
   actions.append(editBtn,remove);
-  card.append(thumb,actions,makeLabel('Álbum',cat),cat,makeLabel('Texto opcional',caption),caption,makeLabel('Orden (menor primero)',order),order,makeLabel('Portada del álbum',cover),cover,makeLabel('Oculta en el sitio',hidden),hidden,save,note);
+  card.append(thumb,actions,makeLabel('Álbum',cat),cat,makeLabel(adminLang==='es'?'Texto opcional':'Texto opcional ('+adminLang+')',caption),caption,makeLabel('Orden (menor primero)',order),order,makeLabel('Portada del álbum',cover),cover,makeLabel('Oculta en el sitio',hidden),hidden,save,note);
   card.onsubmit=e=>{e.preventDefault();action(card,async()=>{
    const n=Number(order.value);if(!Number.isInteger(n)||n<0||n>1000000) throw Error('Usá un orden entero entre 0 y 1.000.000.');
-   await persistItem({...item,category:cat.value,caption:caption.value.trim(),order:n,cover:cover.checked,hidden:hidden.checked});
+   const nextItem={...item,category:cat.value,order:n,cover:cover.checked,hidden:hidden.checked};
+   const val=caption.value.trim();
+   if(adminLang==='es') nextItem.caption=val;
+   else { const caps={...(item.captions||{})}; if(val) caps[adminLang]=val; else delete caps[adminLang]; nextItem.captions=caps; }
+   await persistItem(nextItem);
    renderGallery();say('Foto actualizada.');
   },text=>{note.textContent=text;});};
   $('gallery-admin-items').append(card);
@@ -271,11 +324,15 @@ function renderSite() {
  $('foto-inicio-preview').src=site.fotoArtista||'artista.jpg';
  renderFondo();
  renderGuias();
- $('site-whatsapp').value=site.whatsapp;$('site-map').value=site.mapaCurso;
- $('site-text-fields').replaceChildren();
- for(const [key,value] of Object.entries(site.textos)) {
-  const input=document.createElement('textarea');input.id='text-'+key;input.dataset.textKey=key;input.value=value;input.rows=3;input.maxLength=6000;
-  $('site-text-fields').append(makeLabel(defaults.etiquetasTextos[key]||key,input),input);
+ if($('site-whatsapp')) $('site-whatsapp').value=site.whatsapp;if($('site-map')) $('site-map').value=site.mapaCurso;
+ pintarLangTabs($('site-lang-tabs'),$('site-lang-hint'));
+ pintarLangTabs($('gallery-lang-tabs'),$('gallery-lang-hint'));
+ const box=$('site-text-fields'); if(!box) return;
+ box.replaceChildren();
+ for(const key of Object.keys(site.textos||{})) {
+  const input=document.createElement('textarea');input.id='text-'+key;input.dataset.textKey=key;input.dataset.textLang=adminLang;input.value=valorTexto(key);input.rows=3;input.maxLength=6000;
+  if(adminLang!=='es') input.placeholder=site.textos[key]||'';
+  box.append(makeLabel((defaults.etiquetasTextos[key]||key)+(adminLang==='es'?'':' ('+adminLang+')'),input),input);
  }
 }
 async function loadWorkspace() {
@@ -388,12 +445,13 @@ $('foto-inicio-editar').onclick=()=>{const out=t=>{$('foto-inicio-status').textC
  }}).catch(e=>out(api.explainError(e)));
 };
 async function saveSite(extra={}, statusEl=$('site-status'), msg='Textos y contacto guardados.'){
+ flushTextosForm();
  const textos={...site.textos};
- for(const input of document.querySelectorAll('#site-form [data-text-key]')) textos[input.dataset.textKey]=input.value;
+ const textosI18n=site.textosI18n?JSON.parse(JSON.stringify(site.textosI18n)):undefined;
  const next=D.validateSite({
   whatsapp:$('site-whatsapp').value.trim()||site.whatsapp,
   mapaCurso:$('site-map').value.trim()||site.mapaCurso,
-  textos,
+  textos, textosI18n,
   fotoArtista:site.fotoArtista, fotoArtistaPath:site.fotoArtistaPath,
   fondoImagen:site.fondoImagen, fondoImagenPath:site.fondoImagenPath, fondoOpacidad:site.fondoOpacidad,
   ventanasOpacidad:site.ventanasOpacidad, fondoDesenfoque:site.fondoDesenfoque,
@@ -419,8 +477,9 @@ $('fondo-quitar').onclick=()=>action($('fondo-admin'),async()=>{
  if(!site.fondoImagen && !site.fondoImagenPath) return;
  if(!confirm('¿Volver a la imagen de fondo original del sitio?')) return;
  const previous=site.fondoImagenPath||'';
- const textos={...site.textos}; for(const input of document.querySelectorAll('#site-form [data-text-key]')) textos[input.dataset.textKey]=input.value;
- const cleared={whatsapp:site.whatsapp,mapaCurso:site.mapaCurso,textos,fondoOpacidad:fondoOp(),ventanasOpacidad:ventanasOp(),fondoDesenfoque:fondoBlur()};
+ flushTextosForm();
+ const textos={...site.textos}; const textosI18n=site.textosI18n?JSON.parse(JSON.stringify(site.textosI18n)):undefined;
+ const cleared={whatsapp:site.whatsapp,mapaCurso:site.mapaCurso,textos,textosI18n,fondoOpacidad:fondoOp(),ventanasOpacidad:ventanasOp(),fondoDesenfoque:fondoBlur()};
  if(site.fotoArtista){cleared.fotoArtista=site.fotoArtista;cleared.fotoArtistaPath=site.fotoArtistaPath||'';}
  const next=D.validateSite(cleared);await api.saveConfig('sitio',next);site=next;renderFondo();$('fondo-status').textContent='Se restauró la imagen original.';
  if(previous.startsWith('sitio/')){try{await api.deleteStorageFile(previous);}catch{setPending(previous,true);}}

@@ -726,3 +726,8 @@ body.asistente-abierto .page-background { z-index: 0; }
 .grupo-material-escultura { width: 100%; box-sizing: border-box; }
 #nota-tejido-metalico { margin-top: 8px; }
 #tasa-info, .asistente-fx { font-size: 11px; color: #aaa; line-height: 1.4; overflow-wrap: anywhere; margin-top: 4px; }
+
+.idioma-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 8px;}
+.idioma-tab{min-height:36px;padding:6px 10px;border-radius:999px;border:1px solid rgba(212,175,55,.35);background:rgba(255,255,255,.06);color:#eee;font:inherit;font-size:13px;cursor:pointer;}
+.idioma-tab.active{background:#d4af37;color:#111;border-color:#d4af37;font-weight:700;}
+.admin-hint{font-size:12px;color:#bbb;margin:0 0 10px;}

@@ -34,13 +34,13 @@
 <a aria-label="Instagram" href="https://www.instagram.com/artista_harold_lezcano?igsh=Y245bWM4dHc2NHQw" rel="noopener noreferrer" target="_blank"><i class="fab fa-instagram"></i></a>
 <a aria-label="Facebook" href="https://www.facebook.com/share/1AwixXnZUH/" rel="noopener noreferrer" target="_blank"><i class="fab fa-facebook-f"></i></a>
 <a aria-label="TikTok" href="https://www.tiktok.com/@artista_harold_lezcano?_r=1&amp;_t=ZS-95tf3WkUc1E" rel="noopener noreferrer" target="_blank"><i class="fab fa-tiktok"></i></a>
-<button aria-label="Compartir" onclick="compartirPagina(event)" title="Compartir página" type="button"><i class="fas fa-share-nodes"></i></button>
+<button aria-label="Compartir" data-i18n-aria="comun.compartir" onclick="compartirPagina(event)" title="Compartir página" data-i18n-title="share.pagina" type="button"><i class="fas fa-share-nodes"></i></button>
 </div>
 <p id="share-status" role="status"></p></div>
 <div class="bio-section" id="bioText">
         Nací en Asunción en 1989, bendecido con un don artístico heredado de <strong>mi madre</strong> y forjado con la disciplina, la perseverancia y la visión para aprovechar cada oportunidad que me inculcó <strong>mi padre</strong>. Tuve el honor de perfeccionar este legado durante <strong>más de 20 años</strong> junto al gran Maestro <strong>Prof. Manuel Viedma</strong>. Hoy, fusiono esa pasión innata y trabajo duro con una técnica de élite para dar vida a obras exclusivas que transforman espacios.
     </div>
-<section aria-labelledby="galeria-titulo" class="inicio-galeria" id="galeria-inicio"><h2 id="galeria-titulo">Galería</h2>
+<section aria-labelledby="galeria-titulo" class="inicio-galeria" id="galeria-inicio"><h2 id="galeria-titulo" data-i18n="galeria.titulo">Galería</h2>
 <div class="album-grid" id="vista-albumes">
 <button class="album-book" data-album="retrato" onclick="openAlbum('retrato', 'Retratos')" type="button">
 <img alt="Álbum de retratos de Harold Lezcano" class="album-cover-img" loading="lazy" src="https://i.postimg.cc/KzS87GJg/1464351820687.jpg"/>
@@ -70,7 +70,7 @@
 <div id="vista-hojas" style="display:none;">
 <div class="album-header">
 <button class="btn-volver" onclick="closeAlbum()"><i class="fas fa-arrow-left"></i> <span data-i18n="album.volver">Volver a la Biblioteca</span></button>
-<h2 id="titulo-album-abierto">Álbum</h2>
+<h2 id="titulo-album-abierto" data-i18n="galeria.album">Álbum</h2>
 </div>
 <div class="hojas-container" id="mainGallery">
 <button class="gallery-item retrato" data-gallery-id="seed-001" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de retratos de Harold Lezcano, imagen 1" loading="lazy" src="https://i.postimg.cc/KzS87GJg/1464351820687.jpg"/></button>
@@ -226,88 +226,88 @@
 <button class="gallery-item otros" data-gallery-id="seed-151" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 46" loading="lazy" src="https://i.postimg.cc/BtWrkbPT/Screenshot-20240325-131056-Instagram.jpg"/></button>
 <button class="gallery-item otros" data-gallery-id="seed-152" onclick="openModal(this.firstChild.src)" type="button"><img alt="Obra de otros trabajos de Harold Lezcano, imagen 47" loading="lazy" src="https://i.postimg.cc/rydzBHRj/Screenshot-20240325-131113-Instagram.jpg"/></button>
 </div>
-<div style="text-align:center; color:#888; font-size:10px; margin-top:5px; font-style:italic; letter-spacing: 1px;">← Desliza hacia los lados para hojear →</div>
+<div style="text-align:center; color:#888; font-size:10px; margin-top:5px; font-style:italic; letter-spacing: 1px;" data-i18n="contacto.desliza">← Desliza hacia los lados para hojear →</div>
 </div>
 </section>
-<section aria-labelledby="contacto-titulo" class="contact-section" id="contacto"><h2 id="contacto-titulo">Contacto del estudio</h2><p data-setting="contacto">Harold Lezcano · Las Residentas 460, Fernando de la Mora, Paraguay.</p>
-<p><button type="button" class="btn-confirmar" data-abrir-asistente>Hacer mi pedido</button> · <a href="#cursos">Conocer los cursos</a></p>
-<p data-setting="condiciones">Completá tu pedido en la página para que podamos prepararlo con todos los detalles. Los presupuestos son estimados y se confirman personalmente. Al enviar el pedido se arma un mensaje con tus datos; revisalo antes de mandarlo. No se confirma una reserva ni se realiza un cobro desde esta página.</p><a class="admin-link" href="admin.html">Administrar</a>
+<section aria-labelledby="contacto-titulo" class="contact-section" id="contacto"><h2 id="contacto-titulo" data-i18n="contacto.titulo">Contacto del estudio</h2><p data-setting="contacto">Harold Lezcano · Las Residentas 460, Fernando de la Mora, Paraguay.</p>
+<p><button type="button" class="btn-confirmar" data-abrir-asistente data-i18n="contacto.pedido">Hacer mi pedido</button> · <a href="#cursos" data-i18n="contacto.cursos">Conocer los cursos</a></p>
+<p data-setting="condiciones">Completá tu pedido en la página para que podamos prepararlo con todos los detalles. Los presupuestos son estimados y se confirman personalmente. Al enviar el pedido se arma un mensaje con tus datos; revisalo antes de mandarlo. No se confirma una reserva ni se realiza un cobro desde esta página.</p><a class="admin-link" href="admin.html" data-i18n="comun.administrar">Administrar</a>
 <div class="mapa-cuadro">
-<iframe class="mapa-embed" title="Ubicación del estudio: Las Residentas 460, Fernando de la Mora, Paraguay" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Las+Residentas+460,+Fernando+de+la+Mora,+Paraguay&amp;output=embed"></iframe>
-<a class="btn-confirmar btn-block btn-como-llegar" href="https://www.google.com/maps/dir/?api=1&amp;destination=Las+Residentas+460,+Fernando+de+la+Mora,+Paraguay" rel="noopener noreferrer" target="_blank">Cómo llegar</a>
+<iframe class="mapa-embed" title="Ubicación del estudio: Las Residentas 460, Fernando de la Mora, Paraguay" data-i18n-title="mapa.titulo" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Las+Residentas+460,+Fernando+de+la+Mora,+Paraguay&amp;output=embed"></iframe>
+<a class="btn-confirmar btn-block btn-como-llegar" href="https://www.google.com/maps/dir/?api=1&amp;destination=Las+Residentas+460,+Fernando+de+la+Mora,+Paraguay" rel="noopener noreferrer" target="_blank" data-i18n="contacto.comoLlegar">Cómo llegar</a>
 </div>
 </section>
 </div>
 <div class="tab-content" id="tab-cotizacion">
 <div class="form-card" id="card-especificaciones">
-<h3 class="card-title"><i class="fas fa-paint-brush"></i> 1. Especificaciones de la obra</h3>
+<h3 class="card-title"><i class="fas fa-paint-brush"></i> <span data-i18n="form.spec">1. Especificaciones de la obra</span></h3>
 <div id="step-estilo">
-<label for="estilo">Estilo de Acabado / Tipo</label>
+<label for="estilo" data-i18n="form.estilo">Estilo de Acabado / Tipo</label>
 <select aria-describedby="error-estilo" class="" id="estilo" onchange="onEstiloChange()">
-<option disabled="" selected="" value="">Seleccioná un estilo o tipo...</option>
-<option value="Realista">Realista (recomendado)</option>
-<option value="Hiperrealista">Hiperrealista</option>
-<option value="Espatulado">Espatulado</option>
-<option value="Bocetado">Monocromático</option>
-<option value="Abstracto">Abstracto</option>
-<option value="Mural">Mural sobre pared</option>
-<option value="Escultura">Escultura</option>
-<option value="Restauracion">Restauración de obras / fotos</option>
+<option disabled="" selected="" value="" data-i18n-option="opt.estilo.ph">Seleccioná un estilo o tipo...</option>
+<option value="Realista" data-i18n-option="opt.estilo.realista">Realista (recomendado)</option>
+<option value="Hiperrealista" data-i18n-option="opt.estilo.hiperrealista">Hiperrealista</option>
+<option value="Espatulado" data-i18n-option="opt.estilo.espatulado">Espatulado</option>
+<option value="Bocetado" data-i18n-option="opt.estilo.monocromatico">Monocromático</option>
+<option value="Abstracto" data-i18n-option="opt.estilo.abstracto">Abstracto</option>
+<option value="Mural" data-i18n-option="opt.estilo.mural">Mural sobre pared</option>
+<option value="Escultura" data-i18n-option="opt.estilo.escultura">Escultura</option>
+<option value="Restauracion" data-i18n-option="opt.estilo.restauracion">Restauración de obras / fotos</option>
 </select><div aria-live="polite" class="field-error" id="error-estilo"></div>
 <div class="info-text" id="info-estilo"></div>
 </div>
 <div id="bloque-pintura">
 <div id="step-tecnica">
-<label for="tecnica">Técnica y material</label>
+<label for="tecnica" data-i18n="form.tecnica">Técnica y material</label>
 <select aria-describedby="error-tecnica" class="" id="tecnica" onchange="onTecnicaChange();">
-<option disabled="" selected="" value="">Seleccioná...</option>
-<option value="Oleo">Óleo (recomendado)</option>
-<option value="Acrilico">Acrílico</option>
-<option value="Carbonilla">Lápiz / Carbonilla</option>
+<option disabled="" selected="" value="" data-i18n-option="opt.tecnica.ph">Seleccioná...</option>
+<option value="Oleo" data-i18n-option="opt.tecnica.oleo">Óleo (recomendado)</option>
+<option value="Acrilico" data-i18n-option="opt.tecnica.acrilico">Acrílico</option>
+<option value="Carbonilla" data-i18n-option="opt.tecnica.carbonilla">Lápiz / Carbonilla</option>
 </select><div aria-live="polite" class="field-error" id="error-tecnica"></div>
 <div class="info-text" id="info-tecnica"></div>
 </div>
 <div id="step-color-lapiz" style="display:none;">
-<label for="color_lapiz">Opción de lápiz</label>
+<label for="color_lapiz" data-i18n="form.colorLapiz">Opción de lápiz</label>
 <select aria-describedby="error-color_lapiz" class="" id="color_lapiz" onchange="mostrarInfo('color_lapiz'); calcular();">
-<option disabled="" selected="" value="">Seleccioná una opción...</option>
-<option value="Sin color">Sin color (blanco y negro)</option>
-<option value="A color">A color</option>
+<option disabled="" selected="" value="" data-i18n-option="opt.color.ph">Seleccioná una opción...</option>
+<option value="Sin color" data-i18n-option="opt.color.sin">Sin color (blanco y negro)</option>
+<option value="A color" data-i18n-option="opt.color.color">A color</option>
 </select><div aria-live="polite" class="field-error" id="error-color_lapiz"></div>
 <div class="info-text" id="info-color_lapiz"></div>
 </div>
 </div>
 <div id="step-tema">
-<label for="tema">¿Qué temática deseás cotizar?</label>
+<label for="tema" data-i18n="form.tema">¿Qué temática deseás cotizar?</label>
 <select aria-describedby="error-tema" class="" id="tema" onchange="onTemaChange()">
-<option disabled="" selected="" value="">Seleccioná una temática...</option>
-<option value="Retrato">Retrato (persona o animal)</option>
-<option value="Paisaje">Paisaje</option>
-<option value="Bodegon">Bodegón / naturaleza muerta</option>
+<option disabled="" selected="" value="" data-i18n-option="opt.tema.ph">Seleccioná una temática...</option>
+<option value="Retrato" data-i18n-option="opt.tema.retrato">Retrato (persona o animal)</option>
+<option value="Paisaje" data-i18n-option="opt.tema.paisaje">Paisaje</option>
+<option value="Bodegon" data-i18n-option="opt.tema.bodegon">Bodegón / naturaleza muerta</option>
 </select><div aria-live="polite" class="field-error" id="error-tema"></div>
 <div class="info-text" id="info-tema"></div>
 </div>
 </div>
 <div class="form-card" id="retratos-extras" style="display:none;">
-<h3 class="card-title"><i class="fas fa-user-friends"></i> Composición (Sujetos)</h3>
-<div class="stepper-group"><span>Personas extra</span><div class="stepper"><button onclick="step('personas', -1)">-</button><label for="personas">Personas extra</label><input aria-describedby="error-personas" id="personas" readonly="" value="0"/><div aria-live="polite" class="field-error" id="error-personas"></div><button onclick="step('personas', 1)">+</button></div></div>
-<div class="info-text">Agregá personas adicionales a la composición principal (el precio base ya incluye a 1 persona con fondo simple).</div>
-<div class="stepper-group"><span>Mascotas extra</span><div class="stepper"><button onclick="step('mascotas', -1)">-</button><label for="mascotas">Mascotas extra</label><input aria-describedby="error-mascotas" id="mascotas" readonly="" value="0"/><div aria-live="polite" class="field-error" id="error-mascotas"></div><button onclick="step('mascotas', 1)">+</button></div></div>
-<div class="info-text">Sumá a tus queridas mascotas como protagonistas de la obra.</div>
+<h3 class="card-title"><i class="fas fa-user-friends"></i> <span data-i18n="form.composicion">Composición (Sujetos)</span></h3>
+<div class="stepper-group"><span data-i18n="chip.personasExtra">Personas extra</span><div class="stepper"><button onclick="step('personas', -1)">-</button><label for="personas" data-i18n="chip.personasExtra">Personas extra</label><input aria-describedby="error-personas" id="personas" readonly="" value="0"/><div aria-live="polite" class="field-error" id="error-personas"></div><button onclick="step('personas', 1)">+</button></div></div>
+<div class="info-text" data-i18n="form.personasHelp">Agregá personas adicionales a la composición principal (el precio base ya incluye a 1 persona con fondo simple).</div>
+<div class="stepper-group"><span data-i18n="chip.mascotasExtra">Mascotas extra</span><div class="stepper"><button onclick="step('mascotas', -1)">-</button><label for="mascotas" data-i18n="chip.mascotasExtra">Mascotas extra</label><input aria-describedby="error-mascotas" id="mascotas" readonly="" value="0"/><div aria-live="polite" class="field-error" id="error-mascotas"></div><button onclick="step('mascotas', 1)">+</button></div></div>
+<div class="info-text" data-i18n="form.mascotasHelp">Sumá a tus queridas mascotas como protagonistas de la obra.</div>
 <div id="contenedor-fondo">
 <hr style="border: 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 20px 0 15px 0;"/>
-<label class="checkbox-label" for="fondo"><input id="fondo" onchange="calcular()" type="checkbox"/> Incluir fondo detallado</label>
-<div class="info-text" style="margin-left: 28px; margin-top: -8px;">Agregá paisajes complejos, arquitectura o elementos detallados detrás de los sujetos principales.</div>
+<label class="checkbox-label" for="fondo"><input id="fondo" onchange="calcular()" type="checkbox"/> <span data-i18n="form.fondoDetalle">Incluir fondo detallado</span></label>
+<div class="info-text" style="margin-left: 28px; margin-top: -8px;"><span data-i18n="form.fondoHelp">Agregá paisajes complejos, arquitectura o elementos detallados detrás de los sujetos principales.</span></div>
 </div>
 </div>
 <div class="form-card" id="contenedor-restauracion" style="display:none;">
-<h3 class="card-title" style="color:#d4af37;"><i class="fas fa-magic"></i> Detalles de Restauración</h3>
-<label for="tipo_restauracion" style="margin-top:0;">Tipo de Restauración</label>
-<select aria-describedby="error-tipo_restauracion" class="" id="tipo_restauracion" onchange="updateUI(); mostrarInfo('tipo_restauracion'); calcular()"><option disabled="" selected="" value="">Seleccioná el tipo...</option><option value="Digital">Digital simple (limpieza y grietas — 180.000 Gs.)</option><option value="Digital Compleja">Digital compleja (reconstrucción — 350.000 Gs.)</option><option value="Fisica">Física (obras reales — A evaluar)</option></select><div aria-live="polite" class="field-error" id="error-tipo_restauracion"></div>
+<h3 class="card-title" style="color:#d4af37;"><i class="fas fa-magic"></i> <span data-i18n="form.restauracion">Detalles de Restauración</span></h3>
+<label for="tipo_restauracion" style="margin-top:0;" data-i18n="form.tipoRestauracion">Tipo de Restauración</label>
+<select aria-describedby="error-tipo_restauracion" class="" id="tipo_restauracion" onchange="updateUI(); mostrarInfo('tipo_restauracion'); calcular()"><option disabled="" selected="" value="" data-i18n-option="opt.rest.ph">Seleccioná el tipo...</option><option value="Digital" data-i18n-option="opt.rest.digital">Digital simple (limpieza y grietas — 180.000 Gs.)</option><option value="Digital Compleja" data-i18n-option="opt.rest.compleja">Digital compleja (reconstrucción — 350.000 Gs.)</option><option value="Fisica" data-i18n-option="opt.rest.fisica">Física (obras reales — A evaluar)</option></select><div aria-live="polite" class="field-error" id="error-tipo_restauracion"></div>
 <div class="info-text" id="info-tipo_restauracion" style="margin-top:10px;"></div>
 </div>
 <div class="form-card" id="contenedor-cuadros" style="display:none;">
-<h3 class="card-title"><i class="fas fa-ruler-combined"></i> 2. Dimensiones y formato</h3>
+<h3 class="card-title"><i class="fas fa-ruler-combined"></i> <span data-i18n="form.dimensiones">2. Dimensiones y formato</span></h3>
 <div id="step-unidad" style="margin-bottom: 15px;">
 <label style="margin-top:0;" data-i18n="unidad.titulo">Unidad de Medida</label>
 <div style="display: flex; gap: 8px; margin-top: 10px;">
@@ -317,18 +317,18 @@
 </div>
 </div>
 <div id="formato-lienzo-container" style="display:none;">
-<label for="forma_lienzo">Formato del lienzo</label>
+<label for="forma_lienzo" data-i18n="form.formatoLienzo">Formato del lienzo</label>
 <select aria-describedby="error-forma_lienzo" class="" id="forma_lienzo" onchange="onFormaChange(); mostrarInfo('forma_lienzo');">
-<option disabled="" value="">Seleccioná un formato...</option>
-<option selected="" value="Estandar">Estándar (Cuadrado/Rectangular)</option>
-<option value="Circular">Circular</option>
-<option value="Ovalado">Ovalado</option>
-<option value="Hexagonal">Hexagonal</option>
+<option disabled="" value="" data-i18n-option="opt.forma.ph">Seleccioná un formato...</option>
+<option selected="" value="Estandar" data-i18n-option="opt.forma.estandar">Estándar (Cuadrado/Rectangular)</option>
+<option value="Circular" data-i18n-option="opt.forma.circular">Circular</option>
+<option value="Ovalado" data-i18n-option="opt.forma.ovalado">Ovalado</option>
+<option value="Hexagonal" data-i18n-option="opt.forma.hexagonal">Hexagonal</option>
 </select><div aria-live="polite" class="field-error" id="error-forma_lienzo"></div>
 <div class="info-text" id="info-forma_lienzo"></div>
 </div>
 <div id="step-tamano">
-<label for="tamano_predefinido">Tamaño</label>
+<label for="tamano_predefinido" data-i18n="form.tamano">Tamaño</label>
 <select aria-describedby="error-tamano_predefinido" class="" id="tamano_predefinido" onchange="handleTamanoChange(); calcular();"></select><div aria-live="polite" class="field-error" id="error-tamano_predefinido"></div>
 </div>
 <div id="tamano_manual_container" style="display:none; margin-top:15px; background:rgba(0,0,0,0.3); padding:15px; border-radius:10px; border: 1px solid rgba(255,255,255,0.05);">
@@ -336,62 +336,62 @@
 <div id="c_ancho" style="width:50%"><label for="ancho_cm" id="l_ancho" style="margin:0">Ancho (cm)</label><input aria-describedby="error-ancho_cm" id="ancho_cm" max="500" min="0.1" oninput="onMedidaManualInput()" step="any" type="number" value="50"/><div aria-live="polite" class="field-error" id="error-ancho_cm"></div></div>
 <div id="c_alto" style="width:50%"><label for="alto_cm" id="l_alto" style="margin:0">Alto (cm)</label><input aria-describedby="error-alto_cm" id="alto_cm" max="500" min="0.1" oninput="onMedidaManualInput()" step="any" type="number" value="70"/><div aria-live="polite" class="field-error" id="error-alto_cm"></div></div>
 </div>
-<p class="info-text" id="nota-personalizado" style="display:block;margin-top:10px">El precio se calcula según el área, en proporción a los tamaños de la tabla.</p>
+<p class="info-text" id="nota-personalizado" style="display:block;margin-top:10px" data-i18n="form.notaPersonalizado">El precio se calcula según el área, en proporción a los tamaños de la tabla.</p>
 </div>
 <div id="step-enmarcado">
 <hr style="border: 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 20px 0 15px 0;"/>
-<label for="enmarcado" style="margin-top:0;">Enmarcado</label>
+<label for="enmarcado" style="margin-top:0;" data-i18n="form.enmarcado">Enmarcado</label>
 <select aria-describedby="error-enmarcado" class="" id="enmarcado" onchange="mostrarInfo('enmarcado'); calcular()">
-<option disabled="" value="">Seleccioná un enmarcado...</option>
-<option selected="" value="SinMarco">Sin marco (bordes pintados, listo para colgar)</option>
-<option value="Estandar">Marco Estándar</option>
-<option value="Cajon">Marco Cajón</option>
-<option value="Clasico">Marco Clásico</option>
-<option value="SemiRelieve">Marco con semirrelieve</option>
-<option value="GruesoRelieves">Marco Grueso con Relieves</option>
+<option disabled="" value="" data-i18n-option="opt.marco.ph">Seleccioná un enmarcado...</option>
+<option selected="" value="SinMarco" data-i18n-option="opt.marco.sin">Sin marco (bordes pintados, listo para colgar)</option>
+<option value="Estandar" data-i18n-option="opt.marco.estandar">Marco Estándar</option>
+<option value="Cajon" data-i18n-option="opt.marco.cajon">Marco Cajón</option>
+<option value="Clasico" data-i18n-option="opt.marco.clasico">Marco Clásico</option>
+<option value="SemiRelieve" data-i18n-option="opt.marco.semi">Marco con semirrelieve</option>
+<option value="GruesoRelieves" data-i18n-option="opt.marco.grueso">Marco Grueso con Relieves</option>
 </select><div aria-live="polite" class="field-error" id="error-enmarcado"></div>
 <div class="info-text" id="info-enmarcado"></div>
 </div>
 </div>
 <div class="form-card" id="contenedor-murales" style="display: none;">
-<h3 class="card-title"><i class="fas fa-paint-roller"></i> Dimensiones del Mural</h3>
-<label for="estilo_mural" style="margin-top:0;">Estilo del Mural</label>
+<h3 class="card-title"><i class="fas fa-paint-roller"></i> <span data-i18n="form.muralDim">Dimensiones del Mural</span></h3>
+<label for="estilo_mural" style="margin-top:0;" data-i18n="form.muralEstilo">Estilo del Mural</label>
 <select aria-describedby="error-estilo_mural" class="" id="estilo_mural" onchange="calcular()">
-<option selected="" value="Realista Mural">Realismo con detalle</option>
-<option value="Ilustracion Mural">Ilustración o diseño</option>
-<option value="Bocetado">Bocetado</option>
+<option selected="" value="Realista Mural" data-i18n-option="opt.mural.realista">Realismo con detalle</option>
+<option value="Ilustracion Mural" data-i18n-option="opt.mural.ilustracion">Ilustración o diseño</option>
+<option value="Bocetado" data-i18n-option="opt.mural.bocetado">Bocetado</option>
 </select><div aria-live="polite" class="field-error" id="error-estilo_mural"></div>
 <label id="label-mural-tamano" style="margin-top:15px;">Tamaño (centímetros)</label>
 <div style="display: flex; gap: 15px; margin-top:10px;">
 <div style="width:50%"><label for="mural_ancho" id="label-mural-ancho" style="margin:0; font-size:11px;">Ancho</label><input aria-describedby="error-mural_ancho" id="mural_ancho" inputmode="decimal" max="2000" min="100" oninput="calcular()" step="any" type="text" value=""/><div aria-live="polite" class="field-error" id="error-mural_ancho"></div></div>
 <div style="width:50%"><label for="mural_alto" id="label-mural-alto" style="margin:0; font-size:11px;">Alto</label><input aria-describedby="error-mural_alto" id="mural_alto" inputmode="decimal" max="500" min="100" oninput="calcular()" step="any" type="text" value=""/><div aria-live="polite" class="field-error" id="error-mural_alto"></div></div>
 </div>
-<div id="alerta-andamio" style="display:none; color:#d4af37; font-size:10px; margin-top:15px; padding: 10px; border-radius: 8px; background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2);">Si la pared mide 2,5 m o más de alto, puede hacer falta andamio y equipo de seguridad. El valor se acuerda al consultar.</div>
+<div id="alerta-andamio" style="display:none; color:#d4af37; font-size:10px; margin-top:15px; padding: 10px; border-radius: 8px; background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2);"></div>
 </div>
 <div class="form-card" id="contenedor-escultura" style="display:none;">
-<h3 class="card-title"><i class="fab fa-studiovinari"></i> Detalles de la Escultura</h3>
-<label for="tipo_escultura" style="margin-top:0;">Tipo de escultura</label>
+<h3 class="card-title"><i class="fab fa-studiovinari"></i> <span data-i18n="form.esculturaDetalles">Detalles de la Escultura</span></h3>
+<label for="tipo_escultura" style="margin-top:0;" data-i18n="escultura.tipo">Tipo de escultura</label>
 <select aria-describedby="error-tipo_escultura" id="tipo_escultura" onchange="onTipoEsculturaChange(); calcular()">
-<option disabled="" selected="" value="">Seleccioná el tipo...</option>
-<option value="Busto">Busto</option>
-<option value="Medio cuerpo">Medio cuerpo</option>
-<option value="Figura completa">Figura de cuerpo entero</option>
-<option value="Relieve">Relieve</option>
-<option value="Animal">Animal u otra figura no humana</option>
-<option value="Abstracto">Abstracto</option>
-<option value="Objeto">Objeto</option>
-<option value="Otro">Otro</option>
+<option disabled="" selected="" value="" data-i18n-option="opt.tipo.ph">Seleccioná el tipo...</option>
+<option value="Busto" data-i18n-option="escultura.busto">Busto</option>
+<option value="Medio cuerpo" data-i18n-option="escultura.medio">Medio cuerpo</option>
+<option value="Figura completa" data-i18n-option="escultura.figura">Figura de cuerpo entero</option>
+<option value="Relieve" data-i18n-option="escultura.relieve">Relieve</option>
+<option value="Animal" data-i18n-option="escultura.animal">Animal u otra figura no humana</option>
+<option value="Abstracto" data-i18n-option="escultura.abstracto">Abstracto</option>
+<option value="Objeto" data-i18n-option="escultura.objeto">Objeto</option>
+<option value="Otro" data-i18n-option="escultura.otro">Otro</option>
 </select><div aria-live="polite" class="field-error" id="error-tipo_escultura"></div>
 <div class="info-text" id="info-tipo_escultura"></div>
 <div id="grupo-material-escultura" class="grupo-material-escultura" style="margin-top:15px; display:none;">
-<label for="material_escultura" id="label-material-escultura">Material</label>
+<label for="material_escultura" id="label-material-escultura" data-i18n="escultura.material">Material</label>
 <select id="material_escultura" aria-describedby="nota-tejido-metalico error-material_escultura" onchange="onMaterialEsculturaChange();">
-<option disabled="" selected="" value="">Seleccioná el material...</option>
-<option value="Fibra">Fibra de vidrio con estructura de hierro</option>
-<option value="Cemento">Cemento hueco con estructura de hierro</option>
-<option value="Arcilla">Arcilla con cemento con estructura de hierro</option>
+<option disabled="" selected="" value="" data-i18n-option="opt.material.ph">Seleccioná el material...</option>
+<option value="Fibra" data-i18n-option="escultura.fibra">Fibra de vidrio con estructura de hierro</option>
+<option value="Cemento" data-i18n-option="escultura.cemento">Cemento hueco con estructura de hierro</option>
+<option value="Arcilla" data-i18n-option="escultura.arcilla">Arcilla con cemento con estructura de hierro</option>
 </select>
-<p class="info-text" id="nota-tejido-metalico">Todas incluyen tejido metálico en el interior.</p>
+<p class="info-text" id="nota-tejido-metalico" data-i18n="escultura.tejido">Todas incluyen tejido metálico en el interior.</p>
 <div aria-live="polite" class="field-error" id="error-material_escultura"></div>
 </div>
 <div class="stepper-group altura-escultura" id="grupo-altura-escultura" style="margin-top: 15px; display:none;">
@@ -405,37 +405,37 @@
 <div aria-live="polite" class="field-error" id="error-escultura_cm"></div>
 <p class="peso-estimado" id="escultura-peso-estimado" hidden></p>
 </div>
-<div class="info-text" style="margin-top:15px;">Precio para pieza modelada a mano. No incluye fundición en bronce ni otros metales. La altura se mide de la base al punto más alto. Para piezas de más de 2 metros, indicalo al enviar el pedido.</div>
+<div class="info-text" style="margin-top:15px;"><span data-i18n="form.esculturaNota">Precio para pieza modelada a mano. No incluye fundición en bronce ni otros metales. La altura se mide de la base al punto más alto. Para piezas de más de 2 metros, indicalo al enviar el pedido.</span></div>
 </div>
 <div class="form-card" id="step-fotos" style="display:none;">
-<h3 class="card-title"><i class="far fa-lightbulb"></i> 3. Referencias y detalles</h3>
+<h3 class="card-title"><i class="far fa-lightbulb"></i> <span data-i18n="form.referencias">3. Referencias y detalles</span></h3>
 <div style="margin-bottom: 20px;">
-<label for="fotos_referencia" style="margin-top:0;">Imágenes de referencia</label>
+<label for="fotos_referencia" style="margin-top:0;" data-i18n="form.imagenesRef">Imágenes de referencia</label>
 <select aria-describedby="error-fotos_referencia" class="" id="fotos_referencia" onchange="calcular()">
-<option disabled="" selected="" value="">¿Tenés fotos de guía?</option>
-<option value="Sí, quiero cargar fotos de guía">Sí, quiero cargar fotos de guía</option>
-<option value="No, necesito asesoramiento">No tengo fotos, necesito asesoramiento</option>
-</select><div aria-live="polite" class="field-error" id="error-fotos_referencia"></div><div class="reference-upload"><label for="referencias_archivos">Cargá la foto de guía o la imagen de referencia</label><input accept="image/*" aria-describedby="referencias-ayuda referencias-estado" id="referencias_archivos" multiple="" type="file"/><p class="upload-help" id="referencias-ayuda">Hasta 5 imágenes de 8 MB cada una. Al continuar se comprimen y se suben; WhatsApp abre con el pedido y el enlace de cada foto. Si la subida falla, se abre el chat para que las envíes ahí. No se publican en la galería.</p><div class="upload-previews" id="referencias-previews"></div><p aria-live="polite" id="referencias-estado" role="status"></p><a class="wa-btn" hidden="" id="whatsapp-continuar" rel="noopener noreferrer" target="_blank">Abrir mensaje en WhatsApp</a><button type="button" class="wa-btn" hidden="" id="referencias-compartir">Compartir fotos por WhatsApp</button></div>
+<option disabled="" selected="" value="" data-i18n-option="opt.fotos.ph">¿Tenés fotos de guía?</option>
+<option value="Sí, quiero cargar fotos de guía" data-i18n-option="opt.fotos.si">Sí, quiero cargar fotos de guía</option>
+<option value="No, necesito asesoramiento" data-i18n-option="opt.fotos.no">No tengo fotos, necesito asesoramiento</option>
+</select><div aria-live="polite" class="field-error" id="error-fotos_referencia"></div><div class="reference-upload"><label for="referencias_archivos" data-i18n="form.cargarFoto">Cargá la foto de guía o la imagen de referencia</label><input accept="image/*" aria-describedby="referencias-ayuda referencias-estado" id="referencias_archivos" multiple="" type="file"/><p class="upload-help" id="referencias-ayuda" data-i18n="form.referenciasAyuda">Hasta 5 imágenes de 8 MB cada una. Al continuar se comprimen y se suben; WhatsApp abre con el pedido y el enlace de cada foto. Si la subida falla, se abre el chat para que las envíes ahí. No se publican en la galería.</p><div class="upload-previews" id="referencias-previews"></div><p aria-live="polite" id="referencias-estado" role="status"></p><a class="wa-btn" hidden="" id="whatsapp-continuar" rel="noopener noreferrer" target="_blank" data-i18n="form.abrirWhatsapp">Abrir mensaje en WhatsApp</a><button type="button" class="wa-btn" hidden="" id="referencias-compartir" data-i18n="form.compartirFotos">Compartir fotos por WhatsApp</button></div>
 </div>
 </div>
 <div id="step-idea" style="margin-top:15px;">
-<label for="idea_cliente" style="margin-top:0;">Contame tu idea (opcional)</label>
-<textarea aria-describedby="error-idea_cliente" id="idea_cliente" oninput="calcular()" placeholder="Describí detalles, la paleta de colores o la emoción que buscás..." rows="3"></textarea><div aria-live="polite" class="field-error" id="error-idea_cliente"></div>
+<label for="idea_cliente" style="margin-top:0;" data-i18n="form.idea">Contame tu idea (opcional)</label>
+<textarea aria-describedby="error-idea_cliente" id="idea_cliente" oninput="calcular()" placeholder="Describí detalles, la paleta de colores o la emoción que buscás..." data-i18n-placeholder="form.ideaPh" rows="3"></textarea><div aria-live="polite" class="field-error" id="error-idea_cliente"></div>
 </div>
 <div class="form-card" id="step-envio" style="display:none;">
-<h3 class="card-title"><i class="fas fa-shipping-fast"></i> 4. Cliente y logística</h3>
-<div class="form-row"><label for="envio_nombre">Nombre y apellido</label><input aria-describedby="error-envio_nombre" id="envio_nombre" oninput="calcular()" placeholder="Nombre y apellido" type="text"/><div aria-live="polite" class="field-error" id="error-envio_nombre"></div></div>
-<label style="margin-top:15px;">País de residencia</label>
+<h3 class="card-title"><i class="fas fa-shipping-fast"></i> <span data-i18n="form.cliente">4. Cliente y logística</span></h3>
+<div class="form-row"><label for="envio_nombre" data-i18n="form.nombre">Nombre y apellido</label><input aria-describedby="error-envio_nombre" id="envio_nombre" oninput="calcular()" placeholder="Nombre y apellido" type="text" data-i18n-placeholder="form.nombre"/><div aria-live="polite" class="field-error" id="error-envio_nombre"></div></div>
+<label style="margin-top:15px;" data-i18n="form.paisResidencia">País de residencia</label>
 <div class="form-row">
-<label for="envio_pais">País de envío</label><select aria-describedby="error-envio_pais" class="" id="envio_pais" onchange="cambiarPaisLogistica()">
-<option selected="" value="Paraguay">Paraguay</option>
-<option value="Internacional">Otro país (Internacional)</option>
+<label for="envio_pais" data-i18n="form.paisEnvio">País de envío</label><select aria-describedby="error-envio_pais" class="" id="envio_pais" onchange="cambiarPaisLogistica()">
+<option selected="" value="Paraguay" data-i18n-option="form.paraguay">Paraguay</option>
+<option value="Internacional" data-i18n-option="form.internacional">Otro país (Internacional)</option>
 </select><div aria-live="polite" class="field-error" id="error-envio_pais"></div>
 </div>
 <div id="datos_extra_envio" style="display:none; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; margin-top: 15px;">
-<label style="margin-top:0;">WhatsApp / Teléfono</label>
+<label style="margin-top:0;" data-i18n="form.telefono">WhatsApp / Teléfono</label>
 <div class="input-group">
-<label for="envio_cod_pais">Código de país</label><select aria-describedby="error-envio_cod_pais" class="" id="envio_cod_pais" style="width: 40%;">
+<label for="envio_cod_pais" data-i18n="form.codPais">Código de país</label><select aria-describedby="error-envio_cod_pais" class="" id="envio_cod_pais" style="width: 40%;">
 <option value="+54">+54 🇦🇷</option>
 <option value="+55">+55 🇧🇷</option>
 <option value="+56">+56 🇨🇱</option>
@@ -444,30 +444,30 @@
 <option value="+1">+1 🇺🇸</option>
 <option value="+34">+34 🇪🇸</option>
 <option value="+52">+52 🇲🇽</option>
-<option value="">Otro...</option>
+<option value="" data-i18n-option="form.otro">Otro...</option>
 </select><div aria-live="polite" class="field-error" id="error-envio_cod_pais"></div>
-<label for="envio_telefono">Número de teléfono</label><input aria-describedby="error-envio_telefono" id="envio_telefono" placeholder="Número..." style="width: 60%;" type="tel"/><div aria-live="polite" class="field-error" id="error-envio_telefono"></div>
+<label for="envio_telefono" data-i18n="form.numero">Número de teléfono</label><input aria-describedby="error-envio_telefono" id="envio_telefono" placeholder="Número..." style="width: 60%;" type="tel" data-i18n-placeholder="form.numeroPh"/><div aria-live="polite" class="field-error" id="error-envio_telefono"></div>
 </div>
-<label style="margin-top:15px;">Ubicación exacta</label>
+<label style="margin-top:15px;" data-i18n="form.ubicacion">Ubicación exacta</label>
 <div class="form-row">
-<label for="envio_pais_int">País</label><input aria-describedby="error-envio_pais_int" id="envio_pais_int" placeholder="País" type="text"/><div aria-live="polite" class="field-error" id="error-envio_pais_int"></div>
-<label for="envio_estado_int">Estado o provincia</label><input aria-describedby="error-envio_estado_int" id="envio_estado_int" placeholder="Estado o provincia" type="text"/><div aria-live="polite" class="field-error" id="error-envio_estado_int"></div>
-<label for="envio_ciudad_int">Ciudad y barrio</label><input aria-describedby="error-envio_ciudad_int" id="envio_ciudad_int" placeholder="Ciudad y barrio" type="text"/><div aria-live="polite" class="field-error" id="error-envio_ciudad_int"></div>
-<label for="envio_direccion">Dirección exacta</label><input aria-describedby="error-envio_direccion" id="envio_direccion" placeholder="Dirección exacta" type="text"/><div aria-live="polite" class="field-error" id="error-envio_direccion"></div>
-<label for="envio_cp">Código postal</label><input aria-describedby="error-envio_cp" id="envio_cp" placeholder="Código postal" type="text"/><div aria-live="polite" class="field-error" id="error-envio_cp"></div>
+<label for="envio_pais_int" data-i18n="locale.pais">País</label><input aria-describedby="error-envio_pais_int" id="envio_pais_int" placeholder="País" type="text" data-i18n-placeholder="locale.pais"/><div aria-live="polite" class="field-error" id="error-envio_pais_int"></div>
+<label for="envio_estado_int" data-i18n="form.estado">Estado o provincia</label><input aria-describedby="error-envio_estado_int" id="envio_estado_int" placeholder="Estado o provincia" type="text" data-i18n-placeholder="form.estado"/><div aria-live="polite" class="field-error" id="error-envio_estado_int"></div>
+<label for="envio_ciudad_int" data-i18n="form.ciudadBarrio">Ciudad y barrio</label><input aria-describedby="error-envio_ciudad_int" id="envio_ciudad_int" placeholder="Ciudad y barrio" type="text" data-i18n-placeholder="form.ciudadBarrio"/><div aria-live="polite" class="field-error" id="error-envio_ciudad_int"></div>
+<label for="envio_direccion" data-i18n="form.direccion">Dirección exacta</label><input aria-describedby="error-envio_direccion" id="envio_direccion" placeholder="Dirección exacta" type="text" data-i18n-placeholder="form.direccion"/><div aria-live="polite" class="field-error" id="error-envio_direccion"></div>
+<label for="envio_cp" data-i18n="form.cp">Código postal</label><input aria-describedby="error-envio_cp" id="envio_cp" placeholder="Código postal" type="text" data-i18n-placeholder="form.cp"/><div aria-live="polite" class="field-error" id="error-envio_cp"></div>
 </div>
 </div>
 <div id="contenedor-factura" style="margin-top: 20px;">
 <hr style="border: 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 0 0 15px 0;"/>
-<label class="checkbox-label" for="factura"><input id="factura" onchange="toggleFactura()" type="checkbox"/> ¿Necesitás Factura Legal con RUC?</label>
+<label class="checkbox-label" for="factura"><input id="factura" onchange="toggleFactura()" type="checkbox"/> <span data-i18n="form.facturaLegal">¿Necesitás Factura Legal con RUC?</span></label>
 <div id="factura-datos" style="display:none; margin-top: 10px;">
-<label for="razon">Razón social</label><input aria-describedby="error-razon" id="razon" placeholder="Razón social"/><div aria-live="polite" class="field-error" id="error-razon"></div>
-<label for="ruc">RUC</label><input aria-describedby="error-ruc" id="ruc" placeholder="R.U.C."/><div aria-live="polite" class="field-error" id="error-ruc"></div>
+<label for="razon" data-i18n="form.razon">Razón social</label><input aria-describedby="error-razon" id="razon" placeholder="Razón social" data-i18n-placeholder="form.razon"/><div aria-live="polite" class="field-error" id="error-razon"></div>
+<label for="ruc" data-i18n="form.ruc">RUC</label><input aria-describedby="error-ruc" id="ruc" placeholder="R.U.C." data-i18n-placeholder="form.ruc"/><div aria-live="polite" class="field-error" id="error-ruc"></div>
 </div>
 </div>
 <div id="pago-container" style="margin-top: 20px;">
 <hr style="border: 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin: 0 0 15px 0;"/>
-<label for="cuotas" style="margin-top:0;">Forma de Pago</label>
+<label for="cuotas" style="margin-top:0;" data-i18n="form.pago">Forma de Pago</label>
 <select aria-describedby="error-cuotas" class="" id="cuotas" onchange="mostrarInfo('cuotas'); calcular();"></select><div aria-live="polite" class="field-error" id="error-cuotas"></div>
 <div class="info-text" id="info-cuotas"></div>
 </div>
@@ -479,18 +479,18 @@
 <h2 data-setting="tituloCursos">DIBUJO Y PINTURA</h2>
 <p data-setting="programaCurso" style="font-size: 13px; color: #d4af37;"><strong>Harold Lezcano</strong> | Programa 12 meses</p>
 <hr style="border:0; border-bottom:1px solid rgba(255,255,255,0.1); margin:15px 0;"/>
-<p style="font-size: 12px; font-weight: 300;"><span data-setting="horarioCurso">Viernes 18:00 a 20:00 hs.</span> (Matrícula única: <span data-price="matricula">150.000</span> Gs.)<br/><span data-setting="direccionCurso">📍 Las Residentas 460, Fernando de la Mora, Paraguay.</span>
+<p style="font-size: 12px; font-weight: 300;"><span data-setting="horarioCurso">Viernes 18:00 a 20:00 hs.</span> <span id="curso-matricula-unica">(Matrícula única: <span data-price="matricula">150.000</span> Gs.)</span><br/><span data-setting="direccionCurso">📍 Las Residentas 460, Fernando de la Mora, Paraguay.</span>
 <br/><br/><i data-setting="flexibilidadCurso">Flexibilidad total de horario y recuperación.</i></p>
 </div>
 <div class="course-card" style="border-left-color: #d4af37;">
-<h3>🎯 Inversión y Modalidades</h3>
+<h3>🎯 <span data-i18n="curso.inversion">Inversión y Modalidades</span></h3>
 <ul>
-<li><b style="color:#d4af37;">Mensualidad:</b> <span data-price="mensualidad">400.000</span> Gs. (Incluye 4 clases al mes, de 2 horas cada una). Opción ideal para un aprendizaje constante y guiado.</li>
-<li><b style="color:#d4af37;">Clase Suelta:</b> <span data-price="claseSuelta">120.000</span> Gs. (Ideal si buscás perfeccionar una técnica específica o tenés horarios muy variables).</li>
+<li><b style="color:#d4af37;" data-i18n="curso.mensualidad">Mensualidad:</b> <span data-price="mensualidad">400.000</span> Gs. <span data-i18n="curso.mensualidadHelp">(Incluye 4 clases al mes, de 2 horas cada una). Opción ideal para un aprendizaje constante y guiado.</span></li>
+<li><b style="color:#d4af37;" data-i18n="curso.claseSuelta">Clase Suelta:</b> <span data-price="claseSuelta">120.000</span> Gs. <span data-i18n="curso.claseSueltaHelp">(Ideal si buscás perfeccionar una técnica específica o tenés horarios muy variables).</span></li>
 </ul>
 </div>
 <div class="course-card" style="border-left-color: #eee;">
-<h3 style="color: #eee;">Kit Básico de Inicio (Módulo 1)</h3>
+<h3 style="color: #eee;" data-i18n="curso.kitTitulo">Kit Básico de Inicio (Módulo 1)</h3>
 <ul>
 <li data-setting="kit-1">Cartulinas de dibujo (Canson A4 o A3).</li>
 <li data-setting="kit-2">Set de lápices de grafito (HB, 2B, 4B y 6B).</li>
@@ -499,7 +499,7 @@
 <li data-setting="kit-5">Sacapuntas o cúter, y regla de 30 cm.</li>
 </ul>
 <div class="shop-info">
-                📍 <b>¿Dónde comprar materiales?</b> Contactá directo por WhatsApp:<br/>
+                📍 <b data-i18n="curso.donde">¿Dónde comprar materiales?</b> <span data-i18n="curso.contactoWa">Contactá directo por WhatsApp:</span><br/>
 <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
 <a class="wa-btn" href="https://wa.me/595985100502" rel="noopener noreferrer" target="_blank"><i class="fab fa-whatsapp"></i> Maita Papelería</a>
 <a class="wa-btn" href="https://wa.me/595982524215" rel="noopener noreferrer" target="_blank"><i class="fab fa-whatsapp"></i> Librería Arq-Tec</a>
@@ -508,47 +508,47 @@
 </div>
 </div>
 <div class="form-card">
-<h3 class="card-title">Módulo 1: Fundamentos y Claroscuro</h3>
+<h3 class="card-title" data-i18n="curso.mod1">Módulo 1: Fundamentos y Claroscuro</h3>
 <ul style="padding-left: 18px; margin: 0; color: #bbb; font-size: 12px; line-height: 1.5;"><li data-setting="modulo-1">Dibujo base, encaje y proporciones.</li><li data-setting="modulo-2">Luz, sombra y volumen (claroscuro).</li><li data-setting="modulo-3">Bodegones y naturaleza muerta.</li></ul>
 </div>
 <div class="form-card">
-<h3 class="card-title">Módulo 2: Teoría y Acuarela</h3>
+<h3 class="card-title" data-i18n="curso.mod2">Módulo 2: Teoría y Acuarela</h3>
 <ul style="padding-left: 18px; margin: 0; color: #bbb; font-size: 12px; line-height: 1.5;"><li data-setting="modulo-4">Teoría del color, círculo cromático y mezclas.</li><li data-setting="modulo-5">Transparencias y técnicas húmedas.</li></ul>
 </div>
 <div class="form-card">
-<h3 class="card-title">Módulo 3: Acrílico y Proporciones</h3>
+<h3 class="card-title" data-i18n="curso.mod3">Módulo 3: Acrílico y Proporciones</h3>
 <ul style="padding-left: 18px; margin: 0; color: #bbb; font-size: 12px; line-height: 1.5;"><li data-setting="modulo-6">Acrílico: pinceladas y atmósferas.</li><li data-setting="modulo-7">Anatomía y retrato básico.</li></ul>
 </div>
 <div class="form-card">
-<h3 class="card-title">Módulo 4: Óleo y Maestría</h3>
+<h3 class="card-title" data-i18n="curso.mod4">Módulo 4: Óleo y Maestría</h3>
 <ul style="padding-left: 18px; margin: 0; color: #bbb; font-size: 12px; line-height: 1.5;"><li data-setting="modulo-8">Introducción al óleo y veladuras clásicas.</li><li data-setting="modulo-9">Proyecto final tutelado.</li></ul>
 </div>
 <div class="form-card" style="margin-top: 10px;">
-<h3 class="card-title" style="justify-content: center; border:none;"><i class="fas fa-user-plus"></i> Formulario de Inscripción</h3>
-<label for="c_nom">Nombre y apellido</label><input aria-describedby="error-c_nom" id="c_nom" placeholder="Nombre y apellido" required=""/><div aria-live="polite" class="field-error" id="error-c_nom"></div>
-<label for="c_edad">Edad (mínimo 8 años)</label><input aria-describedby="error-c_edad" id="c_edad" max="120" min="8" placeholder="Edad (mín. 8 años)" required="" step="1" type="number"/><div aria-live="polite" class="field-error" id="error-c_edad"></div>
-<label for="c_niv">Nivel de experiencia</label><select aria-describedby="error-c_niv" class="" id="c_niv" onchange="mostrarInfo('c_niv')">
-<option disabled="" selected="" value="">Seleccioná tu nivel...</option>
-<option value="Nivel inicial">Nivel inicial</option>
-<option value="Nivel medio">Nivel medio</option>
-<option value="Nivel avanzado">Nivel avanzado</option>
-<option value="Nivel pro">Nivel pro</option>
+<h3 class="card-title" style="justify-content: center; border:none;"><i class="fas fa-user-plus"></i> <span data-i18n="curso.formulario">Formulario de Inscripción</span></h3>
+<label for="c_nom" data-i18n="form.nombre">Nombre y apellido</label><input aria-describedby="error-c_nom" id="c_nom" placeholder="Nombre y apellido" required="" data-i18n-placeholder="form.nombre"/><div aria-live="polite" class="field-error" id="error-c_nom"></div>
+<label for="c_edad" data-i18n="curso.edadLabel">Edad (mínimo 8 años)</label><input aria-describedby="error-c_edad" id="c_edad" max="120" min="8" placeholder="Edad (mín. 8 años)" required="" step="1" type="number" data-i18n-placeholder="curso.edadPh"/><div aria-live="polite" class="field-error" id="error-c_edad"></div>
+<label for="c_niv" data-i18n="curso.nivel">Nivel de experiencia</label><select aria-describedby="error-c_niv" class="" id="c_niv" onchange="mostrarInfo('c_niv')">
+<option disabled="" selected="" value="" data-i18n-option="opt.nivel.ph">Seleccioná tu nivel...</option>
+<option value="Nivel inicial" data-i18n-option="opt.nivel.inicial">Nivel inicial</option>
+<option value="Nivel medio" data-i18n-option="opt.nivel.medio">Nivel medio</option>
+<option value="Nivel avanzado" data-i18n-option="opt.nivel.avanzado">Nivel avanzado</option>
+<option value="Nivel pro" data-i18n-option="opt.nivel.pro">Nivel pro</option>
 </select><div aria-live="polite" class="field-error" id="error-c_niv"></div>
 <div class="info-text" id="info-c_niv"></div>
-<label for="c_pag">Pago de matrícula</label><select aria-describedby="error-c_pag" class="" id="c_pag">
+<label for="c_pag" data-i18n="curso.pagoLabel">Pago de matrícula</label><select aria-describedby="error-c_pag" class="" id="c_pag">
 <option data-matricula-label="true" disabled="" selected="" value="">Pago de Matrícula (150.000 Gs.)...</option>
-<option value="Abonar ahora">Abonar matrícula ahora</option>
-<option value="En clase">Abonar en primera clase</option>
+<option value="Abonar ahora" data-i18n-option="opt.pago.ahora">Abonar matrícula ahora</option>
+<option value="En clase" data-i18n-option="opt.pago.clase">Abonar en primera clase</option>
 </select><div aria-live="polite" class="field-error" id="error-c_pag"></div>
-<button class="btn-confirmar btn-block" onclick="enviarInscripcion()">Enviar Inscripción</button>
+<button class="btn-confirmar btn-block" onclick="enviarInscripcion()" data-i18n="curso.enviar">Enviar Inscripción</button>
 </div>
 <div class="mapa-cuadro mapa-cuadro-curso">
-<iframe class="mapa-embed" title="Ubicación del estudio: Las Residentas 460, Fernando de la Mora, Paraguay" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Las+Residentas+460,+Fernando+de+la+Mora,+Paraguay&amp;output=embed"></iframe>
-<a class="btn-confirmar btn-block btn-como-llegar" href="https://www.google.com/maps/dir/?api=1&amp;destination=Las+Residentas+460,+Fernando+de+la+Mora,+Paraguay" rel="noopener noreferrer" target="_blank">Cómo llegar</a>
+<iframe class="mapa-embed" title="Ubicación del estudio: Las Residentas 460, Fernando de la Mora, Paraguay" data-i18n-title="mapa.titulo" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Las+Residentas+460,+Fernando+de+la+Mora,+Paraguay&amp;output=embed"></iframe>
+<a class="btn-confirmar btn-block btn-como-llegar" href="https://www.google.com/maps/dir/?api=1&amp;destination=Las+Residentas+460,+Fernando+de+la+Mora,+Paraguay" rel="noopener noreferrer" target="_blank" data-i18n="contacto.comoLlegar">Cómo llegar</a>
 </div>
 </div>
 </div>
-<nav aria-label="Secciones" class="tab-container bottom-nav">
+<nav aria-label="Secciones" data-i18n-aria="nav.secciones" class="tab-container bottom-nav">
 <button class="tab-btn active" data-tab="inicio" onclick="switchTab('inicio', event)" type="button"><i aria-hidden="true" class="fas fa-house"></i><span data-i18n="nav.inicio">Inicio</span></button>
 <button class="tab-btn" data-tab="cotizacion" onclick="switchTab('cotizacion', event)" type="button"><i aria-hidden="true" class="fas fa-calculator"></i><span data-i18n="nav.cotizar">Cotizar</span></button>
 <button class="tab-btn" data-tab="curso" onclick="switchTab('curso', event)" type="button"><i aria-hidden="true" class="fas fa-palette"></i><span data-i18n="nav.cursos">Cursos</span></button>
@@ -587,7 +587,7 @@
 <div class="footer-left">
 <div class="price-box-header">
 <div aria-live="polite" id="precioFinal">0</div>
-<label for="moneda">Moneda orientativa</label><select aria-describedby="error-moneda" class="moneda-selector" id="moneda" onchange="calcular()" style="">
+<label for="moneda" data-i18n="form.moneda">Moneda orientativa</label><select aria-describedby="error-moneda" class="moneda-selector" id="moneda" onchange="calcular()" style="">
 <option value="PYG">Gs (Paraguay)</option>
 <option value="ARS">ARS (Argentina)</option>
 <option value="BRL">R$ (Brasil)</option>
@@ -608,15 +608,15 @@
 <div id="desglose"></div><div id="tasa-info"></div></div>
 <button class="btn-confirmar" id="enviar-obra" onclick="enviarObra()" data-i18n="comun.enviar">Enviar pedido</button>
 </div>
-<div aria-label="Visor de obras de Harold Lezcano" aria-modal="true" class="modal" hidden="" id="imageModal" role="dialog">
-<button aria-label="Cerrar visor" class="close-modal" onclick="closeModal()" type="button">×</button>
-<button aria-label="Obra anterior" class="nav-modal prev-modal" onclick="changeImg(-1)" type="button">❮</button>
+<div aria-label="Visor de obras de Harold Lezcano" data-i18n-aria="galeria.titulo" aria-modal="true" class="modal" hidden="" id="imageModal" role="dialog">
+<button aria-label="Cerrar visor" data-i18n-aria="visor.cerrar" class="close-modal" onclick="closeModal()" type="button">×</button>
+<button aria-label="Obra anterior" data-i18n-aria="visor.prev" class="nav-modal prev-modal" onclick="changeImg(-1)" type="button">❮</button>
 <img alt="Obra de Harold Lezcano" draggable="false" id="modalImg"/>
 <div aria-live="polite" class="modal-counter" id="modalCounter"></div>
-<button aria-label="Obra siguiente" class="nav-modal next-modal" onclick="changeImg(1)" type="button">❯</button>
+<button aria-label="Obra siguiente" data-i18n-aria="visor.next" class="nav-modal next-modal" onclick="changeImg(1)" type="button">❯</button>
 </div>
 <!-- LÓGICA FINANCIERA Y CONVERSIÓN EN VIVO -->
-<script src="estudio-datos.js"></script><script src="estudio-i18n.js"></script><script src="recorte.js"></script><script src="cotizador.js"></script><script src="cotizador-visual.js"></script>
+<script src="estudio-datos.js"></script><script src="estudio-i18n.js"></script><script src="estudio-i18n-mas.js"></script><script src="recorte.js"></script><script src="cotizador.js"></script><script src="cotizador-visual.js"></script>
 <script src="interfaz.js"></script>
 <script src="cotizador-asistente.js"></script>
 <script src="mejoras.js"></script><script src="estudio.js"></script></body>

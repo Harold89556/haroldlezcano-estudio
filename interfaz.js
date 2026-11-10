@@ -53,10 +53,10 @@
         e.preventDefault(); const status=document.getElementById('share-status');
         const data={title:document.title,text:'Obras de arte y cursos con Harold Lezcano.',url:window.location.href};
         try {
-            if(navigator.share) { await navigator.share(data); status.textContent='Enlace compartido.'; return; }
-            if(navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(data.url); status.textContent='Enlace copiado.'; return; }
-            status.textContent='Copiá este enlace: '+data.url;
-        } catch(error) { if(error.name !== 'AbortError') status.textContent='Podés copiar este enlace: '+data.url; }
+            if(navigator.share) { await navigator.share(data); status.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('share.ok'):'Enlace compartido.'; return; }
+            if(navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(data.url); status.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('share.copiado'):'Enlace copiado.'; return; }
+            status.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('share.copia',{url:data.url}):('Copiá este enlace: '+data.url);
+        } catch(error) { if(error.name !== 'AbortError') status.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('share.copia2',{url:data.url}):('Podés copiar este enlace: '+data.url); }
     }
 
     function cambiarPaisLogistica() {
@@ -147,7 +147,7 @@
         let e = document.getElementById(campo);
         let infoDiv = document.getElementById('info-' + campo);
         if(!e || !infoDiv) return;
-        if(campo==='enmarcado' && valor('tecnica')==='Carbonilla' && e.value==='SinMarco'){infoDiv.textContent='Dibujo sobre papel, sin marco (lámina suelta).';infoDiv.style.display='block';return;}
+        if(campo==='enmarcado' && valor('tecnica')==='Carbonilla' && e.value==='SinMarco'){infoDiv.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('info.sinMarcoPapel'):'Dibujo sobre papel, sin marco (lámina suelta).';infoDiv.style.display='block';return;}
         let val = e.value || 'default';
         if(campo==='estilo' && val==='Bocetado' && valor('tecnica')==='Carbonilla'){
             infoDiv.innerText='Boceto a lápiz o carbonilla: trazo suelto, de estudio o apunte.';
@@ -179,7 +179,7 @@
         document.getElementById('tab-'+t).classList.add('active');
         document.body.dataset.pantalla = t;
         const bioCurso = document.getElementById('bioCurso');
-        if (bioCurso && !bioCurso.dataset.listo) { if(window.sitioActual?.textos?.introduccionCurso) bioCurso.textContent=window.sitioActual.textos.introduccionCurso; else bioCurso.innerHTML = textBioCurso; bioCurso.dataset.listo='1'; }
+        if (bioCurso && !bioCurso.dataset.listo) { if(typeof aplicarTextosSitio==='function') aplicarTextosSitio(); else if(window.sitioActual?.textos?.introduccionCurso) bioCurso.textContent=window.sitioActual.textos.introduccionCurso; else bioCurso.innerHTML = textBioCurso; bioCurso.dataset.listo='1'; }
         if (anterior && anterior.id !== 'tab-'+t) { if (!/jsdom/.test(navigator.userAgent)) window.scrollTo(0, scrollPorPantalla['tab-'+t] || 0); }
         calcular();
         if (irAGaleria) { const g = document.getElementById('galeria-inicio'); if (g && g.scrollIntoView && !/jsdom/.test(navigator.userAgent)) requestAnimationFrame(() => g.scrollIntoView({block:'start'})); }
@@ -333,11 +333,11 @@
         
         let te = document.getElementById('tecnica').value;
         const sinMarco=document.querySelector('#enmarcado option[value="SinMarco"]');
-        if(sinMarco)sinMarco.textContent=te==='Carbonilla'?'Sin marco (lámina sobre papel)':'Sin marco (bordes pintados, listo para colgar)';
+        if(sinMarco)sinMarco.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t(te==='Carbonilla'?'opt.marco.sinPapel':'opt.marco.sin'):(te==='Carbonilla'?'Sin marco (lámina sobre papel)':'Sin marco (bordes pintados, listo para colgar)');
         const estOpt=document.querySelector('#enmarcado option[value="Estandar"]');
-        if(estOpt)estOpt.textContent=te==='Carbonilla'?'Marco estándar (vidrio y paspartú)':'Marco estándar';
+        if(estOpt)estOpt.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t(te==='Carbonilla'?'opt.marco.estandarPapel':'opt.marco.estandar'):(te==='Carbonilla'?'Marco estándar (vidrio y paspartú)':'Marco estándar');
         const claOpt=document.querySelector('#enmarcado option[value="Clasico"]');
-        if(claOpt)claOpt.textContent=te==='Carbonilla'?'Marco clásico (vidrio y paspartú)':'Marco clásico';
+        if(claOpt)claOpt.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t(te==='Carbonilla'?'opt.marco.clasicoPapel':'opt.marco.clasico'):(te==='Carbonilla'?'Marco clásico (vidrio y paspartú)':'Marco clásico');
         const paperOnly=te==='Carbonilla';
         ['Cajon','SemiRelieve','GruesoRelieves'].forEach(v=>{
             const o=document.querySelector('#enmarcado option[value="'+v+'"]');
@@ -346,20 +346,20 @@
         const esp=document.querySelector('#estilo option[value="Espatulado"]');
         if(esp) esp.hidden=paperOnly;
         const boc=document.querySelector('#estilo option[value="Bocetado"]');
-        if(boc) boc.textContent=paperOnly?'Boceto':'Monocromático';
+        if(boc) boc.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t(paperOnly?'opt.estilo.boceto':'opt.estilo.monocromatico'):(paperOnly?'Boceto':'Monocromático');
         if(paperOnly){
             const enm=document.getElementById('enmarcado');
             if(enm && ['Cajon','SemiRelieve','GruesoRelieves'].includes(enm.value)){enm.value='Estandar';}
             const est=document.getElementById('estilo');
             if(est && est.value==='Espatulado'){est.value='Realista';}
         }
-        if(te==='Carbonilla' && document.getElementById('enmarcado').value==='SinMarco') document.getElementById('info-enmarcado').textContent='Dibujo sobre papel, sin marco (lámina suelta).';
+        if(te==='Carbonilla' && document.getElementById('enmarcado').value==='SinMarco') document.getElementById('info-enmarcado').textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('info.sinMarcoPapel'):'Dibujo sobre papel, sin marco (lámina suelta).';
         document.getElementById('formato-lienzo-container').style.display = (t!=='Mural' && t!=='Restauracion' && t!=='Escultura' && (te==='Oleo'||te==='Acrilico')) ? 'block' : 'none';
         const labForm=document.querySelector('label[for="forma_lienzo"]');
-        if(labForm && !paperOnly) labForm.textContent='Formato del lienzo';
+        if(labForm && !paperOnly) labForm.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('form.formatoLienzo'):'Formato del lienzo';
         const labTam=document.querySelector('#step-tamano .card-title, #step-tamano h3, label[for="tamano_predefinido"]');
         const labTamEl=document.querySelector('label[for="tamano_predefinido"]');
-        if(labTamEl) labTamEl.textContent=paperOnly?'Tamaño del papel':'Tamaño';
+        if(labTamEl) labTamEl.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t(paperOnly?'form.tamanoPapel':'form.tamano'):(paperOnly?'Tamaño del papel':'Tamaño');
     }
 
     function onEstiloChange() {
@@ -416,7 +416,7 @@
             document.getElementById('l_alto').innerText = 'Alto ' + txtUni;
             
             let prev = st.value; 
-            st.innerHTML = '<option value="" disabled selected>Seleccioná un tamaño...</option>';
+            st.innerHTML = '<option value="" disabled selected data-i18n-option="opt.tamano.ph">'+((window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('opt.tamano.ph'):'Seleccioná un tamaño...')+'</option>';
             
             const formatOpt = (w_cm, h_cm) => (typeof formatoParDesdeCm==='function')?formatoParDesdeCm(w_cm,h_cm):(formatoDesdeCm(w_cm)+' × '+formatoDesdeCm(h_cm));
 
@@ -855,4 +855,20 @@
   const ready = () => { if (window.CotizadorVisual) CotizadorVisual.refreshAll(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(ready, 0));
   else setTimeout(ready, 0);
+
+                function aplicarOpcionesTraducidas(){
+            const i18=(k,vars,fb)=>(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t(k,vars):(fb||k);
+            const dineroN=(n)=> (typeof dinero==='function')?dinero(n): (Number(n).toLocaleString('es-PY')+' ₲');
+            const p=window.preciosActuales||(window.ESTUDIO_DEFAULTS&&window.ESTUDIO_DEFAULTS.precios)||{};
+            const dig=document.querySelector('#tipo_restauracion option[value="Digital"]');
+            const com=document.querySelector('#tipo_restauracion option[value="Digital Compleja"]');
+            const fis=document.querySelector('#tipo_restauracion option[value="Fisica"]');
+            if(dig) dig.textContent=i18('opt.rest.digital',{n:dineroN(p.restauracionDigital||180000)},dig.textContent);
+            if(com) com.textContent=i18('opt.rest.compleja',{n:dineroN(p.restauracionDigitalCompleja||350000)},com.textContent);
+            if(fis) fis.textContent=i18('opt.rest.fisica',undefined,fis.textContent);
+            const pers=document.querySelector('#tamano_predefinido option[value="personalizado"]');
+            if(pers) pers.textContent=i18('opt.tamano.personalizado',undefined,pers.textContent);
+        }
+        window.aplicarOpcionesTraducidas=aplicarOpcionesTraducidas;
+
 })();

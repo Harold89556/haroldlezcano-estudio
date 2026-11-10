@@ -91,7 +91,16 @@
     const t = document.createElement('strong');
     t.textContent = title;
     const p = document.createElement('span');
-    p.textContent = g.text || '';
+    let guideText = g.text || '';
+    if (window.EstudioI18n && EstudioI18n.t) {
+      const keys = (typeof clavesGuia === 'function') ? clavesGuia(key) : [key];
+      for (const k of keys) {
+        const tr = EstudioI18n.t('guia.' + k);
+        if (tr && tr !== ('guia.' + k)) { guideText = tr; break; }
+      }
+    }
+    p.textContent = guideText;
+
     cap.append(t, p);
     btn.append(media, cap);
     btn.addEventListener('click', () => onPick(value));
@@ -124,7 +133,7 @@
       host.id = 'guias-fondo';
       host.className = 'guia-grid';
       host.setAttribute('role', 'listbox');
-      host.setAttribute('aria-label', 'Fondo del retrato');
+      host.setAttribute('aria-label', (window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('guia.aria.fondo'):'Fondo del retrato');
       box.insertAdjacentElement('afterbegin', host);
     }
     const checked = document.getElementById('fondo')?.checked;
@@ -149,7 +158,7 @@
       host.id = 'guias-sujetos';
       host.className = 'guia-grid';
       host.setAttribute('role', 'listbox');
-      host.setAttribute('aria-label', 'Ejemplos de personas y mascotas');
+      host.setAttribute('aria-label', (window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('guia.aria.sujetos'):'Ejemplos de personas y mascotas');
       const title = box.querySelector('.card-title');
       if (title) title.insertAdjacentElement('afterend', host);
       else box.insertAdjacentElement('afterbegin', host);

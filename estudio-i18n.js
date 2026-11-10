@@ -160,7 +160,7 @@
       "locale.idioma": "Language",
       "locale.pais": "Country",
       "comun.y": "and",
-      "comun.cambiar": "change",
+      "comun.cambiar": "Change",
       "comun.atras": "Back",
       "comun.siguiente": "Next",
       "comun.cerrar": "Close",
@@ -292,7 +292,7 @@
       "locale.idioma": "Idioma",
       "locale.pais": "País",
       "comun.y": "e",
-      "comun.cambiar": "alterar",
+      "comun.cambiar": "Alterar",
       "comun.atras": "Voltar",
       "comun.siguiente": "Seguinte",
       "comun.cerrar": "Fechar",
@@ -424,7 +424,7 @@
       "locale.idioma": "Langue",
       "locale.pais": "Pays",
       "comun.y": "et",
-      "comun.cambiar": "modifier",
+      "comun.cambiar": "Modifier",
       "comun.atras": "Retour",
       "comun.siguiente": "Suivant",
       "comun.cerrar": "Fermer",
@@ -556,7 +556,7 @@
       "locale.idioma": "Lingua",
       "locale.pais": "Paese",
       "comun.y": "e",
-      "comun.cambiar": "modifica",
+      "comun.cambiar": "Modifica",
       "comun.atras": "Indietro",
       "comun.siguiente": "Avanti",
       "comun.cerrar": "Chiudi",
@@ -688,7 +688,7 @@
       "locale.idioma": "Sprache",
       "locale.pais": "Land",
       "comun.y": "und",
-      "comun.cambiar": "ändern",
+      "comun.cambiar": "Ändern",
       "comun.atras": "Zurück",
       "comun.siguiente": "Weiter",
       "comun.cerrar": "Schließen",
@@ -868,6 +868,18 @@
     document.querySelectorAll('[data-i18n-aria]').forEach((el) => {
       el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria')));
     });
+    document.querySelectorAll('[data-i18n-title]').forEach((el) => {
+      el.setAttribute('title', t(el.getAttribute('data-i18n-title')));
+    });
+    document.querySelectorAll('[data-i18n-option]').forEach((el) => {
+      const key = el.getAttribute('data-i18n-option');
+      if (!key) return;
+      const vars = el.dataset.i18nVars ? (function(){ try { return JSON.parse(el.dataset.i18nVars); } catch(e) { return {}; } })() : undefined;
+      el.textContent = t(key, vars);
+    });
+    if (typeof aplicarTextosSitio === 'function') { try { aplicarTextosSitio(); } catch (e) {} }
+    if (typeof aplicarOpcionesTraducidas === 'function') { try { aplicarOpcionesTraducidas(); } catch (e) {} }
+    if (typeof renderGallery === 'function') { try { renderGallery(); } catch (e) {} }
     rellenarSelects();
     const iva = document.getElementById('asistente-iva') || document.querySelector('.asistente-iva');
     if (iva) iva.textContent = t('precio.iva');
@@ -886,7 +898,38 @@
     if (window.AsistentePedido && !document.getElementById('asistente-pedido')?.hidden) {
       try { AsistentePedido.pintar(); } catch (e) {}
     }
+    if (window.CotizadorVisual && typeof CotizadorVisual.refreshAll === 'function') { try { CotizadorVisual.refreshAll(); } catch (e) {} }
     if (typeof calcular === 'function') calcular();
+  }
+
+  function registrar(packs) {
+    if (!packs || typeof packs !== 'object') return;
+    Object.keys(packs).forEach((lang) => {
+      if (!STRINGS[lang]) STRINGS[lang] = {};
+      Object.assign(STRINGS[lang], packs[lang] || {});
+    });
+  }
+  function textoSitio(key) {
+    const sitio = global.sitioActual || (global.ESTUDIO_DEFAULTS && global.ESTUDIO_DEFAULTS.sitio) || { textos: {} };
+    if (idioma && idioma !== 'es') {
+      const pack = sitio.textosI18n && sitio.textosI18n[idioma];
+      if (pack && Object.prototype.hasOwnProperty.call(pack, key)) {
+        if (typeof pack[key] === 'string' && pack[key].trim()) return pack[key];
+      } else {
+        const defPack = global.ESTUDIO_DEFAULTS && global.ESTUDIO_DEFAULTS.sitio && global.ESTUDIO_DEFAULTS.sitio.textosI18n;
+        const def = defPack && defPack[idioma] && defPack[idioma][key];
+        if (typeof def === 'string' && def.trim()) return def;
+      }
+    }
+    const es = sitio.textos && sitio.textos[key];
+    if (typeof es === 'string') return es;
+    const defEs = global.ESTUDIO_DEFAULTS && global.ESTUDIO_DEFAULTS.sitio && global.ESTUDIO_DEFAULTS.sitio.textos && global.ESTUDIO_DEFAULTS.sitio.textos[key];
+    return typeof defEs === 'string' ? defEs : '';
+  }
+  function captionDe(item) {
+    if (!item) return '';
+    if (idioma !== 'es' && item.captions && typeof item.captions[idioma] === 'string' && item.captions[idioma].trim()) return item.captions[idioma];
+    return typeof item.caption === 'string' ? item.caption : '';
   }
   function persist() {
     try {
@@ -948,7 +991,7 @@
   else setTimeout(iniciar, 0);
 
   global.EstudioI18n = {
-    t, locale, setIdioma, setPais, aplicar, iniciar, PAISES,
+    t, locale, setIdioma, setPais, aplicar, iniciar, registrar, textoSitio, captionDe, PAISES, LANGS,
     get idioma() { return idioma; },
     get pais() { return pais; },
     get moneda() { return paisInfo().moneda; }

@@ -211,12 +211,27 @@
   for(const a of document.querySelectorAll('.btn-como-llegar')){ a.href=m.dir; a.hidden=false; }
  }
 
+ function textoSitio(key){
+  if(window.EstudioI18n&&typeof EstudioI18n.textoSitio==='function') return EstudioI18n.textoSitio(key);
+  const sitio=window.sitioActual||window.ESTUDIO_DEFAULTS.sitio;
+  return (sitio&&sitio.textos&&sitio.textos[key])||'';
+ }
+ function aplicarTextosSitio(){
+  const sitio=window.sitioActual||window.ESTUDIO_DEFAULTS.sitio;
+  if(!sitio||!sitio.textos) return;
+  for (const el of document.querySelectorAll('[data-setting]')) {
+   const value=textoSitio(el.dataset.setting);if (typeof value==='string') el.textContent=value;
+  }
+  if($('bioText')) $('bioText').textContent=textoSitio('biografia');
+  if($('bioCurso')){$('bioCurso').textContent=textoSitio('introduccionCurso');$('bioCurso').dataset.listo='1';}
+  const matricula=document.getElementById('curso-matricula-unica');
+  if(matricula && window.preciosActuales){
+   const n=window.preciosActuales.cursos.matricula.toLocaleString((window.EstudioI18n&&EstudioI18n.locale&&EstudioI18n.locale())||'es-PY');
+   matricula.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('curso.matriculaUnica',{n}):('(Matrícula única: '+n+' Gs.)');
+  }
+ }
  function applySite(config) {
   window.sitioActual=data.validateSite(config);
-  for (const el of document.querySelectorAll('[data-setting]')) {
-   const value=window.sitioActual.textos[el.dataset.setting];if (typeof value==='string') el.textContent=value;
-  }
-  $('bioText').textContent=window.sitioActual.textos.biografia;
   const foto=document.querySelector('img.artista-foto');if(foto&&window.sitioActual.fotoArtista){foto.src=window.sitioActual.fotoArtista;foto.classList.add('artista-foto-propia');}
     const bg=document.querySelector('.page-background');
   if(bg){
@@ -229,12 +244,17 @@
    bg.style.setProperty('--fondo-desenfoque',blur+'px');
    document.documentElement.style.setProperty('--ventanas-opacidad',String(vent));
   }
-  if($('bioCurso')){$('bioCurso').textContent=window.sitioActual.textos.introduccionCurso;$('bioCurso').dataset.listo='1';}
+  aplicarTextosSitio();
   aplicarMapa(window.sitioActual);
  }
  function applyCoursePrices() {
   for (const el of document.querySelectorAll('[data-price]')) el.textContent=preciosActuales.cursos[el.dataset.price].toLocaleString('es-PY');
-  document.querySelector('#c_pag option[value=""]').textContent='Pago de Matrícula ('+preciosActuales.cursos.matricula.toLocaleString('es-PY')+' Gs.)...';
+  const pagPh=document.querySelector('#c_pag option[value=""]');
+  if(pagPh){
+   const n=preciosActuales.cursos.matricula.toLocaleString((window.EstudioI18n&&EstudioI18n.locale&&EstudioI18n.locale())||'es-PY');
+   pagPh.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('opt.pago.ph',{n}):('Pago de Matrícula ('+n+' Gs.)...');
+  }
+  aplicarTextosSitio();
  }
  if($('mapa-curso')) $('mapa-curso').addEventListener('click',()=>window.open(window.sitioActual.mapaCurso,'_blank','noopener,noreferrer'));
  function renderGallery() {
@@ -243,21 +263,24 @@
   const allCategories=[...categories];
   for (const item of visible) if (!allCategories.some(c=>c.id===item.category)) allCategories.push({id:item.category,name:item.category});
   for (const cat of allCategories) {
-   nombresAlbum[cat.id]=cat.name;
    const items=visible.filter(item=>item.category===cat.id);
    const cover=items.find(item=>item.cover)||items[0];
+   const albumName=(window.EstudioI18n&&EstudioI18n.t&&EstudioI18n.t('album.'+cat.id) && EstudioI18n.t('album.'+cat.id)!=='album.'+cat.id)?EstudioI18n.t('album.'+cat.id):cat.name;
+   nombresAlbum[cat.id]=albumName;
    const button=document.createElement('button');button.type='button';button.className='album-book';button.dataset.album=cat.id;
-   button.addEventListener('click',()=>openAlbum(cat.id,cat.name));
-   if (cover) { const img=document.createElement('img');img.src=cover.url;img.alt=cat.name;img.className='album-cover-img';img.loading='lazy';window.EstudioRecorte?.aplicar(img,cover.edit);button.append(img); }
+   button.addEventListener('click',()=>openAlbum(cat.id,nombresAlbum[cat.id]||cat.name));
+   if (cover) { const img=document.createElement('img');img.src=cover.url;img.alt=albumName;img.className='album-cover-img';img.loading='lazy';window.EstudioRecorte?.aplicar(img,cover.edit);button.append(img); }
    else { const empty=document.createElement('div');empty.className='album-cover-img album-cover-empty';empty.setAttribute('aria-hidden','true');empty.innerHTML='<i class="fas fa-images"></i>';button.append(empty); }
-   const title=document.createElement('div');title.className='album-title';title.textContent=cat.name;
-   const count=document.createElement('span');count.className='album-count';count.textContent=items.length+(items.length===1?' foto':' fotos');button.append(title,count);albumGrid.append(button);
+   const title=document.createElement('div');title.className='album-title';title.textContent=albumName;
+   const fotoPal=(window.EstudioI18n&&EstudioI18n.t)?(items.length===1?EstudioI18n.t('comun.foto'):EstudioI18n.t('comun.fotos')):(items.length===1?' foto':' fotos');
+   const count=document.createElement('span');count.className='album-count';count.textContent=items.length+' '+fotoPal;button.append(title,count);albumGrid.append(button);
   }
   const main=$('mainGallery');main.replaceChildren();
   for (const item of visible) {
    const button=document.createElement('button');button.type='button';button.className='gallery-item '+item.category;button.dataset.galleryId=item.id;
-   const img=document.createElement('img');img.src=item.url;img.alt=item.caption || item.alt || 'Obra de Harold Lezcano';img.loading='lazy';window.EstudioRecorte?.aplicar(img,item.edit);button.append(img);
-   if (item.caption) { const caption=document.createElement('span');caption.className='gallery-caption';caption.textContent=item.caption;button.append(caption); }
+   const cap=(window.EstudioI18n&&EstudioI18n.captionDe)?EstudioI18n.captionDe(item):(item.caption||'');
+   const img=document.createElement('img');img.src=item.url;img.alt=cap || item.alt || 'Obra de Harold Lezcano';img.loading='lazy';window.EstudioRecorte?.aplicar(img,item.edit);button.append(img);
+   if (cap) { const caption=document.createElement('span');caption.className='gallery-caption';caption.textContent=cap;button.append(caption); }
    button.addEventListener('click',()=>openModal(img.src));main.append(button);
   }
   const route=location.hash.split('/');
@@ -286,6 +309,7 @@
    renderGallery();
   } catch { /* El HTML original y los precios de respaldo permanecen disponibles. */ }
  }
+ window.aplicarTextosSitio=aplicarTextosSitio;window.textoSitio=textoSitio;
  applyCoursePrices();
  loadRemote();
 })();

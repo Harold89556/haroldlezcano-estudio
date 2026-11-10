@@ -389,6 +389,138 @@ window.ESTUDIO_DEFAULTS = {
       "horarioCurso": "Viernes 18:00 a 20:00 hs.",
       "direccionCurso": "📍 Las Residentas 460, Fernando de la Mora, Paraguay.",
       "flexibilidadCurso": "Flexibilidad total de horario y recuperación."
+    },
+    "textosI18n": {
+      "en": {
+        "subtitulo": "Visual artist | Art teacher",
+        "biografia": "I was born in Asunción in 1989, blessed with an artistic gift inherited from my mother and shaped by the discipline, perseverance and eye for opportunity that my father instilled in me. I had the honour of refining this legacy for more than 20 years alongside the great Master Prof. Manuel Viedma. Today I bring together that innate passion and hard work with a highly trained technique to create exclusive works that transform spaces.",
+        "introduccionCurso": "🎨 Why study drawing and painting? Learning to paint is much more than mastering a technique; it is discovering a new way of seeing the world, easing stress and boosting your creativity. In this space I will guide you step by step so you can turn a blank canvas into your own masterpiece, even if you are starting completely from scratch. Awaken the artist you carry within!",
+        "contacto": "Harold Lezcano · Las Residentas 460, Fernando de la Mora, Paraguay.",
+        "condiciones": "Complete your order on this page so we can prepare it with every detail. The quotes are estimates and are confirmed in person. When you send the order, a message is put together with your details; please check it before sending. No reservation is confirmed and no payment is taken from this page.",
+        "tituloCursos": "DRAWING AND PAINTING",
+        "programaCurso": "Harold Lezcano | 12-month programme",
+        "modulo-1": "Basic drawing, composition and proportions.",
+        "modulo-2": "Light, shadow and volume (chiaroscuro).",
+        "modulo-3": "Still lifes and objects.",
+        "modulo-4": "Colour theory, the colour wheel and mixing.",
+        "modulo-5": "Transparencies and wet techniques.",
+        "modulo-6": "Acrylic: brushstrokes and atmospheres.",
+        "modulo-7": "Anatomy and basic portraiture.",
+        "modulo-8": "Introduction to oil and classic glazes.",
+        "modulo-9": "Tutored final project.",
+        "kit-1": "Drawing papers (Canson A4 or A3).",
+        "kit-2": "Set of graphite pencils (HB, 2B, 4B and 6B).",
+        "kit-3": "Blending stump for shading.",
+        "kit-4": "White eraser and kneaded eraser.",
+        "kit-5": "Sharpener or craft knife, and a 30 cm ruler.",
+        "horarioCurso": "Fridays, 6:00 p.m. to 8:00 p.m.",
+        "direccionCurso": "📍 Las Residentas 460, Fernando de la Mora, Paraguay.",
+        "flexibilidadCurso": "Full flexibility of schedule, including make-up classes."
+      },
+      "pt": {
+        "subtitulo": "Artista plástico | Professor de arte",
+        "biografia": "Nasci em Assunção em 1989, abençoado com um dom artístico herdado da minha mãe e forjado com a disciplina, a perseverança e a visão para aproveitar cada oportunidade que meu pai me ensinou. Tive a honra de aperfeiçoar esse legado durante mais de 20 anos junto ao grande Mestre Prof. Manuel Viedma. Hoje, uno essa paixão inata e o trabalho duro a uma técnica de alto nível para dar vida a obras exclusivas que transformam espaços.",
+        "introduccionCurso": "🎨 Por que estudar desenho e pintura? Aprender a pintar é muito mais do que dominar uma técnica; é descobrir uma nova forma de ver o mundo, reduzir o estresse e potencializar a sua criatividade. Neste espaço, vou orientar você passo a passo para transformar uma tela em branco na sua própria obra-prima, mesmo que você comece completamente do zero. Desperte o artista que você leva dentro de si!",
+        "contacto": "Harold Lezcano · Las Residentas 460, Fernando de la Mora, Paraguai.",
+        "condiciones": "Complete o seu pedido nesta página para que possamos prepará-lo com todos os detalhes. Os orçamentos são estimativas e se confirmam pessoalmente. Ao enviar o pedido, monta-se uma mensagem com os seus dados; revise-a antes de enviá-la. Não se confirma uma reserva nem se realiza um pagamento nesta página.",
+        "tituloCursos": "DESENHO E PINTURA",
+        "programaCurso": "Harold Lezcano | Programa de 12 meses",
+        "modulo-1": "Desenho de base, encaixe e proporções.",
+        "modulo-2": "Luz, sombra e volume (claroscuro).",
+        "modulo-3": "Naturezas-mortas e objetos.",
+        "modulo-4": "Teoria da cor, círculo cromático e misturas.",
+        "modulo-5": "Transparências e técnicas úmidas.",
+        "modulo-6": "Acrílico: pinceladas e atmosferas.",
+        "modulo-7": "Anatomia e retrato básico.",
+        "modulo-8": "Introdução ao óleo e veladuras clássicas.",
+        "modulo-9": "Projeto final com orientação.",
+        "kit-1": "Cartolinas de desenho (Canson A4 ou A3).",
+        "kit-2": "Conjunto de lápis de grafite (HB, 2B, 4B e 6B).",
+        "kit-3": "Esfuminho para sombreado.",
+        "kit-4": "Borracha branca e borracha maleável.",
+        "kit-5": "Apontador ou estilete, e régua de 30 cm.",
+        "horarioCurso": "Sextas-feiras, das 18:00 às 20:00.",
+        "direccionCurso": "📍 Las Residentas 460, Fernando de la Mora, Paraguai.",
+        "flexibilidadCurso": "Flexibilidade total de horário e reposição de aulas."
+      },
+      "fr": {
+        "subtitulo": "Artiste plasticien | Maître d’art",
+        "biografia": "Je suis né à Asunción en 1989, béni d’un don artistique hérité de ma mère et forgé par la discipline, la persévérance et le regard pour saisir chaque occasion que mon père m’a transmis. J’ai eu l’honneur d’approfondir cet héritage pendant plus de 20 ans aux côtés du grand Maître le Prof. Manuel Viedma. Aujourd’hui, je réunis cette passion innée et ce travail exigeant à une technique de haut niveau pour donner vie à des œuvres exclusives qui transforment les espaces.",
+        "introduccionCurso": "🎨 Pourquoi étudier le dessin et la peinture ? Apprendre à peindre, c’est bien plus que maîtriser une technique ; c’est découvrir une nouvelle façon de voir le monde, apaiser le stress et développer sa créativité. Dans cet espace, je te guide pas à pas pour transformer une toile blanche en ta propre œuvre, même si tu commences tout à fait de zéro. Réveille l’artiste que tu portes en toi !",
+        "contacto": "Harold Lezcano · Las Residentas 460, Fernando de la Mora, Paraguay.",
+        "condiciones": "Complète ta commande sur cette page pour que nous puissions la préparer dans tous ses détails. Les devis sont des estimations et se confirment en personne. En envoyant la commande, un message est préparé avec tes données ; vérifie-le avant de l’envoyer. Aucune réservation n’est confirmée et aucun paiement n’est effectué depuis cette page.",
+        "tituloCursos": "DESSIN ET PEINTURE",
+        "programaCurso": "Harold Lezcano | Programme de 12 mois",
+        "modulo-1": "Dessin de base, mise en place et proportions.",
+        "modulo-2": "Lumière, ombre et volume (clair-obscur).",
+        "modulo-3": "Natures mortes et objets.",
+        "modulo-4": "Théorie de la couleur, cercle chromatique et mélanges.",
+        "modulo-5": "Transparences et techniques humides.",
+        "modulo-6": "Acrylique : coups de pinceau et atmosphères.",
+        "modulo-7": "Anatomie et portrait de base.",
+        "modulo-8": "Introduction à l’huile et aux glacis classiques.",
+        "modulo-9": "Projet final accompagné.",
+        "kit-1": "Papiers à dessin (Canson A4 ou A3).",
+        "kit-2": "Jeu de crayons graphite (HB, 2B, 4B et 6B).",
+        "kit-3": "Estompe pour les ombres.",
+        "kit-4": "Gomme blanche et gomme mie de pain.",
+        "kit-5": "Taille-crayon ou cutter, et règle de 30 cm.",
+        "horarioCurso": "Vendredis, de 18 h 00 à 20 h 00.",
+        "direccionCurso": "📍 Las Residentas 460, Fernando de la Mora, Paraguay.",
+        "flexibilidadCurso": "Toute flexibilité d’horaire, avec des cours de rattrapage."
+      },
+      "it": {
+        "subtitulo": "Artista visivo | Maestro d’arte",
+        "biografia": "Sono nato ad Asunción nel 1989, benedetto da un dono artistico ereditato da mia madre e forgiato con la disciplina, la perseveranza e lo sguardo per cogliere ogni opportunità che mio padre mi ha trasmesso. Ho avuto l’onore di perfezionare questo lascito per più di 20 anni accanto al grande Maestro Prof. Manuel Viedma. Oggi unisco quella passione innata e il lavoro costante a una tecnica di alto livello per dare vita a opere esclusive che trasformano gli spazi.",
+        "introduccionCurso": "🎨 Perché studiare disegno e pittura? Imparare a dipingere è molto più che padroneggiare una tecnica; è scoprire un modo nuovo di vedere il mondo, ridurre lo stress e potenziare la creatività. In questo spazio ti guiderò passo dopo passo perché tu possa trasformare una tela bianca nella tua opera, anche se parti completamente da zero. Risveglia l’artista che porti dentro di te!",
+        "contacto": "Harold Lezcano · Las Residentas 460, Fernando de la Mora, Paraguay.",
+        "condiciones": "Completa il tuo ordine in questa pagina così possiamo prepararlo con tutti i dettagli. I preventivi sono stime e si confermano di persona. Quando invii l’ordine si prepara un messaggio con i tuoi dati; controllalo prima di mandarlo. Non si conferma una prenotazione e non si effettua un pagamento da questa pagina.",
+        "tituloCursos": "DISEGNO E PITTURA",
+        "programaCurso": "Harold Lezcano | Programma di 12 mesi",
+        "modulo-1": "Disegno di base, incastro e proporzioni.",
+        "modulo-2": "Luce, ombra e volume (chiaroscuro).",
+        "modulo-3": "Nature morte e oggetti.",
+        "modulo-4": "Teoria del colore, cerchio cromatico e mescolanze.",
+        "modulo-5": "Trasparenze e tecniche umide.",
+        "modulo-6": "Acrilico: pennellate e atmosfere.",
+        "modulo-7": "Anatomia e ritratto di base.",
+        "modulo-8": "Introduzione all’olio e alle velature classiche.",
+        "modulo-9": "Progetto finale con tutela.",
+        "kit-1": "Cartoncini da disegno (Canson A4 o A3).",
+        "kit-2": "Set di matite di grafite (HB, 2B, 4B e 6B).",
+        "kit-3": "Sfumino per le ombre.",
+        "kit-4": "Gomma bianca e gomma pane.",
+        "kit-5": "Temperamatite o cutter, e riga da 30 cm.",
+        "horarioCurso": "Venerdì, dalle 18:00 alle 20:00.",
+        "direccionCurso": "📍 Las Residentas 460, Fernando de la Mora, Paraguay.",
+        "flexibilidadCurso": "Piena flessibilità di orario e recupero delle lezioni."
+      },
+      "de": {
+        "subtitulo": "Bildender Künstler | Kunstlehrer",
+        "biografia": "Ich wurde 1989 in Asunción geboren, gesegnet mit einer künstlerischen Gabe, die ich von meiner Mutter geerbt habe, und geprägt von der Disziplin, der Ausdauer und dem Blick für jede Gelegenheit, den mein Vater mir vermittelt hat. Ich hatte die Ehre, dieses Vermächtnis mehr als 20 Jahre lang an der Seite des großen Meisters Prof. Manuel Viedma zu vertiefen. Heute verbinde ich diese angeborene Leidenschaft und die harte Arbeit mit einer hoch ausgebildeten Technik, um exklusive Werke zu schaffen, die Räume verwandeln.",
+        "introduccionCurso": "🎨 Warum Zeichnen und Malen lernen? Malen zu lernen ist weit mehr als das Beherrschen einer Technik; es bedeutet, die Welt neu zu sehen, Stress zu lindern und die eigene Kreativität zu stärken. In diesem Raum begleite ich dich Schritt für Schritt, damit du eine leere Leinwand in dein eigenes Werk verwandeln kannst, auch wenn du ganz bei null beginnst. Wecke den Künstler, den du in dir trägst!",
+        "contacto": "Harold Lezcano · Las Residentas 460, Fernando de la Mora, Paraguay.",
+        "condiciones": "Vervollständige deine Bestellung auf dieser Seite, damit wir sie mit allen Angaben vorbereiten können. Die Kostenvoranschläge sind Schätzungen und werden persönlich bestätigt. Beim Absenden der Bestellung wird eine Nachricht mit deinen Daten erstellt; prüfe sie bitte, bevor du sie schickst. Es wird keine Reservierung bestätigt und von dieser Seite aus keine Zahlung vorgenommen.",
+        "tituloCursos": "ZEICHNEN UND MALEN",
+        "programaCurso": "Harold Lezcano | 12-Monats-Programm",
+        "modulo-1": "Grundlegendes Zeichnen, Aufbau und Proportionen.",
+        "modulo-2": "Licht, Schatten und Volumen (Chiaroscuro).",
+        "modulo-3": "Stillleben und Gegenstände.",
+        "modulo-4": "Farbtheorie, Farbkreis und Mischungen.",
+        "modulo-5": "Transparenzen und nasse Techniken.",
+        "modulo-6": "Acryl: Pinselstriche und Atmosphären.",
+        "modulo-7": "Anatomie und grundlegendes Porträt.",
+        "modulo-8": "Einführung in die Ölmalerei und klassische Lasuren.",
+        "modulo-9": "Betreutes Abschlussprojekt.",
+        "kit-1": "Zeichenkarton (Canson A4 oder A3).",
+        "kit-2": "Set aus Grafitstiften (HB, 2B, 4B und 6B).",
+        "kit-3": "Estompe zum Schummern.",
+        "kit-4": "Weißer Radiergummi und Knetgummi.",
+        "kit-5": "Spitzer oder Cutter und ein 30-cm-Lineal.",
+        "horarioCurso": "Freitags, 18:00 bis 20:00 Uhr.",
+        "direccionCurso": "📍 Las Residentas 460, Fernando de la Mora, Paraguay.",
+        "flexibilidadCurso": "Volle zeitliche Flexibilität, einschließlich Nachholstunden."
+      }
     }
   },
   "categorias": [
@@ -489,6 +621,23 @@ window.EstudioDatos = (() => {
    textos[key] = value.textos[key];
   }
   const out = { whatsapp:value.whatsapp, mapaCurso:map.href, textos };
+  if (value.textosI18n && typeof value.textosI18n === 'object' && !Array.isArray(value.textosI18n)) {
+   const langs = ['en','pt','fr','it','de'];
+   const known = Object.keys(defaults.sitio.textos);
+   const outI = {};
+   for (const lang of langs) {
+    const src = value.textosI18n[lang];
+    if (!src || typeof src !== 'object' || Array.isArray(src)) continue;
+    const map = {};
+    for (const key of known) {
+     if (typeof src[key] !== 'string') continue;
+     if (src[key].length > 6000) throw Error('Traducción inválida: ' + lang + '/' + key);
+     map[key] = src[key];
+    }
+    outI[lang] = map;
+   }
+   if (Object.keys(outI).length) out.textosI18n = outI;
+  }
   // Foto de Inicio opcional: URL https pública y ruta del archivo en sitio/ para poder reemplazarlo.
   if (value.fotoArtista) {
    let foto;
@@ -539,7 +688,15 @@ window.EstudioDatos = (() => {
     const base = window.location?.origin || 'https://galeria.example';
     const url = new URL(item.url || map.get(item.id)?.url, base);
     if (url.protocol !== 'https:' || !/^[a-z][a-z0-9-]{0,39}$/.test(item.category || '')) continue;
-    map.set(item.id, { ...map.get(item.id), ...item, url:url.href, caption:typeof item.caption === 'string' ? item.caption.slice(0,240) : '', order:Number.isFinite(item.order) ? item.order : 0 });
+    const captions={};
+    if (item.captions && typeof item.captions==='object' && !Array.isArray(item.captions)) {
+     for (const lang of ['en','pt','fr','it','de']) {
+      if (typeof item.captions[lang]==='string' && item.captions[lang].trim()) captions[lang]=item.captions[lang].trim().slice(0,240);
+     }
+    }
+    const next={ ...map.get(item.id), ...item, url:url.href, caption:typeof item.caption === 'string' ? item.caption.slice(0,240) : '', order:Number.isFinite(item.order) ? item.order : 0 };
+    if (Object.keys(captions).length) next.captions=captions; else delete next.captions;
+    map.set(item.id, next);
    } catch { /* Un registro inválido no debe romper el resto de la galería. */ }
   }
   return [...map.values()].sort((a,b) => (a.order - b.order) || a.id.localeCompare(b.id));
