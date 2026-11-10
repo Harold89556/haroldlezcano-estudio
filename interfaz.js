@@ -1,21 +1,46 @@
 
-    let unidadActual = 'cm'; 
+    let unidadActual = 'cm'; window.unidadActual = unidadActual;
 
     function setUnidad(u, event) {
+        if(!{cm:1,in:1,m:1}[u])return;
         const factors = {cm:1, in:2.54, m:100};
-        ['ancho_cm','alto_cm'].forEach(id => {
+        const from = factors[unidadActual]||1, to = factors[u]||1;
+        const convertir = (id) => {
             const input = document.getElementById(id);
-            const n = Number(input.value);
-            if (Number.isFinite(n) && n > 0) input.value = String(Number((n * factors[unidadActual] / factors[u]).toPrecision(12)));
-        });
+            if(!input) return;
+            const n = parseMedida(input.value);
+            if (!Number.isFinite(n) || n <= 0) return;
+            const cm = aCm(n, unidadActual);
+            asignarMedidaDesdeCm(id, cm, u);
+        };
+        if(u!==unidadActual){
+            ['ancho_cm','alto_cm','escultura_cm','mural_ancho','mural_alto'].forEach(convertir);
+        }
         unidadActual = u;
-        ['ancho_cm','alto_cm'].forEach(id=>{const field=document.getElementById(id);field.min=String(0.1/factors[u]);field.max=String(500/factors[u]);});
-        document.getElementById('btn-uni-cm').classList.remove('active');
-        document.getElementById('btn-uni-in').classList.remove('active');
-        document.getElementById('btn-uni-m').classList.remove('active');
-        event.currentTarget.classList.add('active');
-        updateSize(); 
+        window.unidadActual = u;
+        document.querySelectorAll('[data-unidad]').forEach(btn=>{
+            btn.classList.toggle('active', btn.getAttribute('data-unidad')===u);
+        });
+        ['btn-uni-cm','btn-uni-in','btn-uni-m'].forEach(id=>{
+            const b=document.getElementById(id); if(b) b.classList.toggle('active', id==='btn-uni-'+u);
+        });
+        if(event&&event.currentTarget) event.currentTarget.classList.add('active');
+        actualizarLimitesUnidad();
+        actualizarEtiquetasUnidad();
+        updateSize();
+        if(typeof onTipoEsculturaChange==='function') onTipoEsculturaChange();
+        if(typeof actualizarPesoEscultura==='function') actualizarPesoEscultura();
         calcular();
+    }
+    function actualizarLimitesUnidad(){
+        const f=factorUnidad();
+        ['ancho_cm','alto_cm'].forEach(id=>{
+            const field=document.getElementById(id); if(!field)return;
+            field.min=String(0.1/f); field.max=String(500/f);
+        });
+        const mw=document.getElementById('mural_ancho'), mh=document.getElementById('mural_alto');
+        if(mw){ mw.min=String(100/f); mw.max=String(2000/f); mw.step=unidadActual==='m'?'0.1':unidadActual==='in'?'1':'1'; }
+        if(mh){ mh.min=String(100/f); mh.max=String(500/f); mh.step=unidadActual==='m'?'0.1':unidadActual==='in'?'1':'1'; }
     }
 
     if ('serviceWorker' in navigator) {
@@ -162,43 +187,80 @@
     }
 
     function step(id, a) { let i=document.getElementById(id); let v=parseInt(i.value)+a; if(v<0)v=0; i.value=v; calcular(); }
-    function configEscultura(){ return (typeof ESCULTURA_TIPOS !== 'undefined') ? ESCULTURA_TIPOS[valor('tipo_escultura')] : null; }
+    function configEscultura(){
+        const tipo=valor('tipo_escultura');
+        if(typeof ESCULTURA_TIPOS !== 'undefined' && ESCULTURA_TIPOS[tipo]) return ESCULTURA_TIPOS[tipo];
+        if(tipo && typeof esEsculturaHumana==='function' && !esEsculturaHumana(tipo)) return {min:30,max:200,step:5,def:50};
+        return null;
+    }
     function onTipoEsculturaChange() {
         const cfg = configEscultura();
         const grupo = document.getElementById('grupo-altura-escultura');
         const input = document.getElementById('escultura_cm');
         const label = document.getElementById('label-altura-escultura');
+        const gMat=document.getElementById('grupo-material-escultura');
         if (!cfg) {
             if (grupo) grupo.style.display = 'none';
+            if (gMat) gMat.style.display = 'none';
             mostrarInfo('tipo_escultura');
             return;
         }
+        const minU=deCm(cfg.min,unidadActual), maxU=deCm(cfg.max,unidadActual), defU=deCm(cfg.def,unidadActual);
         let v = Number(input.value);
-        if (!Number.isFinite(v) || v < cfg.min || v > cfg.max) input.value = String(cfg.def);
-        input.min = String(cfg.min);
-        input.max = String(cfg.max);
-        input.step = String(cfg.step || 1);
-        if (label) label.textContent = 'Altura en centímetros';
+        const vCm = aCm(v,unidadActual);
+        if (!Number.isFinite(vCm) || vCm < cfg.min || vCm > cfg.max) asignarMedida(input.id, defU, unidadActual);
+        input.min = textoMedida(minU,unidadActual,true);
+        input.max = textoMedida(maxU,unidadActual,true);
+        const stepU=deCm(cfg.step||1,unidadActual);
+        input.step = textoMedida(stepU,unidadActual,true);
+        const i18=(k,fb)=>window.EstudioI18n&&EstudioI18n.t?EstudioI18n.t(k):fb;
+        if (label) label.textContent = i18('escultura.alturaEn','Altura en') + ' ' + etiquetaUnidad();
         const hint = document.getElementById('hint-altura-escultura');
-        if (hint) hint.textContent = 'Entre ' + cfg.min + ' y ' + cfg.max + ' cm.';
+        if (hint) hint.textContent = i18('escultura.entre','Entre') + ' ' + formatoDesdeCm(cfg.min) + ' ' + i18('comun.y','y') + ' ' + formatoDesdeCm(cfg.max) + '.';
         if (grupo) grupo.style.display = '';
+        if(gMat) gMat.style.display='';
         mostrarInfo('tipo_escultura');
+        actualizarPesoEscultura();
     }
     function aplicarAlturaEscultura(v, clamp) {
-        const cfg = configEscultura();
+        const cfg = configEscultura() || {min:30,max:200,def:50,step:1};
         const i = document.getElementById('escultura_cm');
-        if (!cfg || !i) return;
+        if (!i) return;
         let n = Number(v);
+        const minU=deCm(cfg.min,unidadActual), maxU=deCm(cfg.max,unidadActual), defU=deCm(cfg.def,unidadActual);
         if (!Number.isFinite(n)) {
-            if (clamp) i.value = String(cfg.def);
+            if (clamp) asignarMedida(i.id, defU, unidadActual);
         } else if (clamp) {
-            if (n < cfg.min) n = cfg.min;
-            if (n > cfg.max) n = cfg.max;
-            i.value = String(Math.round(n));
+            if (n < minU) n = minU;
+            if (n > maxU) n = maxU;
+            asignarMedida(i.id, n, unidadActual);
         }
+        actualizarPesoEscultura();
         if (typeof calcular === 'function') calcular();
         else if (window.CotizadorVisual) CotizadorVisual.updateEscalaEscultura();
     }
+    function actualizarPesoEscultura(){
+        const el=document.getElementById('escultura-peso-estimado');
+        if(!el)return;
+        const i18=(k,fb)=>window.EstudioI18n&&EstudioI18n.t?EstudioI18n.t(k):fb;
+        if(!esEsculturaHumana()){
+            el.hidden=true; el.textContent=''; return;
+        }
+        const kg=pesoEsculturaKg();
+        if(!Number.isFinite(kg)){ el.hidden=true; el.textContent=''; return; }
+        const loc=(window.EstudioI18n&&EstudioI18n.locale&&EstudioI18n.locale())||'es-PY';
+        const n=kg>=20?Math.round(kg):kg;
+        el.hidden=false;
+        el.textContent=i18('escultura.peso','Peso estimado: aprox. {n} kg').replace('{n}', Number(n).toLocaleString(loc));
+    }
+    function actualizarEtiquetasUnidad(){
+        const i18=(k,fb)=>window.EstudioI18n&&EstudioI18n.t?EstudioI18n.t(k):fb;
+        const lab=document.getElementById('label-mural-tamano');
+        if(lab) lab.textContent=i18('mural.tamano','Tamaño')+' ('+etiquetaUnidad()+')';
+        const nota=document.getElementById('alerta-andamio');
+        if(nota && !nota.dataset.i18nKeep) { /* i18n apply handles text */ }
+    }
+    function onMaterialEsculturaChange(){ actualizarPesoEscultura(); if(typeof calcular==='function')calcular(); }
     function onEsculturaCmInput(){ aplicarAlturaEscultura(document.getElementById('escultura_cm')?.value, false); }
     function onEsculturaCmBlur(){ aplicarAlturaEscultura(document.getElementById('escultura_cm')?.value, true); }
     function stepEsc(a) {
@@ -206,8 +268,8 @@
         if (!cfg) return;
         const i = document.getElementById('escultura_cm');
         let v = Number(i.value);
-        if (!Number.isFinite(v)) v = cfg.def;
-        v += a * cfg.step;
+        if (!Number.isFinite(v)) v = deCm(cfg.def,unidadActual);
+        v += a * deCm(cfg.step||1,unidadActual);
         aplicarAlturaEscultura(v, true);
     }
 
@@ -356,11 +418,7 @@
             let prev = st.value; 
             st.innerHTML = '<option value="" disabled selected>Seleccioná un tamaño...</option>';
             
-            const formatOpt = (w_cm, h_cm) => {
-                if (unidadActual === 'cm') return `${w_cm} x ${h_cm} cm`;
-                if (unidadActual === 'in') return `${(w_cm/2.54).toFixed(1)} x ${(h_cm/2.54).toFixed(1)} in`;
-                return `${(w_cm/100).toFixed(2)} x ${(h_cm/100).toFixed(2)} m`;
-            };
+            const formatOpt = (w_cm, h_cm) => (typeof formatoParDesdeCm==='function')?formatoParDesdeCm(w_cm,h_cm):(formatoDesdeCm(w_cm)+' × '+formatoDesdeCm(h_cm));
 
             if (te === 'Carbonilla') {
                 st.add(new Option(`A5 (${formatOpt(14.8, 21)})`, '15x21'));
@@ -389,19 +447,14 @@
         }
     }
 
-    function cmAUnidad(cm){
-        const factor={cm:1,in:2.54,m:100}[unidadActual]||1;
-        return Number((cm/factor).toPrecision(12));
-    }
+    function cmAUnidad(cm){ return deCm(cm, unidadActual); }
     function aplicarMedidasDelSelect(){
         const st=document.getElementById('tamano_predefinido');
         if(!st||!st.value||st.value==='personalizado')return;
         const parts=st.value.split('x').map(Number);
         if(parts.length<2||!parts.every(Number.isFinite))return;
-        const aw=document.getElementById('ancho_cm');
-        const ah=document.getElementById('alto_cm');
-        if(aw)aw.value=String(cmAUnidad(parts[0]));
-        if(ah)ah.value=String(cmAUnidad(parts[1]));
+        asignarMedidaDesdeCm('ancho_cm', parts[0]);
+        asignarMedidaDesdeCm('alto_cm', parts[1]);
     }
     function onMedidaManualInput(){
         const st=document.getElementById('tamano_predefinido');
@@ -476,15 +529,25 @@
         if (t === 'Escultura') {
             let te = document.getElementById('tipo_escultura');
             if (te && te.value) texto += "🗿 *Tipo:* " + te.options[te.selectedIndex].text + "\n";
-            texto += "📏 *Altura:* " + document.getElementById('escultura_cm').value + " cm\n";
-            texto += "🪵 *Realización:* Modelado a mano, sin fundición\n";
+            const mat=document.getElementById('material_escultura');
+            if(mat&&mat.value) texto += "🧱 *Material:* " + mat.options[mat.selectedIndex].text + "\n";
+            texto += "🧵 *Estructura:* Tejido metálico e hierro en el interior. Modelado a mano, sin fundición.\n";
+            const hCm=alturaEsculturaCm();
+            if(Number.isFinite(hCm)&&hCm>0){
+                texto += "📏 *Altura:* " + formatoDesdeCm(hCm) + (unidadActual!=='cm' ? ' (' + Math.round(hCm) + ' cm)' : '') + "\n";
+            }
+            const kg=pesoEsculturaKg();
+            if(Number.isFinite(kg)) texto += "⚖️ *Peso estimado:* aprox. " + (kg>=20?Math.round(kg):kg) + " kg\n";
         }
         
         if (t !== 'Restauracion' && t !== 'Escultura') {
             if (t === 'Mural') {
                 let m_h = document.getElementById('mural_alto').value;
-                texto += "📏 *Tamaño del mural:* " + document.getElementById('mural_ancho').value + "m de ancho x " + m_h + "m de alto\n";
-                if(parseFloat(m_h) >= 2.5) texto += "⚠️ *Pared de 2,5 m o más de alto: puede requerir andamio (se acuerda al consultar).*\n";
+                const wCm=muralAnchoCm(), hCm=muralAltoCm();
+                texto += "📏 *Tamaño del mural:* " + formatoDesdeCm(wCm) + " de ancho × " + formatoDesdeCm(hCm) + " de alto";
+                if(unidadActual!=='m') texto += " (" + (wCm/100).toLocaleString('es-PY') + " × " + (hCm/100).toLocaleString('es-PY') + " m)";
+                texto += "\n";
+                if(hCm >= 250) texto += "⚠️ *Pared de 2,5 m o más de alto: puede requerir andamio (se acuerda al consultar).*\n";
             } else {
                 let tec = document.getElementById('tecnica');
                 if (tec.value === 'Oleo' || tec.value === 'Acrilico') {
@@ -555,12 +618,24 @@
         if(m.value) texto += "💵 *Moneda:* " + m.options[m.selectedIndex].text + "\n";
 
         if (t === 'Mural' || (typeof ultimoPresupuesto !== 'undefined' && ultimoPresupuesto && ultimoPresupuesto.consultar)) {
-            texto += (t === 'Mural' || document.getElementById('estilo').value === 'Mural')
+            texto += (ultimoPresupuesto && ultimoPresupuesto.consultarArtista)
+              ? "\n💰 *INVERSIÓN ESTIMADA:* A consultar con el artista.\n"
+              : (t === 'Mural' || document.getElementById('estilo').value === 'Mural')
               ? "\n💰 *INVERSIÓN ESTIMADA:* A consultar según la pared, el acceso y el detalle.\n"
               : "\n💰 *INVERSIÓN ESTIMADA:* A consultar.\n";
         } else {
-            const precioFinal = document.getElementById('precioFinal').textContent;
-            texto += "\n💰 *INVERSIÓN ESTIMADA:* " + precioFinal + " (IVA incluido)\n";
+            const total = ultimoPresupuesto && Number.isFinite(ultimoPresupuesto.total) ? ultimoPresupuesto.total : null;
+            const mon = (document.getElementById('moneda')&&document.getElementById('moneda').value)||'PYG';
+            if(total!=null){
+                texto += "\n💰 *INVERSIÓN ESTIMADA:* " + dinero(total,'PYG') + " (IVA incluido)\n";
+                if(mon!=='PYG'){
+                    texto += "💱 *Equivalente aproximado:* " + dinero(total,mon) + "\n";
+                    texto += "_" + ((window.EstudioI18n&&EstudioI18n.t&&EstudioI18n.t('fx.nota'))||'Conversión aproximada según cotización del día; el precio final se confirma en guaraníes') + "_\n";
+                }
+            } else {
+                const precioFinal = document.getElementById('precioFinal').textContent;
+                texto += "\n💰 *INVERSIÓN ESTIMADA:* " + precioFinal + " (IVA incluido)\n";
+            }
         }
         texto += "✨ *Garantía:* 1 revisión y aprobación previa de boceto fotográfico.\n";
         
@@ -734,19 +809,9 @@
     window.addEventListener('resize', calcular);
 
     window.onload = () => { 
-        let m_ancho = document.getElementById('mural_ancho');
-        if(m_ancho.options.length === 0) { 
-            m_ancho.add(new Option('Seleccioná...', ''));
-            for(let i=1; i<=20; i++) m_ancho.add(new Option(i + ' m', i)); 
-        }
-        let m_alto = document.getElementById('mural_alto');
-        if(m_alto.options.length === 0) { 
-            m_alto.add(new Option('Seleccioná...', ''));
-            for(let i=1; i<=5; i++) m_alto.add(new Option(i + ' m', i)); 
-        }
-        setupSelect(m_ancho); 
-        setupSelect(m_alto);
         setupSelect(document.getElementById('estilo_mural'));
+        actualizarLimitesUnidad();
+        actualizarEtiquetasUnidad();
 
         updateUI();
         updateSize();
@@ -786,7 +851,7 @@
       return r;
     };
   }
-  ['onEstiloChange','onTecnicaChange','onTemaChange','onFormaChange','onTipoEsculturaChange','handleTamanoChange','setUnidad','step','stepEsc','onEsculturaCmInput','onEsculturaCmBlur','updateUI'].forEach(hook);
+  ['onEstiloChange','onTecnicaChange','onTemaChange','onFormaChange','onTipoEsculturaChange','onMaterialEsculturaChange','handleTamanoChange','setUnidad','step','stepEsc','onEsculturaCmInput','onEsculturaCmBlur','updateUI'].forEach(hook);
   const ready = () => { if (window.CotizadorVisual) CotizadorVisual.refreshAll(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(ready, 0));
   else setTimeout(ready, 0);

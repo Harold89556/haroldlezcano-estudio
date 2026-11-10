@@ -35,6 +35,13 @@ window.ESTUDIO_GUIAS_DEFAULT = { items: {
   "tipo_escultura:Medio cuerpo": { url: "img/guias/medio-cuerpo.webp", text: "De la cabeza hasta la cintura.", kind: "foto" },
   "tipo_escultura:Figura completa": { url: "img/guias/figura.webp", text: "Figura de cuerpo entero.", kind: "foto" },
   "tipo_escultura:Relieve": { url: "img/guias/escultura-relieve.webp", text: "Formas que sobresalen de un fondo plano.", kind: "foto" },
+  "tipo_escultura:Animal": { url: "img/guias/estilo-escultura.webp", text: "Una pieza de animal u otra figura no humana. El valor se consulta con el artista.", kind: "foto" },
+  "tipo_escultura:Abstracto": { url: "img/guias/estilo-escultura.webp", text: "Una forma abstracta o libre. El valor se consulta con el artista.", kind: "foto" },
+  "tipo_escultura:Objeto": { url: "img/guias/estilo-escultura.webp", text: "Un objeto u otra pieza que no es figura humana. El valor se consulta con el artista.", kind: "foto" },
+  "tipo_escultura:Otro": { url: "img/guias/estilo-escultura.webp", text: "Otro tipo de escultura. El valor se consulta con el artista.", kind: "foto" },
+  "material_escultura:Cemento": { url: "img/guias/escultura-material-cemento.webp", text: "Cemento hueco con estructura de hierro y tejido metálico en el interior.", kind: "foto" },
+  "material_escultura:Fibra": { url: "img/guias/escultura-material-fibra.webp", text: "Fibra de vidrio con estructura de hierro y tejido metálico en el interior.", kind: "foto" },
+  "material_escultura:Arcilla": { url: "img/guias/escultura-material-arcilla.webp", text: "Arcilla con cemento, estructura de hierro y tejido metálico en el interior.", kind: "foto" },
   "sujetos:1": { url: "img/guias/sujetos-1.webp", text: "Una sola persona (ya incluida en el precio base).", kind: "foto" },
   "sujetos:2": { url: "img/guias/sujetos-2.webp", text: "Dos personas: se suma el valor de un sujeto extra.", kind: "foto" },
   "sujetos:mascota": { url: "img/guias/mascota.webp", text: "Sumá una mascota junto a la persona.", kind: "foto" },
@@ -277,6 +284,43 @@ window.ESTUDIO_DEFAULTS = {
         "def": 50
       }
     },
+    "materialesEscultura": {
+      "Fibra": 1,
+      "Cemento": 1.2,
+      "Arcilla": 1.3
+    },
+    "pesosEscultura": {
+      "refCm": 170,
+      "areaRefCm2": 18000,
+      "espesorFibra": 0.5,
+      "espesorCemento": 2.2,
+      "espesorArcilla": 2.5,
+      "densidadFibra": 1.8,
+      "densidadCemento": 2.3,
+      "densidadArcilla": 2.4,
+      "hierroFigura": 18,
+      "hierroMedio": 12,
+      "hierroBusto": 6,
+      "hierroRelieve": 8,
+      "factorMedio": 0.62,
+      "factorBusto": 0.38,
+      "factorRelieve": 0.55
+    },
+    "tasasRespaldo": {
+      "USD": 0.00016,
+      "EUR": 0.000143,
+      "BRL": 0.000879,
+      "ARS": 0.246616,
+      "UYU": 0.006432,
+      "CLP": 0.155703,
+      "BOB": 0.0019,
+      "GBP": 0.000119,
+      "MXN": 0.002967,
+      "COP": 0.517392,
+      "PEN": 0.000549,
+      "CAD": 0.000225,
+      "CHF": 0.000131
+    },
     "ajustes": {
       "restauracionDigital": 180000,
       "restauracionDigitalCompleja": 350000,
@@ -413,7 +457,17 @@ window.EstudioDatos = (() => {
   if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).sort().join('|') !== Object.keys(reference).sort().join('|')) throw Error('La estructura no corresponde a los precios actuales: ' + path);
   for (const key of Object.keys(reference)) sameNumericShape(value[key], reference[key], path + '/' + key);
  }
+ function mergeNumeric(target, source) {
+  if (typeof target === 'number') return (source != null && Number.isFinite(Number(source))) ? Number(source) : target;
+  if (target && typeof target === 'object' && !Array.isArray(target)) {
+   const out = {};
+   for (const k of Object.keys(target)) out[k] = mergeNumeric(target[k], source ? source[k] : undefined);
+   return out;
+  }
+  return target;
+ }
  function validatePrices(value) {
+  value = mergeNumeric(clone(defaults.precios), value);
   sameNumericShape(value, defaults.precios);
   for (const [name, s] of Object.entries(value.escultura)) {
    if (!(s.min > 0 && s.max >= s.min && s.def >= s.min && s.def <= s.max && s.step > 0 && s.redondeo > 0 && s.max <= 200)) throw Error('Revisá las medidas de ' + name + ' (máximo 200 cm).');

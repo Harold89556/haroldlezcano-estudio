@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   const $ = (id) => document.getElementById(id);
+  const i18n = (k, fb, vars) => { if (fb && typeof fb === 'object' && !Array.isArray(fb)) { vars = fb; fb = undefined; } const s = (window.EstudioI18n && EstudioI18n.t) ? EstudioI18n.t(k, vars) : (fb || k); return s; };
   const parked = [];
   let indice = 0;
   let trabajo = '';
@@ -57,22 +58,20 @@
   }
 
   const TRABAJOS = [
-    { id: 'oleo', title: 'Cuadro al óleo', key: 'tecnica:Oleo', text: 'Pintura con óleo: colores profundos y un acabado que dura muchos años.' },
-    { id: 'acrilico', title: 'Acrílico', key: 'tecnica:Acrilico', text: 'Pintura acrílica: colores vivos y secado más rápido.' },
-    { id: 'carbonilla', title: 'Lápiz / Carbonilla', key: 'tecnica:Carbonilla', text: 'Dibujo a lápiz o carbonilla, en blanco y negro o a color.' },
-    { id: 'escultura', title: 'Escultura', key: 'estilo:Escultura', text: 'Una pieza modelada a mano en tres dimensiones. No incluye fundición.' },
-    { id: 'mural', title: 'Mural', key: 'estilo:Mural', text: 'Una obra grande pintada directo sobre la pared. El valor se acuerda según la pared.' },
-    { id: 'restauracion', title: 'Restauración', key: 'estilo:Restauracion', text: 'Recuperar o mejorar una foto u obra dañada.' }
+    { id: 'oleo', titleKey: 'trabajo.oleo', textKey: 'trabajo.oleo.text', key: 'tecnica:Oleo' },
+    { id: 'acrilico', titleKey: 'trabajo.acrilico', textKey: 'trabajo.acrilico.text', key: 'tecnica:Acrilico' },
+    { id: 'carbonilla', titleKey: 'trabajo.carbonilla', textKey: 'trabajo.carbonilla.text', key: 'tecnica:Carbonilla' },
+    { id: 'escultura', titleKey: 'trabajo.escultura', textKey: 'trabajo.escultura.text', key: 'estilo:Escultura' },
+    { id: 'mural', titleKey: 'trabajo.mural', textKey: 'trabajo.mural.text', key: 'estilo:Mural' },
+    { id: 'restauracion', titleKey: 'trabajo.restauracion', textKey: 'trabajo.restauracion.text', key: 'estilo:Restauracion' }
   ];
 
   function esPintura() { return trabajo === 'oleo' || trabajo === 'acrilico' || trabajo === 'carbonilla'; }
 
   function pasos() {
-    const s = [{ id: 'trabajo', pregunta: '¿Qué tipo de trabajo buscás?', ayuda: 'Elegí la opción que más se parezca a lo que querés. En el siguiente paso te pedimos más detalles, siempre con imágenes de guía.' }];
+    const s = [{ id: 'trabajo', pregunta: i18n('wizard.trabajo.pregunta'), ayuda: i18n('wizard.trabajo.ayuda') }];
     if (esPintura()) {
-      s.push({ id: 'estilo', pregunta: trabajo === 'carbonilla' ? '¿Qué estilo de dibujo te gusta más?' : '¿Qué estilo te gusta más?', ayuda: trabajo === 'carbonilla'
-        ? 'Son estilos de dibujo, no de pintura: un acabado realista, un grafito de detalle extremo, un boceto de trazo suelto o un abstracto a carbonilla.'
-        : 'El estilo es la forma en que se pinta: más natural, con más detalle, con textura, en un solo color (monocromático) o abstracto.' });
+      s.push({ id: 'estilo', pregunta: trabajo === 'carbonilla' ? i18n('wizard.estilo.preguntaCarbonilla') : i18n('wizard.estilo.pregunta'), ayuda: trabajo === 'carbonilla' ? i18n('wizard.estilo.ayudaCarbonilla') : i18n('wizard.estilo.ayuda') });
       s.push({ id: 'tema', pregunta: '¿Qué querés que se vea en la obra?', ayuda: 'Retrato es una persona, una pareja o un animal. También podés pedir un paisaje, objetos o algo más libre.' });
       if (valor('tema') === 'Retrato') {
         s.push({ id: 'sujetos', pregunta: '¿Quiénes van a aparecer?', ayuda: 'El precio base ya incluye a una persona. Si hay más personas o una mascota, se suma al pedido.' });
@@ -86,29 +85,28 @@
       if (trabajo === 'oleo' || trabajo === 'acrilico') {
         s.push({ id: 'forma', pregunta: '¿Qué forma tiene el lienzo?', ayuda: 'Lo más habitual es rectangular. También hay formatos redondos, ovalados o de seis lados.' });
       }
-      s.push({ id: 'tamano', pregunta: '¿De qué tamaño lo querés?', ayuda: trabajo === 'carbonilla'
-        ? 'Las medidas son de papel de dibujo (tamaños tipo A). A la izquierda ves a una persona de 1,70 m para comparar.'
-        : 'A la izquierda ves a una persona de 1,70 m para darte una idea del tamaño real. Si no está en la lista, elegí una medida personalizada.' });
+      s.push({ id: 'tamano', pregunta: i18n('wizard.tamano.pregunta'), ayuda: trabajo === 'carbonilla' ? i18n('wizard.tamano.ayudaCarbonilla') : i18n('wizard.tamano.ayuda') });
       s.push({ id: 'marco', pregunta: '¿Lo querés con marco?', ayuda: trabajo === 'carbonilla'
         ? 'En el dibujo sobre papel, el marco suele llevar vidrio y paspartú para proteger la obra. También podés pedir solo la lámina, sin marco.'
         : 'Es opcional. Podés dejarlo sin marco (listo para colgar) o elegir el estilo que más te guste. Las fotos muestran cómo se ve cada uno en la pared.' });
     } else if (trabajo === 'escultura') {
-      s.push({ id: 'tipo_escultura', pregunta: '¿Qué tipo de escultura buscás?', ayuda: 'Busto es cabeza y parte del pecho. Medio cuerpo llega hasta la cintura. Figura completa es de cuerpo entero. Relieve son formas que sobresalen de un fondo.' });
-      s.push({ id: 'altura_escultura', pregunta: '¿Qué altura querés para la pieza?', ayuda: 'La altura se mide de la base al punto más alto. Al lado ves una persona de 1,70 m para comparar.' });
+      s.push({ id: 'tipo_escultura', pregunta: i18n('wizard.tipoEscultura.pregunta'), ayuda: i18n('wizard.tipoEscultura.ayuda') });
+      s.push({ id: 'material_escultura', pregunta: i18n('wizard.material.pregunta'), ayuda: i18n('wizard.material.ayuda') });
+      s.push({ id: 'altura_escultura', pregunta: i18n('wizard.altura.pregunta'), ayuda: i18n('wizard.altura.ayuda') });
     } else if (trabajo === 'mural') {
-      s.push({ id: 'estilo_mural', pregunta: '¿Qué estilo querés para el mural?', ayuda: 'Podés pedir un mural más realista, más ilustrado o con aspecto de boceto. El precio se acuerda según la pared.' });
-      s.push({ id: 'tamano_mural', pregunta: '¿Qué tamaño tiene la pared?', ayuda: 'Indicá el ancho y el alto en metros. Si la pared es alta, puede hacer falta andamio. El valor final se consulta.' });
+      s.push({ id: 'estilo_mural', pregunta: i18n('wizard.estiloMural.pregunta'), ayuda: i18n('wizard.estiloMural.pregunta') });
+      s.push({ id: 'tamano_mural', pregunta: i18n('wizard.tamanoMural.pregunta'), ayuda: i18n('wizard.tamanoMural.ayuda') });
     } else if (trabajo === 'restauracion') {
       s.push({ id: 'tipo_restauracion', pregunta: '¿Qué tipo de restauración necesitás?', ayuda: 'Digital es sobre una foto o un archivo. Física es sobre una obra real y se evalúa en persona.' });
     }
     if (trabajo) {
-      s.push({ id: 'fotos', pregunta: trabajo === 'restauracion' ? '¿Tenés una foto de la obra?' : '¿Tenés una foto de guía?', ayuda: trabajo === 'restauracion'
+      s.push({ id: 'fotos', pregunta: trabajo === 'restauracion' ? i18n('wizard.fotos.preguntaRest') : i18n('wizard.fotos.pregunta'), ayuda: trabajo === 'restauracion'
         ? 'Cargá una foto de la obra o de la imagen a restaurar, lo más nítida que puedas. Si no tenés, pedimos asesoramiento y lo vemos juntos.'
         : 'Si tenés la foto de guía o modelos de inspiración, cargala acá. Si no, pedimos asesoramiento y lo vemos juntos.' });
-      s.push({ id: 'datos', pregunta: 'Tus datos para el pedido', ayuda: trabajo === 'restauracion'
+      s.push({ id: 'datos', pregunta: i18n('wizard.datos.pregunta'), ayuda: trabajo === 'restauracion'
         ? 'Completá tu nombre y, si podés, describí el daño o lo que querés recuperar. Si necesitás factura, completá también esos datos.'
         : 'Con tu nombre preparamos el pedido. Si necesitás factura, completá también esos datos.' });
-      s.push({ id: 'resumen', pregunta: 'Revisá tu pedido', ayuda: 'Este es el resumen y el precio estimado, con IVA incluido. Al enviar se arma el mensaje con todos los detalles para confirmarlo.' });
+      s.push({ id: 'resumen', pregunta: i18n('wizard.resumen.pregunta'), ayuda: i18n('wizard.resumen.ayuda') });
     }
     return s;
   }
@@ -135,7 +133,7 @@
   }
 
   function opcionesDe(paso) {
-    if (paso.id === 'trabajo') return TRABAJOS.map((t) => ({ value: t.id, title: t.title, text: t.text, url: guia(t.key).url, selected: trabajo === t.id }));
+    if (paso.id === 'trabajo') return TRABAJOS.map((t) => ({ value: t.id, title: i18n(t.titleKey, t.titleKey), text: i18n(t.textKey, t.textKey), url: guia(t.key).url, selected: trabajo === t.id }));
     if (paso.id === 'estilo') {
       const list = [
         { value: 'Realista', key: 'estilo:Realista', title: trabajo === 'carbonilla' ? 'Realista (acabado detallado)' : 'Realista' },
@@ -197,11 +195,22 @@
     }
     if (paso.id === 'tipo_escultura') {
       return [
-        { value: 'Busto', key: 'tipo_escultura:Busto', title: 'Busto' },
-        { value: 'Medio cuerpo', key: 'tipo_escultura:Medio cuerpo', title: 'Medio cuerpo' },
-        { value: 'Figura completa', key: 'tipo_escultura:Figura completa', title: 'Figura completa' },
-        { value: 'Relieve', key: 'tipo_escultura:Relieve', title: 'Relieve' }
+        { value: 'Busto', key: 'tipo_escultura:Busto', title: i18n('escultura.busto') },
+        { value: 'Medio cuerpo', key: 'tipo_escultura:Medio cuerpo', title: i18n('escultura.medio') },
+        { value: 'Figura completa', key: 'tipo_escultura:Figura completa', title: i18n('escultura.figura') },
+        { value: 'Relieve', key: 'tipo_escultura:Relieve', title: i18n('escultura.relieve') },
+        { value: 'Animal', key: 'tipo_escultura:Animal', title: i18n('escultura.animal') },
+        { value: 'Abstracto', key: 'tipo_escultura:Abstracto', title: i18n('escultura.abstracto') },
+        { value: 'Objeto', key: 'tipo_escultura:Objeto', title: i18n('escultura.objeto') },
+        { value: 'Otro', key: 'tipo_escultura:Otro', title: i18n('escultura.otro') }
       ].map((o) => ({ ...o, text: guia(o.key).text, url: guia(o.key).url, selected: valor('tipo_escultura') === o.value }));
+    }
+    if (paso.id === 'material_escultura') {
+      return [
+        { value: 'Fibra', key: 'material_escultura:Fibra', title: i18n('escultura.fibra') },
+        { value: 'Cemento', key: 'material_escultura:Cemento', title: i18n('escultura.cemento') },
+        { value: 'Arcilla', key: 'material_escultura:Arcilla', title: i18n('escultura.arcilla') }
+      ].map((o) => ({ ...o, text: i18n('escultura.tejido') + ' ' + (guia(o.key).text || ''), url: guia(o.key).url, selected: valor('material_escultura') === o.value }));
     }
     if (paso.id === 'estilo_mural') {
       return [
@@ -240,6 +249,7 @@
     else if (paso.id === 'forma') { setVal('forma_lienzo', value); if (window.onFormaChange) onFormaChange(); }
     else if (paso.id === 'marco') setVal('enmarcado', value);
     else if (paso.id === 'tipo_escultura') setVal('tipo_escultura', value);
+    else if (paso.id === 'material_escultura') { setVal('material_escultura', value); if (window.onMaterialEsculturaChange) onMaterialEsculturaChange(); }
     else if (paso.id === 'estilo_mural') setVal('estilo_mural', value);
     else if (paso.id === 'tipo_restauracion') setVal('tipo_restauracion', value);
     pintar();
@@ -252,6 +262,7 @@
     if (paso.id === 'sujetos') return true;
     if (paso.id === 'fondo' || paso.id === 'color' || paso.id === 'forma' || paso.id === 'marco') return true;
     if (paso.id === 'tipo_escultura') return !!valor('tipo_escultura');
+    if (paso.id === 'material_escultura') return !!valor('material_escultura');
     if (paso.id === 'estilo_mural') return !!valor('estilo_mural');
     if (paso.id === 'tipo_restauracion') return !!valor('tipo_restauracion');
     if (paso.id === 'tamano') {
@@ -277,7 +288,7 @@
     media.className = 'guia-media';
     if (opt.url) {
       const img = document.createElement('img');
-      img.src = opt.url; img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
+      img.src = opt.url; img.alt = ''; img.loading = 'eager'; img.decoding = 'sync';
       media.append(img);
     }
     const cap = document.createElement('div');
@@ -295,7 +306,7 @@
     const filas = [];
     const add = (k, v) => { if (v) filas.push('<li><strong>' + k + ':</strong> ' + v + '</li>'); };
     if (esPintura()) {
-      add('Trabajo', TRABAJOS.find((t) => t.id === trabajo)?.title);
+      add('Trabajo', i18n((TRABAJOS.find((t) => t.id === trabajo)||{}).titleKey));
       add('Estilo', $('estilo')?.selectedOptions[0]?.text);
       add('Técnica', $('tecnica')?.selectedOptions[0]?.text);
       if (trabajo === 'carbonilla') add('Color', $('color_lapiz')?.selectedOptions[0]?.text);
@@ -309,20 +320,23 @@
       add('Tamaño', $('tamano_predefinido')?.selectedOptions[0]?.text);
       add('Marco', $('enmarcado')?.selectedOptions[0]?.text);
     } else if (trabajo === 'escultura') {
-      add('Trabajo', 'Escultura');
+      add('Trabajo', i18n('trabajo.escultura'));
       add('Tipo', $('tipo_escultura')?.selectedOptions[0]?.text);
-      add('Altura', valor('escultura_cm') + ' cm');
+      add(i18n('escultura.material','Material'), $('material_escultura')?.selectedOptions[0]?.text);
+      if (typeof alturaEsculturaCm==='function' && Number.isFinite(alturaEsculturaCm())) add('Altura', formatoDesdeCm(alturaEsculturaCm()));
+      const kg = typeof pesoEsculturaKg==='function' ? pesoEsculturaKg() : null;
+      if (Number.isFinite(kg)) add('Peso', i18n('escultura.peso',{n: kg>=20?Math.round(kg):kg}));
     } else if (trabajo === 'mural') {
-      add('Trabajo', 'Mural');
+      add('Trabajo', i18n('trabajo.mural'));
       add('Estilo', $('estilo_mural')?.selectedOptions[0]?.text);
-      add('Tamaño', valor('mural_ancho') + ' m × ' + valor('mural_alto') + ' m');
+      if (typeof muralAnchoCm==='function') add('Tamaño', (typeof formatoParDesdeCm==='function')?formatoParDesdeCm(muralAnchoCm(),muralAltoCm()):(formatoDesdeCm(muralAnchoCm()) + ' × ' + formatoDesdeCm(muralAltoCm())));
     } else if (trabajo === 'restauracion') {
-      add('Trabajo', 'Restauración');
+      add('Trabajo', i18n('trabajo.restauracion'));
       add('Tipo', $('tipo_restauracion')?.selectedOptions[0]?.text);
     }
     add('Referencias', $('fotos_referencia')?.selectedOptions[0]?.text);
     add('Nombre', valor('envio_nombre'));
-    const nota = trabajo === 'mural' ? 'El mural se cotiza a consultar, según la pared.' : 'IVA incluido. Envío aparte.';
+    const nota = trabajo === 'mural' ? i18n('precio.muralDetalle') : i18n('precio.ivaEnvio');
     return '<ul class="asistente-resumen">' + filas.join('') + '</ul><p class="asistente-precio" id="asistente-precio">' + precio + '</p><p class="vista-escala-nota">' + nota + '</p>';
   }
 
@@ -337,8 +351,8 @@
 
   function textoPrecioDe(p) {
     if (!p) return '';
-    if (p.consultar) return 'A consultar';
-    if (p.evaluar) return 'A evaluar';
+    if (p.consultar) return p.consultarArtista ? i18n('precio.consultarArtista') : i18n('precio.consultar');
+    if (p.evaluar) return i18n('precio.consultar');
     return typeof dinero === 'function' ? dinero(p.total) : '';
   }
 
@@ -365,11 +379,11 @@
   function etiquetaTamano(key) {
     if (!key || key === 'personalizado') {
       const d = typeof obtenerDimensiones === 'function' ? obtenerDimensiones() : null;
-      if (d && d.valida) return Math.round(d.ancho) + ' × ' + Math.round(d.alto) + ' cm';
+      if (d && d.valida) return (typeof formatoParDesdeCm==='function') ? formatoParDesdeCm(d.ancho,d.alto) : (typeof formatoDesdeCm==='function') ? (formatoDesdeCm(d.ancho)+' × '+formatoDesdeCm(d.alto)) : (Math.round(d.ancho) + ' × ' + Math.round(d.alto) + ' cm');
       return 'Personalizado';
     }
     const parts = key.split('x').map(Number);
-    if (parts.length >= 2 && parts.every(Number.isFinite)) return parts[0] + ' × ' + parts[1] + ' cm';
+    if (parts.length >= 2 && parts.every(Number.isFinite)) return (typeof formatoParDesdeCm==='function') ? formatoParDesdeCm(parts[0],parts[1]) : (typeof formatoDesdeCm==='function') ? (formatoDesdeCm(parts[0])+' × '+formatoDesdeCm(parts[1])) : (parts[0] + ' × ' + parts[1] + ' cm');
     return key;
   }
 
@@ -508,7 +522,7 @@
       items.push({ id, label, texto });
     };
     if (esPintura()) {
-      add('trabajo', 'Técnica', TRABAJOS.find((t) => t.id === trabajo)?.title);
+      add('trabajo', 'Técnica', i18n((TRABAJOS.find((t) => t.id === trabajo)||{}).titleKey));
       add('estilo', 'Estilo', $('estilo')?.selectedOptions[0]?.text);
       add('tema', 'Tema', $('tema')?.selectedOptions[0]?.text);
       if (valor('tema') === 'Retrato') {
@@ -519,14 +533,15 @@
       }
       add('tamano', 'Tamaño', etiquetaTamano(valor('tamano_predefinido')));
     } else if (trabajo === 'escultura') {
-      add('trabajo', 'Trabajo', 'Escultura');
+      add('trabajo', 'Trabajo', i18n('trabajo.escultura'));
       add('tipo_escultura', 'Tipo', $('tipo_escultura')?.selectedOptions[0]?.text);
-      if (valor('escultura_cm')) add('altura_escultura', 'Altura', valor('escultura_cm') + ' cm');
+      add('material_escultura', i18n('escultura.material','Material'), $('material_escultura')?.selectedOptions[0]?.text);
+      if (typeof alturaEsculturaCm==='function' && Number.isFinite(alturaEsculturaCm()) && alturaEsculturaCm()>0) add('altura_escultura', 'Altura', formatoDesdeCm(alturaEsculturaCm()));
     } else if (trabajo === 'mural') {
       add('trabajo', 'Trabajo', 'Mural');
       add('estilo_mural', 'Estilo', $('estilo_mural')?.selectedOptions[0]?.text);
       if (valor('mural_ancho') && valor('mural_alto')) {
-        add('tamano_mural', 'Tamaño', valor('mural_ancho') + ' m × ' + valor('mural_alto') + ' m');
+        add('tamano_mural', 'Tamaño', (typeof formatoParDesdeCm==='function') ? formatoParDesdeCm(muralAnchoCm(),muralAltoCm()) : (typeof formatoDesdeCm==='function') ? (formatoDesdeCm(muralAnchoCm())+' × '+formatoDesdeCm(muralAltoCm())) : (valor('mural_ancho')+' × '+valor('mural_alto')));
       }
     } else if (trabajo === 'restauracion') {
       add('trabajo', 'Trabajo', 'Restauración');
@@ -565,7 +580,7 @@
         lab.textContent = c.label + ': ' + c.texto + ' · ';
         const ch = document.createElement('span');
         ch.className = 'cambiar';
-        ch.textContent = 'cambiar';
+        ch.textContent = i18n('comun.cambiar');
         btn.append(lab, ch);
         btn.setAttribute('aria-label', 'Cambiar ' + c.label);
         btn.addEventListener('click', () => irA(c.id));
@@ -630,7 +645,11 @@
       take($('vista-escala'));
       if (window.CotizadorVisual) CotizadorVisual.updateEscala();
     }
+    if (paso.id === 'material_escultura') {
+      /* las tarjetas ya muestran el material; la nota queda en la ayuda */
+    }
     if (paso.id === 'altura_escultura') {
+      take($('step-unidad'));
       take($('grupo-altura-escultura'));
       take($('vista-escala-escultura') || $('vista-escala'));
       if (window.CotizadorVisual) {
@@ -638,7 +657,7 @@
         CotizadorVisual.updateEscala();
       }
     }
-    if (paso.id === 'tamano_mural') take($('contenedor-murales'));
+    if (paso.id === 'tamano_mural') { take($('step-unidad')); take($('contenedor-murales')); }
     if (paso.id === 'fotos') {
       take($('step-fotos'));
       const lab = document.querySelector('#step-fotos label[for="fotos_referencia"]');
@@ -665,7 +684,7 @@
     }
     const total = lista.length;
     const n = $('asistente-paso-n');
-    if (n) n.textContent = trabajo ? ('Paso ' + (indice + 1) + ' de ' + total) : 'Paso 1';
+    if (n) n.textContent = trabajo ? i18n('wizard.paso', { n: indice + 1, total: total }) : i18n('wizard.paso1');
     const bar = $('asistente-progreso-bar');
     if (bar) bar.style.width = trabajo ? (Math.round(((indice + 1) / total) * 100) + '%') : '8%';
     const atras = $('asistente-atras');
@@ -676,7 +695,7 @@
     sig.hidden = ultimo;
     sig.disabled = !puedeSeguir(paso);
     if (enviar) {
-      enviar.textContent = 'Enviar pedido';
+      enviar.textContent = i18n('comun.enviar');
       if (ultimo) {
         take(enviar);
         enviar.hidden = false;
@@ -729,7 +748,7 @@
     if (!root) return;
     restoreParked();
     const enviar = $('enviar-obra');
-    if (enviar) { enviar.classList.remove('asistente-enviar'); enviar.textContent = 'Enviar pedido'; }
+    if (enviar) { enviar.classList.remove('asistente-enviar'); enviar.textContent = i18n('comun.enviar'); }
     root.hidden = true;
     document.body.classList.remove('asistente-abierto');
     document.body.style.overflow = '';

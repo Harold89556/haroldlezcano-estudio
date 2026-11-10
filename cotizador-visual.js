@@ -258,7 +258,7 @@
     ].join(' ');
     return [
       `<path d="${d}" fill="#a8a8a8"/>`,
-      `<text x="${cx}" y="${ly}" text-anchor="middle" fill="#d4af37" font-size="11">Persona de 1,70 m</text>`
+      `<text x="${cx}" y="${ly}" text-anchor="middle" fill="#d4af37" font-size="11">${(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('escala.persona'):'Persona de 1,70 m'}${(typeof unidadActualVal==='function'&&unidadActualVal()==='in')?' (67 in)':''}</text>`
     ].join('');
   }
 
@@ -317,7 +317,7 @@
     el.hidden = false;
     const dim = typeof obtenerDimensiones === 'function' ? obtenerDimensiones() : null;
     if (!dim || !dim.valida) {
-      el.innerHTML = '<p class="vista-escala-nota">Elegí un tamaño para ver la obra al lado de una persona de 1,70 m.</p>';
+      el.innerHTML = '<p class="vista-escala-nota">'+((window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('escala.elegi'):'Elegí un tamaño para ver la obra al lado de una persona de 1,70 m.')+'</p>';
       return;
     }
     const forma = document.getElementById('forma_lienzo')?.value || 'Estandar';
@@ -334,11 +334,11 @@
       fill = 'transparent';
     }
     const label = forma === 'Circular'
-      ? `Diámetro ${Math.round(dim.ancho)} cm`
-      : `${Math.round(dim.ancho)} × ${Math.round(dim.alto)} cm`;
+      ? ((window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('escala.diametro'):'Diámetro') + ' ' + ((typeof formatoDesdeCm==='function')?formatoDesdeCm(dim.ancho):(Math.round(dim.ancho)+' cm'))
+      : ((typeof formatoParDesdeCm==='function')?formatoParDesdeCm(dim.ancho,dim.alto):((typeof formatoDesdeCm==='function')?(formatoDesdeCm(dim.ancho)+' × '+formatoDesdeCm(dim.alto)):(`${Math.round(dim.ancho)} × ${Math.round(dim.alto)} cm`)));
     const labelX = Math.min(L.W - L.sidePad, Math.max(L.sidePad + 40, L.artX + L.artW / 2));
     const labelTop = Math.max(14, L.artY - 8);
-    el.innerHTML = `<svg viewBox="0 0 ${L.W} ${L.H}" role="img" aria-label="Comparación de tamaño: obra ${label} junto a una persona de 1,70 metros">${imageTag}${personPath(L.personX, L.ground, L.scale, L.labelY)}${artworkShape(forma, L.artX, L.artY, L.artW, L.artH, fill)}<text x="${labelX}" y="${labelTop}" text-anchor="middle" fill="#e5ca72" font-size="12">${label}</text><line x1="${L.sidePad}" y1="${L.ground}" x2="${L.W - L.sidePad}" y2="${L.ground}" stroke="#444" stroke-width="1"/></svg><p class="vista-escala-nota">La obra se muestra a escala real junto a una persona adulta de 1,70 m.</p>`;
+    el.innerHTML = `<svg viewBox="0 0 ${L.W} ${L.H}" role="img" aria-label="Comparación de tamaño: obra ${label} junto a una persona de 1,70 metros">${imageTag}${personPath(L.personX, L.ground, L.scale, L.labelY)}${artworkShape(forma, L.artX, L.artY, L.artW, L.artH, fill)}<text x="${labelX}" y="${labelTop}" text-anchor="middle" fill="#e5ca72" font-size="12">${label}</text><line x1="${L.sidePad}" y1="${L.ground}" x2="${L.W - L.sidePad}" y2="${L.ground}" stroke="#444" stroke-width="1"/></svg><p class="vista-escala-nota">${(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('escala.notaCuadro'):'La obra se muestra a escala real junto a una persona adulta de 1,70 m.'}${(typeof unidadActualVal==='function'&&unidadActualVal()==='in')?' (67 in).':''}</p>`;
   }
 
   function updateEscalaEscultura() {
@@ -349,16 +349,17 @@
     const enAsistente = !!(grupo && grupo.classList.contains('en-asistente'));
     if (!enAsistente && (!cont || cont.style.display === 'none')) { el.hidden = true; return; }
     const tipo = document.getElementById('tipo_escultura')?.value;
-    const cm = Number(document.getElementById('escultura_cm')?.value || 0);
-    if (!tipo || !cm) { el.hidden = true; return; }
+    const cm = (typeof alturaEsculturaCm==='function')?alturaEsculturaCm():Number(document.getElementById('escultura_cm')?.value || 0);
+    if (!tipo || !Number.isFinite(cm) || cm<=0) { el.hidden = true; return; }
     el.hidden = false;
     const artHcm = cm;
     const artWcm = cm * (tipo === 'Relieve' ? 1.1 : tipo === 'Busto' ? 0.7 : tipo === 'Medio cuerpo' ? 0.55 : 0.4);
     const L = layoutScale(artWcm, artHcm);
-    const label = `${tipo}: ${cm} cm`;
+    const hCm = (typeof alturaEsculturaCm==='function')?alturaEsculturaCm():cm;
+    const label = `${tipo}: ` + ((typeof formatoDesdeCm==='function')?formatoDesdeCm(hCm): (Math.round(hCm)+' cm'));
     const labelX = Math.min(L.W - L.sidePad, Math.max(L.sidePad + 40, L.artX + L.artW / 2));
     const labelTop = Math.max(14, L.artY - 8);
-    el.innerHTML = `<svg viewBox="0 0 ${L.W} ${L.H}" role="img" aria-label="Escultura de ${cm} cm junto a una persona de 1,70 m">${personPath(L.personX, L.ground, L.scale, L.labelY)}<rect x="${L.artX}" y="${L.artY}" width="${L.artW}" height="${L.artH}" rx="6" fill="rgba(180,180,180,0.35)" stroke="#d4af37" stroke-width="2"/><text x="${labelX}" y="${labelTop}" text-anchor="middle" fill="#e5ca72" font-size="12">${label}</text><line x1="${L.sidePad}" y1="${L.ground}" x2="${L.W - L.sidePad}" y2="${L.ground}" stroke="#444" stroke-width="1"/></svg><p class="vista-escala-nota">Altura de la pieza a escala junto a una persona de 1,70 m.</p>`;
+    el.innerHTML = `<svg viewBox="0 0 ${L.W} ${L.H}" role="img" aria-label="Escultura de ${cm} cm junto a una persona de 1,70 m">${personPath(L.personX, L.ground, L.scale, L.labelY)}<rect x="${L.artX}" y="${L.artY}" width="${L.artW}" height="${L.artH}" rx="6" fill="rgba(180,180,180,0.35)" stroke="#d4af37" stroke-width="2"/><text x="${labelX}" y="${labelTop}" text-anchor="middle" fill="#e5ca72" font-size="12">${label}</text><line x1="${L.sidePad}" y1="${L.ground}" x2="${L.W - L.sidePad}" y2="${L.ground}" stroke="#444" stroke-width="1"/></svg><p class="vista-escala-nota">${(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('escala.notaEscultura'):'Altura de la pieza a escala junto a una persona de 1,70 m.'}${(typeof unidadActualVal==='function'&&unidadActualVal()==='in')?' (67 in).':''}</p>`;
   }
 
   function refreshAll() {

@@ -697,3 +697,32 @@ body.asistente-abierto .page-background { z-index: 0; }
   color: #fff;
 }
 .admin-body .container.admin-container { background: rgba(18, 18, 18, var(--ventanas-opacidad)); }
+
+
+/* Idioma y país */
+.locale-bar {
+  position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 720px; z-index: 13050;
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: flex-end;
+  padding: 8px 10px;
+  margin: 0;
+  background: rgba(12,12,12,0.96);
+  border-bottom: 1px solid rgba(212,175,55,0.22);
+  border-radius: 0 0 12px 12px;
+  backdrop-filter: blur(10px);
+  box-sizing: border-box;
+}
+.app-shell { padding-top: 64px; }
+.asistente { padding-top: calc(72px + env(safe-area-inset-top,0px)) !important; }
+
+.locale-field { display: flex; flex-direction: column; gap: 3px; margin: 0; font-size: 10px; letter-spacing: .4px; text-transform: uppercase; color: #bbb; }
+.locale-field select {
+  min-height: 36px; min-width: 128px; max-width: 48vw;
+  border-radius: 8px; border: 1px solid rgba(255,255,255,.16);
+  background: #161616; color: #eee; font: inherit; font-size: 13px; text-transform: none; letter-spacing: 0;
+  padding: 4px 8px;
+}
+.peso-estimado { margin: 10px 0 0; font-size: 14px; color: #e5ca72; font-weight: 600; overflow-wrap: anywhere; }
+.grupo-material-escultura { width: 100%; box-sizing: border-box; }
+#nota-tejido-metalico { margin-top: 8px; }
+#tasa-info, .asistente-fx { font-size: 11px; color: #aaa; line-height: 1.4; overflow-wrap: anywhere; margin-top: 4px; }

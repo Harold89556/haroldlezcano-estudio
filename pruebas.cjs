@@ -4,7 +4,7 @@ const {JSDOM,VirtualConsole}=jsdom;
 const base=__dirname,html=fs.readFileSync(path.join(base,'index.html'),'utf8');
 function iniciar(hash=''){
  const errors=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));const dom=new JSDOM(html,{url:'https://harold-lezcano-estudio.web.app/'+hash,runScripts:'outside-only',virtualConsole:vc});const w=dom.window;w.structuredClone=structuredClone;const opens=[];w.open=url=>opens.push(url);w.fetch=async()=>{throw Error('Red simulada sin conexión');};
- require('node:vm').runInContext(['estudio-datos.js','cotizador.js','cotizador-visual.js','interfaz.js','cotizador-asistente.js','mejoras.js','estudio.js'].map(f=>fs.readFileSync(path.join(base,f),'utf8')).join('\n'),dom.getInternalVMContext());w.onload();w.onload=null;
+ require('node:vm').runInContext(['estudio-datos.js','estudio-i18n.js','cotizador.js','cotizador-visual.js','interfaz.js','cotizador-asistente.js','mejoras.js','estudio.js'].map(f=>fs.readFileSync(path.join(base,f),'utf8')).join('\n'),dom.getInternalVMContext());w.onload();w.onload=null;
  const d=w.document;const set=(id,v)=>{d.getElementById(id).value=String(v);};const price=()=>d.getElementById('precioFinal').textContent;
  const listo=()=>{w.switchTab('cotizacion');set('estilo','Realista');w.onEstiloChange();set('tecnica','Oleo');w.onTecnicaChange();set('tema','Retrato');w.onTemaChange();set('tamano_predefinido','30x40');w.handleTamanoChange();set('envio_nombre','Cliente de prueba');set('fotos_referencia','No, necesito asesoramiento');};
  return {w,d,set,price,opens,listo,errors};
@@ -21,7 +21,7 @@ test('8. CSS escritorio: flex solo para active; inactivos ocultos',()=>{const cs
 test('9. Inscripción: bloquea vacío y edad menor de 8',()=>{const a=iniciar();a.w.enviarInscripcion();assert.equal(a.opens.length,0);a.set('c_nom','Alumno de prueba');a.set('c_edad',7);a.w.enviarInscripcion();assert.equal(a.opens.length,0);a.set('c_edad',8);a.w.enviarInscripcion();assert.equal(a.opens.length,1);});
 test('10. Alt, selectores nativos, labels y rutas persistentes',()=>{const a=iniciar('#galeria/retrato/2');assert.equal(a.d.querySelectorAll('img:not([alt])').length,0);assert.equal(a.d.querySelectorAll('.custom-select-trigger').length,0);assert.equal(a.d.getElementById('imageModal').hidden,false);assert.ok(a.d.getElementById('modalImg').src.includes('1715876237156'));a.w.closeModal();assert.equal(a.w.location.hash,'#galeria/retrato');assert.equal(a.d.getElementById('imageModal').hidden,true);for(const c of a.d.querySelectorAll('input[id]:not([type=checkbox]), select[id], textarea[id]'))assert.ok(a.d.querySelector('label[for="'+c.id+'"]'),'label '+c.id);});
 test('11. Conserva las 152 imágenes y los conteos por categoría',()=>{const a=iniciar();const seed=JSON.parse(fs.readFileSync(path.join(base,'galeria-seed.json'),'utf8'));assert.equal(seed.length,152);assert.equal(a.d.querySelectorAll('#mainGallery .gallery-item').length,152);for(const [cat,n] of Object.entries({retrato:42,paisaje:11,escultura:19,mural:26,abstracto:7,otros:47}))assert.equal(seed.filter(i=>i.category===cat).length,n);});
-test('12. Precios remotos válidos actualizan óleo, carbonilla, extras y esculturas',()=>{const a=iniciar();a.listo();const p=a.w.EstudioDatos.clone(a.w.ESTUDIO_DEFAULTS.precios);p.matriz['30x40'].realista=810000;a.w.aplicarPrecios(a.w.EstudioDatos.validatePrices(p));assert.equal(a.price(),'810.000 ₲');a.set('estilo','Escultura');a.w.onEstiloChange();a.set('tipo_escultura','Busto');a.w.onTipoEsculturaChange();a.w.calcular();assert.equal(a.price(),'8.000.000 ₲');a.set('estilo','Mural');a.w.onEstiloChange();a.set('mural_ancho','3');a.set('mural_alto','2');a.w.calcular();assert.equal(a.price(),'A consultar');});
+test('12. Precios remotos válidos actualizan óleo, carbonilla, extras y esculturas',()=>{const a=iniciar();a.listo();const p=a.w.EstudioDatos.clone(a.w.ESTUDIO_DEFAULTS.precios);p.matriz['30x40'].realista=810000;a.w.aplicarPrecios(a.w.EstudioDatos.validatePrices(p));assert.equal(a.price(),'810.000 ₲');a.set('estilo','Escultura');a.w.onEstiloChange();a.set('tipo_escultura','Busto');a.w.onTipoEsculturaChange();a.w.calcular();assert.equal(a.price(),'8.000.000 ₲');a.set('estilo','Mural');a.w.onEstiloChange();a.w.setUnidad('m',{currentTarget:a.d.getElementById('btn-uni-m')});a.set('mural_ancho','3');a.set('mural_alto','2');a.w.calcular();assert.equal(a.price(),'A consultar');});
 test('13. Configuración malformada rechazada y mezcla de galería no pierde originales',()=>{const a=iniciar();const p=a.w.EstudioDatos.clone(a.w.ESTUDIO_DEFAULTS.precios);p.matriz['30x40'].realista=-1;assert.throws(()=>a.w.EstudioDatos.validatePrices(p));const seed=JSON.parse(fs.readFileSync(path.join(base,'galeria-seed.json'),'utf8'));const merged=a.w.EstudioDatos.mergeGallery(seed,[{id:'nueva',url:'https://example.com/foto.jpg',category:'otros',order:200,caption:''},{...seed[0],hidden:true}]);assert.equal(merged.length,153);assert.equal(merged.find(i=>i.id===seed[0].id).hidden,true);assert.ok(merged.some(i=>i.id==='nueva'));});
 test('14. Sin porcentajes en selects y picker múltiple disponible',()=>{const a=iniciar();for(const opt of a.d.querySelectorAll('select option'))assert.ok(!opt.textContent.includes('%'));assert.equal(a.d.getElementById('referencias_archivos').multiple,true);assert.equal(a.d.getElementById('referencias_archivos').accept,'image/*');});
 test('15. Personalizado 35x67 interpola por área (óleo y acrílico)',()=>{const a=iniciar();a.listo();a.set('tema','Paisaje');a.w.onTemaChange();a.set('tamano_predefinido','personalizado');a.w.handleTamanoChange();a.set('ancho_cm',35);a.set('alto_cm',67);a.w.calcular();assert.equal(a.price(),'1.131.000 ₲');a.set('tema','Retrato');a.w.onTemaChange();a.set('tamano_predefinido','personalizado');a.w.handleTamanoChange();a.set('ancho_cm',35);a.set('alto_cm',67);a.w.calcular();assert.equal(a.price(),'1.131.000 ₲');a.set('tecnica','Acrilico');a.w.onTecnicaChange();a.set('tema','Retrato');a.w.onTemaChange();a.set('tamano_predefinido','personalizado');a.w.handleTamanoChange();a.set('ancho_cm',35);a.set('alto_cm',67);a.w.calcular();assert.equal(a.price(),Math.round(1131000*0.85).toLocaleString('es-PY')+' ₲');a.set('ancho_cm',10);a.set('alto_cm',10);a.w.calcular();assert.ok(a.w.presupuesto().base>=85000);a.set('ancho_cm',200);a.set('alto_cm',200);a.w.calcular();assert.ok(a.w.presupuesto().base>0);});
@@ -65,7 +65,7 @@ test('19. Medidas personalizadas actualizan escala, select y unidades',()=>{cons
   a.w.setUnidad('in',{currentTarget:a.d.getElementById('btn-uni-in')});
   assert.equal(a.w.obtenerDimensiones().ancho,70);
   assert.equal(a.w.obtenerDimensiones().alto,100);
-  assert.ok(Math.abs(Number(a.d.getElementById('ancho_cm').value)-70/2.54)<1e-8);
+  assert.ok(Math.abs(Number(a.d.getElementById('ancho_cm').value)-Number((70/2.54).toFixed(2)))<1e-9);
   fire('ancho_cm',(200/2.54).toPrecision(12));fire('alto_cm',(100/2.54).toPrecision(12));
   assert.equal(a.d.getElementById('tamano_predefinido').value,'personalizado');
   assert.ok(Math.abs(a.w.obtenerDimensiones().ancho-200)<1e-6);
@@ -109,7 +109,7 @@ test('20. Asistente: precio en vivo, chips y sugerencias de presupuesto',()=>{
   assert.match(a.d.getElementById('asistente-precio-vivo').textContent,/1\.334\.500/);
   // mural: A consultar, sin precios inventados
   a.d.querySelector('#asistente-opciones .guia-card[data-value="mural"]').click();
-  a.set('mural_ancho','3');a.set('mural_alto','2');a.w.calcular();
+  a.w.setUnidad('m',{currentTarget:a.d.getElementById('btn-uni-m')});a.set('mural_ancho','3');a.set('mural_alto','2');a.w.calcular();
   a.w.AsistentePedido.irA('tamano_mural');
   assert.match(a.d.getElementById('asistente-precio-vivo').textContent,/A consultar/);
   assert.equal(a.w.AsistentePedido.sugerencias().length,0);
@@ -237,6 +237,58 @@ test('23. Escultura: el precio sube con la altura en vivo, el número se edita y
   assert.match(a.d.getElementById('asistente-ayuda').textContent,/persona de 1,70/);
   const css=fs.readFileSync(path.join(base,'style.css'),'utf8');
   assert.match(css,/#asistente-ayuda[\s\S]*overflow-wrap:\s*anywhere/);
+});
+
+
+test('24. El ancho por defecto se muestra exactamente como 50, sin residuos de coma flotante',()=>{
+  const a=iniciar();a.listo();
+  a.set('forma_lienzo','Estandar');a.w.onFormaChange();
+  a.set('tamano_predefinido','50x70');a.w.handleTamanoChange();
+  assert.equal(a.d.getElementById('ancho_cm').value,'50');
+  assert.equal(a.d.getElementById('alto_cm').value,'70');
+  a.w.setUnidad('in',{currentTarget:a.d.getElementById('btn-uni-in')});
+  a.w.setUnidad('m',{currentTarget:a.d.getElementById('btn-uni-m')});
+  a.w.setUnidad('cm',{currentTarget:a.d.getElementById('btn-uni-cm')});
+  assert.equal(a.d.getElementById('ancho_cm').value,'50');
+  assert.equal(a.d.getElementById('alto_cm').value,'70');
+  assert.ok(!/0{4,}|e-/.test(a.d.getElementById('ancho_cm').value));
+});
+
+test('25. Material, peso y consulta de escultura no humana',()=>{
+  const a=iniciar();a.listo();
+  a.set('estilo','Escultura');a.w.onEstiloChange();
+  a.set('tipo_escultura','Figura completa');a.w.onTipoEsculturaChange();
+  a.set('material_escultura','Fibra');a.w.onMaterialEsculturaChange();
+  a.set('escultura_cm','170');a.w.onEsculturaCmInput();
+  const fibra=a.w.presupuesto();
+  assert.ok(fibra&&!fibra.consultar);
+  assert.equal(fibra.base,20400000);
+  const pFibra=a.w.pesoEsculturaKg('Figura completa',170,'Fibra');
+  const pCem=a.w.pesoEsculturaKg('Figura completa',170,'Cemento');
+  assert.ok(pFibra>=25&&pFibra<=60,String(pFibra));
+  assert.ok(pCem>=80&&pCem<=200,String(pCem));
+  assert.ok(pCem>pFibra);
+  a.set('material_escultura','Cemento');a.w.onMaterialEsculturaChange();
+  const cem=a.w.presupuesto();
+  assert.equal(cem.base,Math.round(20400000*1.2/50000)*50000);
+  assert.match(a.d.getElementById('escultura-peso-estimado').textContent,/Peso estimado/);
+  a.set('tipo_escultura','Animal');a.w.onTipoEsculturaChange();a.w.calcular();
+  const noH=a.w.presupuesto();
+  assert.ok(noH&&noH.consultar&&noH.consultarArtista);
+  assert.match(a.price(),/A consultar con el artista/);
+});
+
+test('26. Idioma y moneda del país, sin mostrar porcentajes al cliente',()=>{
+  const a=iniciar();a.listo();
+  a.w.EstudioI18n.setIdioma('en',{manual:true});
+  a.w.EstudioI18n.setPais('US',{sinIdioma:true});
+  assert.equal(a.d.getElementById('moneda').value,'USD');
+  a.w.calcular();
+  const txt=a.price();
+  assert.ok(/US\$|USD/.test(txt),txt);
+  assert.ok(!/%/.test(a.d.getElementById('tab-cotizacion').textContent));
+  a.w.EstudioI18n.setIdioma('es',{manual:true});
+  a.w.EstudioI18n.setPais('PY');
 });
 
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));

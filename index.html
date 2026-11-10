@@ -16,6 +16,14 @@
 <link href="style.css" rel="stylesheet"/><meta content="Obras de arte por encargo, galería y cursos de dibujo y pintura con Harold Lezcano en Fernando de la Mora, Paraguay." name="description"/><meta content="https://harold-lezcano-estudio.web.app/" property="og:url"/><link href="https://harold-lezcano-estudio.web.app/" rel="canonical"/><link href="icono-192.png" rel="icon" type="image/png"/></head>
 <body>
 <div class="page-background"></div>
+<div class="locale-bar" id="locale-bar">
+  <label class="locale-field" for="selector-idioma"><span data-i18n="locale.idioma">Idioma</span>
+    <select id="selector-idioma" aria-label="Idioma"></select>
+  </label>
+  <label class="locale-field" for="selector-pais"><span data-i18n="locale.pais">País</span>
+    <select id="selector-pais" aria-label="País"></select>
+  </label>
+</div>
 <div class="container app-shell">
 <div class="tab-content active" id="tab-inicio">
 <div class="header">
@@ -36,32 +44,32 @@
 <div class="album-grid" id="vista-albumes">
 <button class="album-book" data-album="retrato" onclick="openAlbum('retrato', 'Retratos')" type="button">
 <img alt="Álbum de retratos de Harold Lezcano" class="album-cover-img" loading="lazy" src="https://i.postimg.cc/KzS87GJg/1464351820687.jpg"/>
-<div class="album-title">Retratos</div>
+<div class="album-title" data-i18n="album.retrato">Retratos</div>
 </button>
 <button class="album-book" data-album="paisaje" onclick="openAlbum('paisaje', 'Paisajes')" type="button">
 <img alt="Álbum de paisajes de Harold Lezcano" class="album-cover-img" loading="lazy" src="https://i.postimg.cc/N0VppVrZ/2012-10-03-061.jpg"/>
-<div class="album-title">Paisajes</div>
+<div class="album-title" data-i18n="album.paisaje">Paisajes</div>
 </button>
 <button class="album-book" data-album="escultura" onclick="openAlbum('escultura', 'Esculturas')" type="button">
 <img alt="Álbum de esculturas de Harold Lezcano" class="album-cover-img" loading="lazy" src="https://i.postimg.cc/WpmwktXs/20210220-120524(1).jpg"/>
-<div class="album-title">Esculturas</div>
+<div class="album-title" data-i18n="album.escultura">Esculturas</div>
 </button>
 <button class="album-book" data-album="mural" onclick="openAlbum('mural', 'Murales')" type="button">
 <img alt="Álbum de murales de Harold Lezcano" class="album-cover-img" loading="lazy" src="https://i.postimg.cc/ZqrCMv9Z/1460758244301.jpg"/>
-<div class="album-title">Murales</div>
+<div class="album-title" data-i18n="album.mural">Murales</div>
 </button>
 <button class="album-book" data-album="abstracto" onclick="openAlbum('abstracto', 'Abstractos')" type="button">
 <img alt="Álbum de abstractos de Harold Lezcano" class="album-cover-img" loading="lazy" src="https://i.postimg.cc/vmLZzRjh/20200302-235543.jpg"/>
-<div class="album-title">Abstractos</div>
+<div class="album-title" data-i18n="album.abstracto">Abstractos</div>
 </button>
 <button class="album-book" data-album="otros" onclick="openAlbum('otros', 'Otros')" type="button">
 <img alt="Álbum de otros trabajos de Harold Lezcano" class="album-cover-img" loading="lazy" src="https://i.postimg.cc/jqGCthzK/2014-06-05-21-19-50.jpg"/>
-<div class="album-title">Otros</div>
+<div class="album-title" data-i18n="album.otros">Otros</div>
 </button>
 </div>
 <div id="vista-hojas" style="display:none;">
 <div class="album-header">
-<button class="btn-volver" onclick="closeAlbum()"><i class="fas fa-arrow-left"></i> Volver a la Biblioteca</button>
+<button class="btn-volver" onclick="closeAlbum()"><i class="fas fa-arrow-left"></i> <span data-i18n="album.volver">Volver a la Biblioteca</span></button>
 <h2 id="titulo-album-abierto">Álbum</h2>
 </div>
 <div class="hojas-container" id="mainGallery">
@@ -301,11 +309,11 @@
 <div class="form-card" id="contenedor-cuadros" style="display:none;">
 <h3 class="card-title"><i class="fas fa-ruler-combined"></i> 2. Dimensiones y formato</h3>
 <div id="step-unidad" style="margin-bottom: 15px;">
-<label style="margin-top:0;">Unidad de Medida</label>
+<label style="margin-top:0;" data-i18n="unidad.titulo">Unidad de Medida</label>
 <div style="display: flex; gap: 8px; margin-top: 10px;">
-<button class="filter-btn active" id="btn-uni-cm" onclick="setUnidad('cm', event)" style="flex:1;">CM</button>
-<button class="filter-btn" id="btn-uni-in" onclick="setUnidad('in', event)" style="flex:1;">IN</button>
-<button class="filter-btn" id="btn-uni-m" onclick="setUnidad('m', event)" style="flex:1;">M</button>
+<button class="filter-btn active" id="btn-uni-cm" data-unidad="cm" onclick="setUnidad('cm', event)" style="flex:1;">CM</button>
+<button class="filter-btn" id="btn-uni-in" data-unidad="in" onclick="setUnidad('in', event)" style="flex:1;">IN</button>
+<button class="filter-btn" id="btn-uni-m" data-unidad="m" onclick="setUnidad('m', event)" style="flex:1;">M</button>
 </div>
 </div>
 <div id="formato-lienzo-container" style="display:none;">
@@ -353,10 +361,10 @@
 <option value="Ilustracion Mural">Ilustración o diseño</option>
 <option value="Bocetado">Bocetado</option>
 </select><div aria-live="polite" class="field-error" id="error-estilo_mural"></div>
-<label style="margin-top:15px;">Tamaño (Metros)</label>
+<label id="label-mural-tamano" style="margin-top:15px;">Tamaño (centímetros)</label>
 <div style="display: flex; gap: 15px; margin-top:10px;">
-<div style="width:50%"><label for="mural_ancho" style="margin:0; font-size:11px;">Ancho</label><select aria-describedby="error-mural_ancho" class="" id="mural_ancho" onchange="calcular()"></select><div aria-live="polite" class="field-error" id="error-mural_ancho"></div></div>
-<div style="width:50%"><label for="mural_alto" style="margin:0; font-size:11px;">Alto</label><select aria-describedby="error-mural_alto" class="" id="mural_alto" onchange="calcular()"></select><div aria-live="polite" class="field-error" id="error-mural_alto"></div></div>
+<div style="width:50%"><label for="mural_ancho" id="label-mural-ancho" style="margin:0; font-size:11px;">Ancho</label><input aria-describedby="error-mural_ancho" id="mural_ancho" inputmode="decimal" max="2000" min="100" oninput="calcular()" step="any" type="text" value=""/><div aria-live="polite" class="field-error" id="error-mural_ancho"></div></div>
+<div style="width:50%"><label for="mural_alto" id="label-mural-alto" style="margin:0; font-size:11px;">Alto</label><input aria-describedby="error-mural_alto" id="mural_alto" inputmode="decimal" max="500" min="100" oninput="calcular()" step="any" type="text" value=""/><div aria-live="polite" class="field-error" id="error-mural_alto"></div></div>
 </div>
 <div id="alerta-andamio" style="display:none; color:#d4af37; font-size:10px; margin-top:15px; padding: 10px; border-radius: 8px; background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.2);">Si la pared mide 2,5 m o más de alto, puede hacer falta andamio y equipo de seguridad. El valor se acuerda al consultar.</div>
 </div>
@@ -369,8 +377,23 @@
 <option value="Medio cuerpo">Medio cuerpo</option>
 <option value="Figura completa">Figura de cuerpo entero</option>
 <option value="Relieve">Relieve</option>
+<option value="Animal">Animal u otra figura no humana</option>
+<option value="Abstracto">Abstracto</option>
+<option value="Objeto">Objeto</option>
+<option value="Otro">Otro</option>
 </select><div aria-live="polite" class="field-error" id="error-tipo_escultura"></div>
 <div class="info-text" id="info-tipo_escultura"></div>
+<div id="grupo-material-escultura" class="grupo-material-escultura" style="margin-top:15px; display:none;">
+<label for="material_escultura" id="label-material-escultura">Material</label>
+<select id="material_escultura" aria-describedby="nota-tejido-metalico error-material_escultura" onchange="onMaterialEsculturaChange();">
+<option disabled="" selected="" value="">Seleccioná el material...</option>
+<option value="Fibra">Fibra de vidrio con estructura de hierro</option>
+<option value="Cemento">Cemento hueco con estructura de hierro</option>
+<option value="Arcilla">Arcilla con cemento con estructura de hierro</option>
+</select>
+<p class="info-text" id="nota-tejido-metalico">Todas incluyen tejido metálico en el interior.</p>
+<div aria-live="polite" class="field-error" id="error-material_escultura"></div>
+</div>
 <div class="stepper-group altura-escultura" id="grupo-altura-escultura" style="margin-top: 15px; display:none;">
 <label for="escultura_cm" id="label-altura-escultura">Altura en centímetros</label>
 <p class="altura-escultura-rango" id="hint-altura-escultura">Entre 30 y 200 cm.</p>
@@ -380,6 +403,7 @@
 <button aria-label="Aumentar altura" class="stepper-btn" onclick="stepEsc(1)" type="button">+</button>
 </div>
 <div aria-live="polite" class="field-error" id="error-escultura_cm"></div>
+<p class="peso-estimado" id="escultura-peso-estimado" hidden></p>
 </div>
 <div class="info-text" style="margin-top:15px;">Precio para pieza modelada a mano. No incluye fundición en bronce ni otros metales. La altura se mide de la base al punto más alto. Para piezas de más de 2 metros, indicalo al enviar el pedido.</div>
 </div>
@@ -525,14 +549,14 @@
 </div>
 </div>
 <nav aria-label="Secciones" class="tab-container bottom-nav">
-<button class="tab-btn active" data-tab="inicio" onclick="switchTab('inicio', event)" type="button"><i aria-hidden="true" class="fas fa-house"></i><span>Inicio</span></button>
-<button class="tab-btn" data-tab="cotizacion" onclick="switchTab('cotizacion', event)" type="button"><i aria-hidden="true" class="fas fa-calculator"></i><span>Cotizar</span></button>
-<button class="tab-btn" data-tab="curso" onclick="switchTab('curso', event)" type="button"><i aria-hidden="true" class="fas fa-palette"></i><span>Cursos</span></button>
+<button class="tab-btn active" data-tab="inicio" onclick="switchTab('inicio', event)" type="button"><i aria-hidden="true" class="fas fa-house"></i><span data-i18n="nav.inicio">Inicio</span></button>
+<button class="tab-btn" data-tab="cotizacion" onclick="switchTab('cotizacion', event)" type="button"><i aria-hidden="true" class="fas fa-calculator"></i><span data-i18n="nav.cotizar">Cotizar</span></button>
+<button class="tab-btn" data-tab="curso" onclick="switchTab('curso', event)" type="button"><i aria-hidden="true" class="fas fa-palette"></i><span data-i18n="nav.cursos">Cursos</span></button>
 </nav>
 
 <div id="asistente-pedido" class="asistente" hidden role="dialog" aria-modal="true" aria-labelledby="asistente-pregunta">
   <header class="asistente-cabecera">
-    <button type="button" class="asistente-cerrar" id="asistente-cerrar" aria-label="Cerrar">×</button>
+    <button type="button" class="asistente-cerrar" id="asistente-cerrar" aria-label="Cerrar" data-i18n-aria="comun.cerrar">×</button>
     <p class="asistente-paso-n" id="asistente-paso-n">Paso 1</p>
     <div class="asistente-progreso" aria-hidden="true"><div class="asistente-progreso-bar" id="asistente-progreso-bar"></div></div>
     <div id="asistente-chips" class="asistente-chips" hidden></div>
@@ -543,18 +567,18 @@
     <div id="asistente-opciones" class="guia-grid asistente-grid" role="listbox"></div>
     <div id="asistente-extra" class="asistente-extra"></div>
     <section id="asistente-sugerencias" class="asistente-sugerencias" hidden>
-      <h3>Otras opciones para tu presupuesto</h3>
+      <h3 data-i18n="wizard.sugerencias">Otras opciones para tu presupuesto</h3>
       <div id="asistente-sugerencias-grid" class="asistente-sugerencias-grid"></div>
     </section>
   </div>
   <footer class="asistente-pie">
     <div id="asistente-precio-bar" class="asistente-precio-bar" hidden>
       <p class="asistente-precio-vivo" id="asistente-precio-vivo"></p>
-      <span class="asistente-iva">IVA incluido</span>
+      <span class="asistente-iva" id="asistente-iva">IVA incluido</span>
     </div>
     <div class="asistente-pie-botones">
-      <button type="button" class="asistente-btn asistente-btn-atras" id="asistente-atras">Atrás</button>
-      <button type="button" class="asistente-btn asistente-btn-sig" id="asistente-siguiente">Siguiente</button>
+      <button type="button" class="asistente-btn asistente-btn-atras" id="asistente-atras" data-i18n="comun.atras">Atrás</button>
+      <button type="button" class="asistente-btn asistente-btn-sig" id="asistente-siguiente" data-i18n="comun.siguiente">Siguiente</button>
     </div>
   </footer>
 </div>
@@ -565,14 +589,24 @@
 <div aria-live="polite" id="precioFinal">0</div>
 <label for="moneda">Moneda orientativa</label><select aria-describedby="error-moneda" class="moneda-selector" id="moneda" onchange="calcular()" style="">
 <option value="PYG">Gs (Paraguay)</option>
+<option value="ARS">ARS (Argentina)</option>
+<option value="BRL">R$ (Brasil)</option>
+<option value="UYU">UYU (Uruguay)</option>
+<option value="CLP">CLP (Chile)</option>
+<option value="BOB">BOB (Bolivia)</option>
 <option value="USD">USD (EE.UU.)</option>
 <option value="EUR">EUR (Europa)</option>
-<option value="BRL">R$ (Brasil)</option>
+<option value="GBP">GBP (Reino Unido)</option>
+<option value="MXN">MXN (México)</option>
+<option value="COP">COP (Colombia)</option>
+<option value="PEN">PEN (Perú)</option>
+<option value="CAD">CAD (Canadá)</option>
+<option value="CHF">CHF</option>
 </select><div aria-live="polite" class="field-error" id="error-moneda"></div>
 </div>
-<span class="nota">IVA incluido. Envío aparte.</span>
+<span class="nota" data-i18n="precio.ivaEnvio">IVA incluido. Envío aparte.</span>
 <div id="desglose"></div><div id="tasa-info"></div></div>
-<button class="btn-confirmar" id="enviar-obra" onclick="enviarObra()">Enviar pedido</button>
+<button class="btn-confirmar" id="enviar-obra" onclick="enviarObra()" data-i18n="comun.enviar">Enviar pedido</button>
 </div>
 <div aria-label="Visor de obras de Harold Lezcano" aria-modal="true" class="modal" hidden="" id="imageModal" role="dialog">
 <button aria-label="Cerrar visor" class="close-modal" onclick="closeModal()" type="button">×</button>
@@ -582,7 +616,7 @@
 <button aria-label="Obra siguiente" class="nav-modal next-modal" onclick="changeImg(1)" type="button">❯</button>
 </div>
 <!-- LÓGICA FINANCIERA Y CONVERSIÓN EN VIVO -->
-<script src="estudio-datos.js"></script><script src="recorte.js"></script><script src="cotizador.js"></script><script src="cotizador-visual.js"></script>
+<script src="estudio-datos.js"></script><script src="estudio-i18n.js"></script><script src="recorte.js"></script><script src="cotizador.js"></script><script src="cotizador-visual.js"></script>
 <script src="interfaz.js"></script>
 <script src="cotizador-asistente.js"></script>
 <script src="mejoras.js"></script><script src="estudio.js"></script></body>
