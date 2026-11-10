@@ -331,6 +331,20 @@ let base;
   assert.equal(await page.locator('button, a',{hasText:'Consultar por WhatsApp'}).count(),0);
   await page.evaluate(()=>document.getElementById('contacto')?.scrollIntoView({block:'center'}));
   await page.screenshot({path:'/workspace/mapa-como-llegar.png'});
+  const lastContacto=await page.evaluate(()=>document.getElementById('contacto').lastElementChild.classList.contains('mapa-cuadro'));
+  const lastCurso=await page.evaluate(()=>document.getElementById('tab-curso').lastElementChild.classList.contains('mapa-cuadro'));
+  assert.equal(lastContacto,true);assert.equal(lastCurso,true);
+  await page.evaluate(()=>{const el=document.scrollingElement||document.documentElement;el.scrollTop=el.scrollHeight;});
+  await page.waitForTimeout(200);
+  const overlap=await page.evaluate(()=>{
+    const map=document.querySelector('#contacto .mapa-cuadro').getBoundingClientRect();
+    const btn=document.querySelector('#contacto .btn-como-llegar').getBoundingClientRect();
+    const nav=document.querySelector('.bottom-nav').getBoundingClientRect();
+    return {mapBottom:map.bottom,btnBottom:btn.bottom,navTop:nav.top,mapVisible:map.top<innerHeight&&map.bottom>0};
+  });
+  assert.ok(overlap.mapVisible,JSON.stringify(overlap));
+  assert.ok(overlap.btnBottom<=overlap.navTop+1,JSON.stringify(overlap));
+  await page.screenshot({path:'/workspace/mapa-abajo.png'});
   assert.deepEqual(errors,[]);await context.close();
  });
  await test('Asistente de pedido: óleo, escultura y mural en móvil',async()=>{
