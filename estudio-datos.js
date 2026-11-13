@@ -68,6 +68,14 @@ window.ESTUDIO_GUIAS_DEFAULT = { items: {
   "sujetos:1:Carbonilla": { url: "img/guias/carbonilla-sujetos-1.webp", text: "Una sola persona (ya incluida en el precio base).", kind: "foto" },
   "sujetos:2:Carbonilla": { url: "img/guias/carbonilla-sujetos-2.webp", text: "Dos personas: se suma el valor de un sujeto extra.", kind: "foto" },
   "sujetos:mascota:Carbonilla": { url: "img/guias/carbonilla-sujetos-mascota.webp", text: "Sumá una mascota junto a la persona.", kind: "foto" },
+  "estilo_mural:Realista Mural": { url: "img/guias/estilo-mural.webp", text: "Un mural con aspecto natural y detalle, pintado sobre la pared.", kind: "foto" },
+  "estilo_mural:Ilustracion Mural": { url: "img/guias/mural-estilo-ilustracion.webp", text: "Mural de una ilustración a color: un dibujo ilustrado pintado en la pared.", kind: "foto" },
+  "estilo_mural:Bocetado": { url: "img/guias/mural-estilo-bocetado.webp", text: "Mural de líneas sencillas, tipo dibujo animado, sin tanto trabajo de modelado.", kind: "foto" },
+  "tipo_restauracion:Digital": { url: "img/guias/restauracion-digital.webp", text: "Limpieza y arreglo de grietas o manchas en una foto o archivo.", kind: "foto" },
+  "tipo_restauracion:Digital Compleja": { url: "img/guias/restauracion-digital-compleja.webp", text: "Reconstrucción más profunda de una imagen muy dañada.", kind: "foto" },
+  "tipo_restauracion:Fisica": { url: "img/guias/estilo-restauracion.webp", text: "Restauración de una obra física. Se evalúa en persona.", kind: "foto" },
+  "color:Sin color": { url: "img/guias/carbonilla.webp", text: "Dibujo en blanco y negro, sin color.", kind: "foto" },
+  "color:A color": { url: "img/guias/carbonilla-a-color.webp", text: "El mismo tipo de dibujo, pero con color.", kind: "foto" },
 } };
 
 window.ESTUDIO_DEFAULTS = {

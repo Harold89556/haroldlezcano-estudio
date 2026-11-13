@@ -589,5 +589,53 @@ test('34. Nombres de álbum traducidos, fallback al español, y categorías con 
   I.setIdioma('es',{manual:true});I.setPais('PY');
 });
 
+
+test('35. En un mismo paso del asistente, cada opción tiene una imagen distinta y acorde al título',()=>{
+  const a=iniciar();a.listo();
+  const W=a.w.AsistentePedido;
+  W.abrir();
+  const srcs=()=>[...a.d.querySelectorAll('#asistente-opciones .guia-card img')].map(i=>i.getAttribute('src')||'');
+  const revisar=(id,min)=>{
+    W.irA(id);
+    const imgs=srcs();
+    assert.ok(imgs.length>=min, id+' tiene '+imgs.length+' opciones');
+    assert.ok(imgs.every(u=>u.startsWith('img/guias/')&&u.endsWith('.webp')), id+' '+JSON.stringify(imgs));
+    assert.equal(new Set(imgs).size,imgs.length, id+' comparte imagen: '+JSON.stringify(imgs));
+  };
+  revisar('trabajo',6);
+  const elige=(v)=>{const c=a.d.querySelector('#asistente-opciones .guia-card[data-value="'+v+'"]');assert.ok(c,v);c.click();};
+  const pintura=(trabajo,pasos)=>{
+    W.irA('trabajo');elige(trabajo);
+    a.set('estilo','Realista');if(a.w.onEstiloChange)a.w.onEstiloChange();
+    a.set('tema','Retrato');if(a.w.onTemaChange)a.w.onTemaChange();
+    for(const id of pasos) revisar(id,2);
+  };
+  pintura('oleo',['estilo','tema','sujetos','fondo','forma','marco']);
+  pintura('acrilico',['estilo','tema','sujetos','fondo','forma','marco']);
+  pintura('carbonilla',['estilo','tema','sujetos','fondo','color','marco']);
+  W.irA('trabajo');elige('escultura');
+  revisar('tipo_escultura',6);revisar('material_escultura',4);
+  W.irA('trabajo');elige('mural');
+  revisar('estilo_mural',3);
+  const mural=Object.fromEntries([...a.d.querySelectorAll('#asistente-opciones .guia-card')].map(c=>[c.getAttribute('data-value'),c.querySelector('img').getAttribute('src')]));
+  assert.match(mural['Realista Mural'],/estilo-mural\.webp/);
+  assert.match(mural['Ilustracion Mural'],/mural-estilo-ilustracion\.webp/);
+  assert.match(mural['Bocetado'],/mural-estilo-bocetado\.webp/);
+  assert.match(a.d.querySelector('#asistente-opciones .guia-card[data-value="Ilustracion Mural"]').textContent,/ilustración a color|dibujo ilustrado/i);
+  assert.match(a.d.querySelector('#asistente-opciones .guia-card[data-value="Bocetado"]').textContent,/dibujo animado|líneas sencillas/);
+  W.irA('trabajo');elige('restauracion');
+  revisar('tipo_restauracion',3);
+  const rest=Object.fromEntries([...a.d.querySelectorAll('#asistente-opciones .guia-card')].map(c=>[c.getAttribute('data-value'),c.querySelector('img').getAttribute('src')]));
+  assert.match(rest['Digital'],/restauracion-digital\.webp/);
+  assert.match(rest['Digital Compleja'],/restauracion-digital-compleja\.webp/);
+  assert.match(rest['Fisica'],/estilo-restauracion\.webp/);
+  W.irA('trabajo');elige('carbonilla');
+  a.set('tema','Retrato');if(a.w.onTemaChange)a.w.onTemaChange();
+  revisar('color',2);
+  const col=Object.fromEntries([...a.d.querySelectorAll('#asistente-opciones .guia-card')].map(c=>[c.getAttribute('data-value'),c.querySelector('img').getAttribute('src')]));
+  assert.match(col['Sin color'],/carbonilla\.webp/);
+  assert.match(col['A color'],/carbonilla-a-color\.webp/);
+});
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));
 

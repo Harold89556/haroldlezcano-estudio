@@ -747,5 +747,34 @@ let base;
   await s.context.close();
  });
 
+
+ await test('Imágenes distintas en un mismo paso: mural, restauración y color',async()=>{
+  const {page,context,errors}=await session();
+  await page.goto(base+'/index.html#cotizacion');
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value=mural]');
+  await elegirAsistente(page,'mural');await siguienteAsistente(page);
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value="Ilustracion Mural"]');
+  const mural=await page.locator('#asistente-opciones .guia-card').evaluateAll(els=>els.map(e=>({v:e.getAttribute('data-value'),src:e.querySelector('img')&&e.querySelector('img').getAttribute('src')})));
+  assert.equal(new Set(mural.map(o=>o.src)).size,mural.length,JSON.stringify(mural));
+  assert.ok(mural.some(o=>o.v==='Ilustracion Mural'&&/mural-estilo-ilustracion/.test(o.src)));
+  assert.ok(mural.some(o=>o.v==='Bocetado'&&/mural-estilo-bocetado/.test(o.src)));
+  await page.locator('#asistente-cerrar').click();
+  await page.goto(base+'/index.html#cotizacion');
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value=restauracion]');
+  await elegirAsistente(page,'restauracion');await siguienteAsistente(page);
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value=Digital]');
+  const rest=await page.locator('#asistente-opciones .guia-card').evaluateAll(els=>els.map(e=>({v:e.getAttribute('data-value'),src:e.querySelector('img')&&e.querySelector('img').getAttribute('src')})));
+  assert.equal(new Set(rest.map(o=>o.src)).size,rest.length,JSON.stringify(rest));
+  await page.locator('#asistente-cerrar').click();
+  await page.goto(base+'/index.html#cotizacion');
+  await elegirAsistente(page,'carbonilla');await siguienteAsistente(page);
+  await elegirAsistente(page,'Realista');await siguienteAsistente(page);
+  await elegirAsistente(page,'Paisaje');await siguienteAsistente(page);
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value="A color"]');
+  const col=await page.locator('#asistente-opciones .guia-card').evaluateAll(els=>els.map(e=>e.querySelector('img')&&e.querySelector('img').getAttribute('src')));
+  assert.equal(new Set(col).size,col.length,JSON.stringify(col));
+  assert.deepEqual(errors,[]);await context.close();
+ });
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(root,'resultados-navegador.json'),JSON.stringify(results,null,2));
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{await browser?.close();server.close();});

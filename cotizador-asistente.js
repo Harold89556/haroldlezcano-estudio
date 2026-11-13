@@ -177,8 +177,8 @@
     }
     if (paso.id === 'color') {
       return [
-        { value: 'Sin color', title: i18n('card.bn'), text: i18n('card.bn.text'), url: guia('tecnica:Carbonilla').url, selected: valor('color_lapiz') === 'Sin color' },
-        { value: 'A color', title: i18n('card.aColor'), text: i18n('card.aColor.text'), url: guia('tecnica:Carbonilla').url, selected: valor('color_lapiz') === 'A color' }
+        { value: 'Sin color', title: i18n('card.bn'), text: i18n('card.bn.text'), url: guia('color:Sin color').url, selected: valor('color_lapiz') === 'Sin color' },
+        { value: 'A color', title: i18n('card.aColor'), text: i18n('card.aColor.text'), url: guia('color:A color').url, selected: valor('color_lapiz') === 'A color' }
       ];
     }
     if (paso.id === 'forma') {
@@ -224,17 +224,16 @@
     }
     if (paso.id === 'estilo_mural') {
       return [
-        { value: 'Realista Mural', title: i18n('card.muralRealista'), text: i18n('card.muralRealista.text'), url: guia('estilo:Mural').url, selected: valor('estilo_mural') === 'Realista Mural' },
-        { value: 'Ilustracion Mural', title: i18n('card.muralIlus'), text: i18n('card.muralIlus.text'), url: guia('estilo:Abstracto').url, selected: valor('estilo_mural') === 'Ilustracion Mural' },
-        { value: 'Bocetado', title: i18n('card.muralBoceto'), text: i18n('card.muralBoceto.text'), url: 'img/guias/bocetado.webp', selected: valor('estilo_mural') === 'Bocetado' }
+        { value: 'Realista Mural', title: i18n('card.muralRealista'), text: i18n('card.muralRealista.text'), url: guia('estilo_mural:Realista Mural').url, selected: valor('estilo_mural') === 'Realista Mural' },
+        { value: 'Ilustracion Mural', title: i18n('card.muralIlus'), text: i18n('card.muralIlus.text'), url: guia('estilo_mural:Ilustracion Mural').url, selected: valor('estilo_mural') === 'Ilustracion Mural' },
+        { value: 'Bocetado', title: i18n('card.muralBoceto'), text: i18n('card.muralBoceto.text'), url: guia('estilo_mural:Bocetado').url, selected: valor('estilo_mural') === 'Bocetado' }
       ];
     }
     if (paso.id === 'tipo_restauracion') {
-      const url = guia('estilo:Restauracion').url;
       return [
-        { value: 'Digital', title: i18n('card.restDigital'), text: i18n('card.restDigital.text'), url, selected: valor('tipo_restauracion') === 'Digital' },
-        { value: 'Digital Compleja', title: i18n('card.restCompleja'), text: i18n('card.restCompleja.text'), url, selected: valor('tipo_restauracion') === 'Digital Compleja' },
-        { value: 'Fisica', title: i18n('card.restFisica'), text: i18n('card.restFisica.text'), url, selected: valor('tipo_restauracion') === 'Fisica' }
+        { value: 'Digital', title: i18n('card.restDigital'), text: i18n('card.restDigital.text'), url: guia('tipo_restauracion:Digital').url, selected: valor('tipo_restauracion') === 'Digital' },
+        { value: 'Digital Compleja', title: i18n('card.restCompleja'), text: i18n('card.restCompleja.text'), url: guia('tipo_restauracion:Digital Compleja').url, selected: valor('tipo_restauracion') === 'Digital Compleja' },
+        { value: 'Fisica', title: i18n('card.restFisica'), text: i18n('card.restFisica.text'), url: guia('tipo_restauracion:Fisica').url, selected: valor('tipo_restauracion') === 'Fisica' }
       ];
     }
     return [];
