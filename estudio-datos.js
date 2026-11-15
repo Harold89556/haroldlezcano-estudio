@@ -547,6 +547,8 @@ window.ESTUDIO_DEFAULTS = {
   "categorias": [
     { "id": "retrato", "name": "Retratos", "nombreI18n": {"en": "Portraits", "pt": "Retratos", "fr": "Portraits", "it": "Ritratti", "de": "Porträts", "zh": "肖像", "ja": "肖像画", "ko": "초상화", "hi": "चित्र", "ru": "Портреты"} },
     { "id": "paisaje", "name": "Paisajes", "nombreI18n": {"en": "Landscapes", "pt": "Paisagens", "fr": "Paysages", "it": "Paesaggi", "de": "Landschaften", "zh": "风景", "ja": "風景画", "ko": "풍경화", "hi": "दृश्य-चित्र", "ru": "Пейзажи"} },
+    { "id": "sacro", "name": "Arte sacro", "nombreI18n": {"en": "Sacred art", "pt": "Arte sacra", "fr": "Art sacré", "it": "Arte sacra", "de": "Sakrale Kunst", "zh": "宗教艺术", "ja": "宗教美術", "ko": "종교 미술", "hi": "धार्मिक कला", "ru": "Сакральное искусство"} },
+
     { "id": "bodegones", "name": "Bodegones", "nombreI18n": {"en": "Still lifes", "pt": "Naturezas-mortas", "fr": "Natures mortes", "it": "Nature morte", "de": "Stillleben", "zh": "静物", "ja": "静物", "ko": "정물", "hi": "स्थिर जीवन", "ru": "Натюрморты"} },
     { "id": "animales", "name": "Animales", "nombreI18n": {"en": "Animals", "pt": "Animais", "fr": "Animaux", "it": "Animali", "de": "Tiere", "zh": "动物", "ja": "動物", "ko": "동물", "hi": "पशु", "ru": "Животные"} },
     { "id": "personajes", "name": "Personajes e ilustración", "nombreI18n": {"en": "Characters and illustration", "pt": "Personagens e ilustração", "fr": "Personnages et illustration", "it": "Personaggi e illustrazione", "de": "Figuren und Illustration", "zh": "角色与插画", "ja": "キャラクターとイラスト", "ko": "캐릭터와 일러스트", "hi": "पात्र और चित्रण", "ru": "Персонажи и иллюстрация"} },
@@ -693,6 +695,8 @@ window.EstudioDatos = (() => {
  const ALBUM_TRADUCCIONES = {
   'Retratos': {"en":"Portraits","pt":"Retratos","fr":"Portraits","it":"Ritratti","de":"Porträts","zh":"肖像","ja":"肖像画","ko":"초상화","hi":"चित्र","ru":"Портреты"},
   'Paisajes': {"en":"Landscapes","pt":"Paisagens","fr":"Paysages","it":"Paesaggi","de":"Landschaften","zh":"风景","ja":"風景画","ko":"풍경화","hi":"दृश्य-चित्र","ru":"Пейзажи"},
+  'Arte sacro': {"en":"Sacred art","pt":"Arte sacra","fr":"Art sacré","it":"Arte sacra","de":"Sakrale Kunst","zh":"宗教艺术","ja":"宗教美術","ko":"종교 미술","hi":"धार्मिक कला","ru":"Сакральное искусство"},
+
   'Escultura': {"en":"Sculpture","pt":"Escultura","fr":"Sculpture","it":"Scultura","de":"Skulptur","zh":"雕塑","ja":"彫刻","ko":"조각","hi":"मूर्ति कला","ru":"Скульптура"},
   'Esculturas': {"en":"Sculptures","pt":"Esculturas","fr":"Sculptures","it":"Sculture","de":"Skulpturen","zh":"雕塑","ja":"彫刻","ko":"조각","hi":"मूर्तियाँ","ru":"Скульптуры"},
   'Arte mural': {"en":"Mural art","pt":"Arte mural","fr":"Art mural","it":"Arte murale","de":"Wandkunst","zh":"壁画艺术","ja":"壁画芸術","ko":"벽화 예술","hi":"भित्ति कला","ru":"Настенная живопись"},

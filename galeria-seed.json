@@ -816,7 +816,7 @@
   {
     "id": "seed-075",
     "url": "https://i.postimg.cc/ZqkWHxqR/2012-05-29-020.jpg",
-    "category": "retrato",
+    "category": "mural",
     "caption": "",
     "alt": "Obra de murales de Harold Lezcano, imagen 3",
     "order": 74,
@@ -1117,14 +1117,14 @@
     "caption": "",
     "alt": "Obra de abstractos de Harold Lezcano, imagen 4",
     "order": 101,
-    "cover": false,
+    "cover": true,
     "hidden": false,
     "storagePath": ""
   },
   {
     "id": "seed-103",
     "url": "https://i.postimg.cc/QMkdbLPg/IMG-20200329-WA0014(1).jpg",
-    "category": "otros",
+    "category": "sacro",
     "caption": "",
     "alt": "Obra de abstractos de Harold Lezcano, imagen 5",
     "order": 102,
@@ -1135,7 +1135,7 @@
   {
     "id": "seed-104",
     "url": "https://i.postimg.cc/tgt450fn/IMG-20250430-WA0011.jpg",
-    "category": "retrato",
+    "category": "sacro",
     "caption": "",
     "alt": "Obra de abstractos de Harold Lezcano, imagen 6",
     "order": 103,
@@ -1146,7 +1146,7 @@
   {
     "id": "seed-105",
     "url": "https://i.postimg.cc/7LMZVvcX/Pics-Art-06-05-11-45-20.jpg",
-    "category": "otros",
+    "category": "sacro",
     "caption": "",
     "alt": "Obra de abstractos de Harold Lezcano, imagen 7",
     "order": 104,
@@ -1179,7 +1179,7 @@
   {
     "id": "seed-108",
     "url": "https://i.postimg.cc/FF21Nxjv/20140718-095757-1.jpg",
-    "category": "retrato",
+    "category": "personajes",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 3",
     "order": 107,
@@ -1289,7 +1289,7 @@
   {
     "id": "seed-118",
     "url": "https://i.postimg.cc/14xk2XVw/20240402-010548.jpg",
-    "category": "retrato",
+    "category": "paisaje",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 13",
     "order": 117,
@@ -1531,7 +1531,7 @@
   {
     "id": "seed-140",
     "url": "https://i.postimg.cc/FF21NxjN/IMG-20170224-WA0017.jpg",
-    "category": "otros",
+    "category": "sacro",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 35",
     "order": 139,
