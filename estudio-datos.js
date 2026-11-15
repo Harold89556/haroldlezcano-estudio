@@ -556,8 +556,8 @@ window.ESTUDIO_DEFAULTS = {
     { "id": "abstracto", "name": "Abstracción", "nombreI18n": {"en": "Abstraction", "pt": "Abstração", "fr": "Abstraction", "it": "Astrazione", "de": "Abstraktion", "zh": "抽象", "ja": "抽象", "ko": "추상", "hi": "अमूर्तन", "ru": "Абстракция"} },
     { "id": "mural", "name": "Arte mural", "nombreI18n": {"en": "Mural art", "pt": "Arte mural", "fr": "Art mural", "it": "Arte murale", "de": "Wandkunst", "zh": "壁画艺术", "ja": "壁画芸術", "ko": "벽화 예술", "hi": "भित्ति कला", "ru": "Настенная живопись"} },
     { "id": "escultura", "name": "Escultura", "nombreI18n": {"en": "Sculpture", "pt": "Escultura", "fr": "Sculpture", "it": "Scultura", "de": "Skulptur", "zh": "雕塑", "ja": "彫刻", "ko": "조각", "hi": "मूर्ति कला", "ru": "Скульптура"} },
-    { "id": "otros", "name": "Otros", "nombreI18n": {"en": "Other", "pt": "Outros", "fr": "Autres", "it": "Altri", "de": "Weitere", "zh": "其他", "ja": "その他", "ko": "기타", "hi": "अन्य", "ru": "Другое"} },
-    { "id": "estudio", "name": "Estudio", "nombreI18n": {"en": "Studio", "pt": "Estúdio", "fr": "Atelier", "it": "Studio", "de": "Atelier", "zh": "画室", "ja": "アトリエ", "ko": "작업실", "hi": "स्टूडियो", "ru": "Мастерская"} }
+    { "id": "estudio", "name": "Estudio", "nombreI18n": {"en": "Studio", "pt": "Estúdio", "fr": "Atelier", "it": "Studio", "de": "Atelier", "zh": "画室", "ja": "アトリエ", "ko": "작업실", "hi": "स्टूडियो", "ru": "Мастерская"} },
+    { "id": "otros", "name": "Otras obras", "nombreI18n": {"en": "Other works", "pt": "Outras obras", "fr": "Autres œuvres", "it": "Altre opere", "de": "Weitere Werke", "zh": "其他作品", "ja": "その他の作品", "ko": "기타 작품", "hi": "अन्य कृतियाँ", "ru": "Другие работы"} }
   ],
   "etiquetasTextos": {
     "subtitulo": "Subtítulo de la cabecera",
@@ -703,7 +703,8 @@ window.EstudioDatos = (() => {
   'Murales': {"en":"Murals","pt":"Murais","fr":"Peintures murales","it":"Murali","de":"Wandbilder","zh":"壁画","ja":"壁画","ko":"벽화","hi":"भित्ति-चित्र","ru":"Муралы"},
   'Abstracción': {"en":"Abstraction","pt":"Abstração","fr":"Abstraction","it":"Astrazione","de":"Abstraktion","zh":"抽象","ja":"抽象","ko":"추상","hi":"अमूर्तन","ru":"Абстракция"},
   'Abstractos': {"en":"Abstract","pt":"Abstratos","fr":"Abstrait","it":"Astratti","de":"Abstrakt","zh":"抽象画","ja":"抽象画","ko":"추상화","hi":"अमूर्त कृतियाँ","ru":"Абстракция"},
-  'Otros': {"en":"Other","pt":"Outros","fr":"Autres","it":"Altri","de":"Weitere","zh":"其他","ja":"その他","ko":"기타","hi":"अन्य","ru":"Другое"},
+  'Otros': {"en":"Other works","pt":"Outras obras","fr":"Autres œuvres","it":"Altre opere","de":"Weitere Werke","zh":"其他作品","ja":"その他の作品","ko":"기타 작품","hi":"अन्य कृतियाँ","ru":"Другие работы"},
+  'Otras obras': {"en":"Other works","pt":"Outras obras","fr":"Autres œuvres","it":"Altre opere","de":"Weitere Werke","zh":"其他作品","ja":"その他の作品","ko":"기타 작품","hi":"अन्य कृतियाँ","ru":"Другие работы"},
   'Estudio': {"en":"Studio","pt":"Estúdio","fr":"Atelier","it":"Studio","de":"Atelier","zh":"画室","ja":"アトリエ","ko":"작업실","hi":"स्टू디오","ru":"Мастерская"},
   'Animales': {"en":"Animals","pt":"Animais","fr":"Animaux","it":"Animali","de":"Tiere","zh":"动物","ja":"動物","ko":"동물","hi":"पशु","ru":"Животные"},
   'Vehículos': {"en":"Vehicles","pt":"Veículos","fr":"Véhicules","it":"Veicoli","de":"Fahrzeuge","zh":"交通工具","ja":"乗り物","ko":"탈것","hi":"वाहन","ru":"Транспорт"},
