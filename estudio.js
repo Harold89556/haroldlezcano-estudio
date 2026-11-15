@@ -80,7 +80,7 @@
  let seed = [...document.querySelectorAll('#mainGallery .gallery-item')].map((button, order) => ({
   id: button.dataset.galleryId, category:[...button.classList].find(c => c !== 'gallery-item'),
   url:button.querySelector('img').src, alt:button.querySelector('img').alt,
-  caption:'', order, cover:false, hidden:false, storagePath:''
+  caption:'', order, cover:button.dataset.cover==='true', hidden:false, storagePath:''
  }));
  let categories = data.clone(defaults.categorias);
  let gallery = seed;
