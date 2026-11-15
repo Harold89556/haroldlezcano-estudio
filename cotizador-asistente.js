@@ -145,11 +145,11 @@
     if (paso.id === 'estilo') {
       const list = [
         { value: 'Realista', key: 'estilo:Realista', title: trabajo === 'carbonilla' ? i18n('card.realistaDet') : i18n('card.realista') },
-        { value: 'Hiperrealista', key: 'estilo:Hiperrealista', title: trabajo === 'carbonilla' ? i18n('card.hiperGrafito') : i18n('card.hiper') }
+        { value: 'Hiperrealista', key: 'estilo:Hiperrealista', title: trabajo === 'carbonilla' ? i18n('card.hiperGrafito') : i18n('card.hiper') },
+        { value: 'Abstracto', key: 'estilo:Abstracto', title: i18n('card.abstracto') }
       ];
       if (trabajo !== 'carbonilla') list.push({ value: 'Espatulado', key: 'estilo:Espatulado', title: i18n('card.espatulado') });
       list.push({ value: 'Bocetado', key: 'estilo:Bocetado', title: trabajo === 'carbonilla' ? i18n('card.bocetoTrazo') : i18n('card.monocromatico') });
-      list.push({ value: 'Abstracto', key: 'estilo:Abstracto', title: i18n('card.abstracto') });
       return list.map((o) => ({ ...o, text: textoGuia(o.key), url: guia(o.key).url, selected: valor('estilo') === o.value }));
     }
     if (paso.id === 'tema') {
@@ -215,9 +215,9 @@
     }
     if (paso.id === 'material_escultura') {
       return [
-        { value: 'Fibra', key: 'material_escultura:Fibra', title: i18n('escultura.fibra'), hierro:false },
-        { value: 'Cemento', key: 'material_escultura:Cemento', title: i18n('escultura.cemento'), hierro:false },
         { value: 'Arcilla', key: 'material_escultura:Arcilla', title: i18n('escultura.arcilla'), hierro:false },
+        { value: 'Cemento', key: 'material_escultura:Cemento', title: i18n('escultura.cemento'), hierro:false },
+        { value: 'Fibra', key: 'material_escultura:Fibra', title: i18n('escultura.fibra'), hierro:false },
         { value: 'Chapa', key: 'material_escultura:Chapa', title: i18n('escultura.chapa'), hierro:true },
         { value: 'Chatarra', key: 'material_escultura:Chatarra', title: i18n('escultura.chatarra'), hierro:true }
       ].map((o) => ({ ...o, text: textoGuia(o.key), url: guia(o.key).url, selected: valor('material_escultura') === o.value }));

@@ -6,7 +6,7 @@
     "caption": "",
     "alt": "Obra de retratos de Harold Lezcano, imagen 1",
     "order": 0,
-    "cover": false,
+    "cover": true,
     "hidden": false,
     "storagePath": ""
   },
@@ -468,7 +468,7 @@
     "caption": "",
     "alt": "Obra de paisajes de Harold Lezcano, imagen 1",
     "order": 42,
-    "cover": false,
+    "cover": true,
     "hidden": false,
     "storagePath": ""
   },
@@ -589,7 +589,7 @@
     "caption": "",
     "alt": "Obra de esculturas de Harold Lezcano, imagen 1",
     "order": 53,
-    "cover": false,
+    "cover": true,
     "hidden": false,
     "storagePath": ""
   },
@@ -842,7 +842,7 @@
     "caption": "",
     "alt": "Obra de murales de Harold Lezcano, imagen 5",
     "order": 76,
-    "cover": false,
+    "cover": true,
     "hidden": false,
     "storagePath": ""
   },
@@ -1084,7 +1084,7 @@
     "caption": "",
     "alt": "Obra de abstractos de Harold Lezcano, imagen 1",
     "order": 98,
-    "cover": false,
+    "cover": true,
     "hidden": false,
     "storagePath": ""
   },
@@ -1128,7 +1128,7 @@
     "caption": "",
     "alt": "Obra de abstractos de Harold Lezcano, imagen 5",
     "order": 102,
-    "cover": false,
+    "cover": true,
     "hidden": false,
     "storagePath": ""
   },
@@ -1161,7 +1161,7 @@
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 1",
     "order": 105,
-    "cover": false,
+    "cover": true,
     "hidden": false,
     "storagePath": ""
   },
@@ -1172,7 +1172,7 @@
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 2",
     "order": 106,
-    "cover": false,
+    "cover": true,
     "hidden": false,
     "storagePath": ""
   },
@@ -1278,7 +1278,7 @@
   {
     "id": "seed-117",
     "url": "https://i.postimg.cc/44KnD0Hw/20240318-123409.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 12",
     "order": 116,
@@ -1300,7 +1300,7 @@
   {
     "id": "seed-119",
     "url": "https://i.postimg.cc/QVL2wCKN/20240423-183609.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 14",
     "order": 118,
@@ -1377,7 +1377,7 @@
   {
     "id": "seed-126",
     "url": "https://i.postimg.cc/sxZFT7XN/20251011-032913.jpg",
-    "category": "otros",
+    "category": "bodegones",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 21",
     "order": 125,
@@ -1388,7 +1388,7 @@
   {
     "id": "seed-127",
     "url": "https://i.postimg.cc/VvbyKn6h/20251018-084154.jpg",
-    "category": "otros",
+    "category": "bodegones",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 22",
     "order": 126,
@@ -1399,11 +1399,11 @@
   {
     "id": "seed-128",
     "url": "https://i.postimg.cc/w3KCZMR1/20251214-223150.jpg",
-    "category": "otros",
+    "category": "estudio",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 23",
     "order": 127,
-    "cover": false,
+    "cover": true,
     "hidden": false,
     "storagePath": ""
   },
@@ -1425,7 +1425,7 @@
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 25",
     "order": 129,
-    "cover": false,
+    "cover": true,
     "hidden": false,
     "storagePath": ""
   },
@@ -1443,7 +1443,7 @@
   {
     "id": "seed-132",
     "url": "https://i.postimg.cc/bYGd75S6/7331fa07b09e2732ed86eeafc2dfd5cc-3.jpg",
-    "category": "otros",
+    "category": "retrato",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 27",
     "order": 131,
@@ -1502,7 +1502,7 @@
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 32",
     "order": 136,
-    "cover": false,
+    "cover": true,
     "hidden": false,
     "storagePath": ""
   },
@@ -1619,7 +1619,7 @@
   {
     "id": "seed-148",
     "url": "https://i.postimg.cc/qgfPSq6r/Picsart-24-02-21-07-48-23-974(1).jpg",
-    "category": "otros",
+    "category": "paisaje",
     "caption": "",
     "alt": "Obra de otros trabajos de Harold Lezcano, imagen 43",
     "order": 147,
