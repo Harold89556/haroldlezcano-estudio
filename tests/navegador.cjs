@@ -776,5 +776,46 @@ let base;
   assert.deepEqual(errors,[]);await context.close();
  });
 
+
+ await test('Atrás del sistema vuelve un paso en el cotizador, el álbum y el visor',async()=>{
+  const {page,context,errors}=await session();
+  await page.setViewportSize({width:390,height:844});
+  await page.goto(base+'/index.html');
+  const origin=new URL(page.url()).origin;
+  await page.click('.tab-btn[data-tab="cotizacion"]');
+  await page.waitForSelector('#asistente-pedido:not([hidden]) #asistente-opciones .guia-card[data-value=oleo]');
+  await elegirAsistente(page,'oleo');
+  await siguienteAsistente(page);
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value=Realista]');
+  assert.equal(new URL(page.url()).hash,'#cotizacion/estilo');
+  await page.goBack();
+  await page.waitForFunction(()=>location.hash==='#cotizacion'&&!document.getElementById('asistente-pedido').hidden);
+  assert.equal(await page.locator('#asistente-pedido').isVisible(),true);
+  assert.equal(await page.locator('#asistente-opciones .guia-card[data-value=oleo]').getAttribute('aria-selected'),'true');
+  await page.screenshot({path:'/workspace/wizard-atras-t53u.png',animations:'disabled'});
+  await page.goBack();
+  await page.waitForFunction(()=>location.hash==='#inicio'&&document.getElementById('asistente-pedido').hidden);
+  assert.equal(new URL(page.url()).origin,origin);
+  assert.equal(await page.locator('#asistente-pedido').isVisible(),false);
+  assert.equal(await page.locator('#tab-inicio').isVisible(),true);
+  await page.locator('[data-album="retrato"]').click();
+  await page.waitForFunction(()=>location.hash==='#galeria/retrato');
+  await page.waitForSelector('#mainGallery .gallery-item.show');
+  await page.locator('#mainGallery .gallery-item.show').first().click();
+  await page.waitForSelector('#imageModal:not([hidden])');
+  assert.match(new URL(page.url()).hash,/^#galeria\/retrato\/\d+$/);
+  await page.goBack();
+  await page.waitForFunction(()=>document.getElementById('imageModal').hidden&&location.hash==='#galeria/retrato');
+  assert.equal(await page.locator('#imageModal').isHidden(),true);
+  assert.equal(await page.locator('#titulo-album-abierto').isVisible(),true);
+  await page.screenshot({path:'/workspace/album-atras-t53u.png',animations:'disabled'});
+  await page.goBack();
+  await page.waitForFunction(()=>location.hash==='#galeria'||location.hash==='#inicio');
+  assert.equal(new URL(page.url()).origin,origin);
+  assert.equal(await page.locator('#vista-albumes').isVisible(),true);
+  assert.deepEqual(errors,[]);
+  await context.close();
+ });
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(root,'resultados-navegador.json'),JSON.stringify(results,null,2));
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{await browser?.close();server.close();});

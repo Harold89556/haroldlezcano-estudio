@@ -120,15 +120,25 @@ function hrefGaleriaNav(){
 function abrirAlbumAdmin(id){
  adminAlbum=id;
  const want=hrefGaleriaNav();
- if(location.hash!==want) history.replaceState(null,'',want);
+ if(location.hash!==want) history.pushState({estudio:{route:want,pushed:true,stack:['#galeria-admin',want]}},'',want);
+ else if(!history.state||!history.state.estudio) history.replaceState({estudio:{route:want,pushed:false,stack:[want]}},'',want);
  renderGallery();
  window.scrollTo(0,0);
 }
 window.abrirAlbumAdmin=abrirAlbumAdmin;
 function cerrarAlbumAdmin(){
+ if(location.hash.startsWith('#galeria-admin/')){
+  const st=history.state&&history.state.estudio;
+  if(st&&st.pushed){history.back();return;}
+  adminAlbum=null;
+  history.replaceState({estudio:{route:'#galeria-admin',pushed:false,stack:['#galeria-admin']}},'','#galeria-admin');
+  renderGallery();
+  window.scrollTo(0,0);
+  return;
+ }
  adminAlbum=null;
  const want=hrefGaleriaNav();
- if(location.hash.startsWith('#galeria-admin') && location.hash!==want) history.replaceState(null,'',want);
+ if(location.hash.startsWith('#galeria-admin') && location.hash!==want) history.replaceState({estudio:{route:want,pushed:false}},'',want);
  renderGallery();
  window.scrollTo(0,0);
 }
@@ -496,6 +506,16 @@ function showScreen(id){
  if(changed) requestAnimationFrame(()=>window.scrollTo(0,scrolls[next]||0));
 }
 window.addEventListener('hashchange',()=>showScreen(location.hash.slice(1)));
+window.addEventListener('popstate',()=>showScreen(location.hash.slice(1)));
+(function sembrarAdmin(){
+ const h=location.hash||'#galeria-admin';
+ const parts=h.slice(1).split('/').filter(Boolean);
+ if(parts[0]==='galeria-admin'&&parts[1]){
+  const base=location.pathname+location.search;
+  history.replaceState({estudio:{route:'#galeria-admin',pushed:false,stack:['#galeria-admin']}},'',base+'#galeria-admin');
+  history.pushState({estudio:{route:h,pushed:true,stack:['#galeria-admin',h]}},'',base+h);
+ }
+})();
 showScreen(location.hash.slice(1));
 $('gallery-upload-form').onsubmit=e=>{e.preventDefault();if(uploading) return;const form=e.currentTarget;
  action(form,async()=>{

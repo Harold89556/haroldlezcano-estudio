@@ -698,7 +698,8 @@
         document.getElementById('vista-albumes').style.display='grid';
         document.getElementById('vista-hojas').style.display='none';
         const trigger=document.querySelector('[data-album="'+window.albumActual+'"]'); if(trigger)trigger.focus();
-        setRoute('#galeria');
+        if(window.EstudioRuta&&typeof EstudioRuta.volverRuta==='function')EstudioRuta.volverRuta();
+        else setRoute('#galeria');
     }
 
     let currentImages = [];
@@ -748,7 +749,8 @@
         document.body.classList.remove('visor-abierto');
         visor.pointers.clear(); resetZoom(false);
         if (window.focoAnterior) window.focoAnterior.focus();
-        setRoute('#galeria/' + (window.albumActual || 'retrato'), true);
+        if(window.EstudioRuta&&typeof EstudioRuta.volverRuta==='function')EstudioRuta.volverRuta();
+        else setRoute('#galeria/' + (window.albumActual || 'retrato'), true);
     }
 
     function changeImg(dir) {

@@ -642,5 +642,34 @@ test('35. En un mismo paso del asistente, cada opción tiene una imagen distinta
   assert.match(col['A color'],/carbonilla-a-color\.webp/);
 });
 
+
+test('36. El historial vuelve un paso en el cotizador, el álbum y el visor',()=>{
+  const a=iniciar();
+  a.w.switchTab('cotizacion');
+  assert.equal(a.w.location.hash,'#cotizacion');
+  assert.equal(a.d.getElementById('asistente-pedido').hidden,false);
+  a.d.querySelector('#asistente-opciones .guia-card[data-value="oleo"]').click();
+  a.w.AsistentePedido.pintar();
+  a.d.getElementById('asistente-siguiente').click();
+  assert.equal(a.w.location.hash,'#cotizacion/estilo');
+  assert.ok(a.d.querySelector('#asistente-opciones .guia-card[data-value="Realista"]'));
+  a.w.EstudioRuta.volverRuta();
+  assert.equal(a.w.location.hash,'#cotizacion');
+  assert.equal(a.d.getElementById('asistente-pedido').hidden,false);
+  assert.equal(a.d.querySelector('#asistente-opciones .guia-card[data-value="oleo"]').getAttribute('aria-selected'),'true');
+  a.w.EstudioRuta.volverRuta();
+  assert.equal(a.w.location.hash,'#inicio');
+  assert.equal(a.d.getElementById('asistente-pedido').hidden,true);
+  assert.equal(a.d.getElementById('tab-inicio').hidden,false);
+  const b=iniciar('#galeria/retrato/2');
+  assert.equal(b.d.getElementById('imageModal').hidden,false);
+  b.w.closeModal();
+  assert.equal(b.w.location.hash,'#galeria/retrato');
+  assert.equal(b.d.getElementById('imageModal').hidden,true);
+  b.w.closeAlbum();
+  assert.equal(b.w.location.hash,'#galeria');
+  assert.equal(b.d.getElementById('vista-albumes').style.display,'grid');
+});
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));
 

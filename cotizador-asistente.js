@@ -350,12 +350,43 @@
   }
 
 
+  function hashPaso(i, lista) {
+    const listaPasos = lista || pasos();
+    const paso = listaPasos[i];
+    if (!paso || i <= 0 || paso.id === 'trabajo') return '#cotizacion';
+    return '#cotizacion/' + paso.id;
+  }
+  function pasoAnterior(id) {
+    const lista = pasos();
+    const i = lista.findIndex((p) => p.id === id);
+    if (i <= 0) return null;
+    const prev = lista[i - 1];
+    return !prev || prev.id === 'trabajo' ? null : prev.id;
+  }
+  function restaurarPaso(id) {
+    const root = $('asistente-pedido');
+    if (root && root.hidden) abrir({ conservar: true });
+    const lista = pasos();
+    let i = lista.findIndex((p) => p.id === id);
+    if (id === 'trabajo' || id === 'cotizacion' || !id) i = 0;
+    if (i < 0) i = 0;
+    indice = i;
+    pintar();
+  }
   function irA(id) {
     const lista = pasos();
     const i = lista.findIndex((p) => p.id === id);
     if (i < 0) return;
+    if (i === indice) { pintar(); return; }
+    if (i < indice && window.EstudioRuta && typeof EstudioRuta.cerrarHasta === 'function' && !window.restaurandoRuta) {
+      indice = i;
+      pintar();
+      EstudioRuta.cerrarHasta(hashPaso(i, lista));
+      return;
+    }
     indice = i;
     pintar();
+    if (!window.restaurandoRuta && typeof setRoute === 'function') setRoute(hashPaso(i, lista), i < indice);
   }
 
   function textoPrecioDe(p) {
@@ -699,7 +730,7 @@
     const atras = $('asistente-atras');
     const sig = $('asistente-siguiente');
     const enviar = $('enviar-obra');
-    atras.disabled = indice === 0;
+    if (atras) atras.disabled = false;
     const ultimo = paso.id === 'resumen';
     sig.hidden = ultimo;
     sig.disabled = !puedeSeguir(paso);
@@ -728,7 +759,7 @@
     if (!paso) return;
     const atras = $('asistente-atras');
     const sig = $('asistente-siguiente');
-    if (atras) atras.disabled = indice === 0;
+    if (atras) atras.disabled = false;
     const ultimo = paso.id === 'resumen';
     if (sig) {
       sig.hidden = ultimo;
@@ -740,45 +771,54 @@
     actualizarBarra();
   }
 
-  function abrir() {
+  function abrir(opts) {
     const root = $('asistente-pedido');
     if (!root) return;
+    const conservar = opts && opts.conservar;
     root.hidden = false;
     document.body.classList.add('asistente-abierto');
     document.body.style.overflow = 'hidden';
-    indice = 0;
+    if (!conservar) indice = 0;
     pintar();
     const close = $('asistente-cerrar');
     if (close) close.focus();
+    if (!window.restaurandoRuta && typeof setRoute === 'function') setRoute(hashPaso(indice), !!conservar);
   }
 
-  function cerrar() {
+  function cerrar(opts) {
     const root = $('asistente-pedido');
-    if (!root) return;
+    if (!root || root.hidden) return;
     restoreParked();
     const enviar = $('enviar-obra');
     if (enviar) { enviar.classList.remove('asistente-enviar'); enviar.textContent = i18n('comun.enviar'); }
     root.hidden = true;
     document.body.classList.remove('asistente-abierto');
     document.body.style.overflow = '';
+    if (opts && opts.salir && !window.restaurandoRuta && window.EstudioRuta && typeof EstudioRuta.cerrarHasta === 'function') {
+      EstudioRuta.cerrarHasta(window.__rutaAntesDeCotizar || '#inicio');
+    }
   }
 
   function siguiente() {
     const lista = pasos();
     const paso = lista[indice];
     if (!paso || !puedeSeguir(paso)) return;
-    if (indice < lista.length - 1) { indice += 1; pintar(); }
+    if (indice < lista.length - 1) {
+      indice += 1;
+      pintar();
+      if (!window.restaurandoRuta && typeof setRoute === 'function') setRoute(hashPaso(indice));
+    }
   }
 
   function atras() {
-    if (indice > 0) { indice -= 1; pintar(); }
+    if (window.EstudioRuta && typeof EstudioRuta.volverRuta === 'function') EstudioRuta.volverRuta();
+    else if (indice > 0) { indice -= 1; pintar(); }
   }
 
   function iniciar() {
     if (!$('asistente-pedido')) return;
     $('asistente-cerrar').addEventListener('click', () => {
-      cerrar();
-      if (typeof switchTab === 'function') switchTab('inicio');
+      cerrar({ salir: true });
     });
     $('asistente-atras').addEventListener('click', atras);
     $('asistente-siguiente').addEventListener('click', siguiente);
@@ -792,8 +832,9 @@
       const orig = window.switchTab;
       window.switchTab = function (t, e) {
         const r = orig.apply(this, arguments);
-        if (t === 'cotizacion') abrir();
-        else if (!$('asistente-pedido').hidden) cerrar();
+        if (window.restaurandoRuta) return r;
+        if (t === 'cotizacion') abrir({ conservar: !$('asistente-pedido').hidden });
+        else if (!$('asistente-pedido').hidden) cerrar({ silencioso: true });
         return r;
       };
       window.switchTab.__conAsistente = true;
@@ -810,7 +851,7 @@
     if (location.hash === '#cotizacion' || document.body.dataset.pantalla === 'cotizacion') abrir();
   }
 
-  window.AsistentePedido = { abrir, cerrar, pintar, iniciar, irA, aplicarSugerencia, sugerencias: sugerenciasPresupuesto, actualizarBarra };
+  window.AsistentePedido = { abrir, cerrar, pintar, iniciar, irA, restaurarPaso, pasoAnterior, hashPaso, aplicarSugerencia, sugerencias: sugerenciasPresupuesto, actualizarBarra };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
   else iniciar();
 })();

@@ -70,6 +70,15 @@ export function abrirEditor({ url, edit, title, onSave, soloArchivo = false }) {
   const root = el('div', { className: 'photo-editor', id: 'photo-editor' }, head, stage, status, tools, input, bar);
   root.setAttribute('role', 'dialog'); root.setAttribute('aria-modal', 'true'); root.setAttribute('aria-label', 'Editar foto');
   document.body.append(root); document.body.classList.add('editor-abierto');
+  let overlayPushed=false;
+  try{
+    if(window.EstudioRuta&&EstudioRuta.abrirOverlay) EstudioRuta.abrirOverlay('editor');
+    else { history.pushState({estudio:{overlay:'editor',pushed:true}},'',location.href); }
+    overlayPushed=true;
+  }catch(e){}
+  const onPop=()=>{ if(document.getElementById('photo-editor')===root) close(false,true); };
+  window.addEventListener('popstate',onPop);
+
   const enabled = v => { for (const b of root.querySelectorAll('button')) b.disabled = !v; };
 
   function draw() {
@@ -150,9 +159,12 @@ export function abrirEditor({ url, edit, title, onSave, soloArchivo = false }) {
    finally { enabled(true); }
   };
   const onResize = () => draw(); window.addEventListener('resize', onResize);
-  function close(result) {
+  function close(result, fromPop) {
+   window.removeEventListener('popstate', onPop);
    window.removeEventListener('resize', onResize); document.removeEventListener('keydown', onKey);
-   if (objectURL) URL.revokeObjectURL(objectURL); root.remove(); document.body.classList.remove('editor-abierto'); resolve(result);
+   if (objectURL) URL.revokeObjectURL(objectURL); root.remove(); document.body.classList.remove('editor-abierto');
+   if (overlayPushed && !fromPop) { try { history.back(); } catch (e) {} }
+   resolve(result);
   }
   const onKey = e => { if (e.key === 'Escape' && !saving) close(false); }; document.addEventListener('keydown', onKey);
   cancel.onclick = () => close(false);

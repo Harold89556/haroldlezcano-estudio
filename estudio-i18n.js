@@ -1005,11 +1005,14 @@
       const ops = opciones();
       marcar(Math.max(0, ops.findIndex((o) => o.dataset.pais === pais)));
       lista.focus({ preventScroll: true });
+      if (window.EstudioRuta && typeof EstudioRuta.abrirOverlay === 'function') EstudioRuta.abrirOverlay('pais');
     };
     const cerrar = (volver) => {
+      const estaba = !lista.hidden;
       lista.hidden = true; btn.setAttribute('aria-expanded', 'false');
       lista.removeAttribute('aria-activedescendant');
       if (volver) btn.focus();
+      if (estaba && window.EstudioRuta && typeof EstudioRuta.cerrarOverlay === 'function') EstudioRuta.cerrarOverlay('pais');
     };
     const elegir = (id) => { cerrar(true); if (id && id !== pais) setPais(id); };
     btn.addEventListener('click', () => (lista.hidden ? abrir() : cerrar(true)));
