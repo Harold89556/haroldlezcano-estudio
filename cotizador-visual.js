@@ -45,8 +45,9 @@
     const styleable = /^(tema|fondo|enmarcado|sujetos|forma_lienzo|color):/.test(key);
     const yaEstilo = styleable && /:(Realista|Hiperrealista|Abstracto|Espatulado|Bocetado)(:|$)/.test(key);
     const keys = [];
-    if (/^material_escultura:/.test(key) && tipoEsc === 'Relieve' && !/:Relieve$/.test(key)) {
-      keys.push(key + ':Relieve');
+    const tiposMaterial = ['Relieve','Animal','Busto','Medio cuerpo','Figura completa','Abstracto','Objeto','Otro'];
+    if (/^material_escultura:/.test(key) && tiposMaterial.includes(tipoEsc) && !key.endsWith(':' + tipoEsc)) {
+      keys.push(key + ':' + tipoEsc);
       keys.push(key);
       return keys;
     }

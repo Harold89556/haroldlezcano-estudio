@@ -1355,5 +1355,61 @@ let base;
   await context.close();
  });
 
+
+ await test('Escultura: el material sigue el tipo (animal, busto, figura, relieve) y el IVA se oculta al consultar',async()=>{
+  const {page,context,errors}=await session();
+  await page.setViewportSize({width:390,height:844});
+  await page.goto(base+'/index.html#cotizacion');
+  await page.waitForSelector('#asistente-pedido:not([hidden]) #asistente-opciones .guia-card[data-value=escultura]');
+  await elegirAsistente(page,'escultura');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/tipo_escultura');
+  const leerMats=()=>page.locator('#asistente-opciones .guia-card').evaluateAll(els=>Object.fromEntries(els.map(c=>[c.getAttribute('data-value'),(c.querySelector('img')||{}).getAttribute('src')||''])));
+  const assertTipo=async(tipo,re)=>{
+    await page.evaluate(()=>AsistentePedido.irA('tipo_escultura'));
+    await page.waitForSelector('#asistente-opciones .guia-card[data-value="'+tipo+'"]');
+    await elegirAsistente(page,tipo);
+    await page.waitForFunction(()=>location.hash==='#cotizacion/material_escultura');
+    await page.waitForSelector('#asistente-opciones .guia-card[data-value=Arcilla] img');
+    const mat=await leerMats();
+    for(const k of ['Arcilla','Cemento','Fibra','Chapa','Chatarra']){
+      assert.ok(mat[k],tipo+' falta '+k+' '+JSON.stringify(mat));
+      assert.match(mat[k],re,tipo+' '+k+' '+mat[k]);
+    }
+    assert.equal(new Set(Object.values(mat)).size,5,tipo+' repetidas '+JSON.stringify(mat));
+    return mat;
+  };
+  const animal=await assertTipo('Animal',/escultura-material-\w+-animal\.webp$/);
+  const ivaHidden=await page.locator('#asistente-iva').evaluate(el=>el.hidden);
+  const precio=await page.locator('#asistente-precio-vivo').textContent();
+  assert.match(precio,/A consultar/);
+  assert.equal(ivaHidden,true);
+  await page.evaluate(()=>{const c=document.querySelector('#asistente-pedido .asistente-cuerpo'); if(c) c.scrollTop=0;});
+  await page.screenshot({path:'/workspace/escultura-animal-material-t63u.png',animations:'disabled'});
+  await assertTipo('Busto',/escultura-material-\w+-busto\.webp$/);
+  await page.evaluate(()=>{const c=document.querySelector('#asistente-pedido .asistente-cuerpo'); if(c) c.scrollTop=0;});
+  await page.screenshot({path:'/workspace/escultura-busto-material-t63u.png',animations:'disabled'});
+  await assertTipo('Figura completa',/escultura-material-\w+-figura\.webp$/);
+  await page.evaluate(()=>{const c=document.querySelector('#asistente-pedido .asistente-cuerpo'); if(c) c.scrollTop=0;});
+  await page.screenshot({path:'/workspace/escultura-figura-material-t63u.png',animations:'disabled'});
+  await assertTipo('Relieve',/escultura-material-\w+-relieve\.webp$/);
+  await page.evaluate(()=>{const c=document.querySelector('#asistente-pedido .asistente-cuerpo'); if(c) c.scrollTop=0;});
+  await page.screenshot({path:'/workspace/escultura-relieve-material-t63u.png',animations:'disabled'});
+  // precio numérico vuelve a mostrar IVA
+  await page.evaluate(()=>AsistentePedido.irA('trabajo'));
+  await elegirAsistente(page,'oleo');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/estilo'||document.querySelector('#asistente-opciones .guia-card[data-value=Realista]'));
+  await elegirAsistente(page,'Realista');
+  await page.evaluate(()=>{
+    const fire=(id,v)=>{const e=document.getElementById(id);if(!e)return;e.value=String(v);e.dispatchEvent(new Event('change',{bubbles:true}));};
+    fire('tamano_predefinido','30x40');if(window.handleTamanoChange)handleTamanoChange();
+    if(window.calcular)calcular();
+    AsistentePedido.irA('tamano');
+  });
+  await page.waitForFunction(()=>/700/.test(document.getElementById('asistente-precio-vivo')?.textContent||''));
+  assert.equal(await page.locator('#asistente-iva').evaluate(el=>el.hidden),false);
+  assert.deepEqual(errors,[]);
+  await context.close();
+ });
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(root,'resultados-navegador.json'),JSON.stringify(results,null,2));
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{await browser?.close();server.close();});

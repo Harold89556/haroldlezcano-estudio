@@ -91,7 +91,7 @@
       s.push({ id: 'material_escultura', pregunta: i18n('wizard.material.pregunta'), ayuda: i18n('wizard.material.ayuda') });
       s.push({ id: 'altura_escultura', pregunta: valor('tipo_escultura')==='Relieve' ? i18n('wizard.alturaRelieve.pregunta') : i18n('wizard.altura.pregunta'), ayuda: valor('tipo_escultura')==='Relieve' ? i18n('wizard.alturaRelieve.ayuda') : i18n('wizard.altura.ayuda') });
     } else if (trabajo === 'mural') {
-      s.push({ id: 'estilo_mural', pregunta: i18n('wizard.estiloMural.pregunta'), ayuda: i18n('wizard.estiloMural.pregunta') });
+      s.push({ id: 'estilo_mural', pregunta: i18n('wizard.estiloMural.pregunta'), ayuda: i18n('wizard.estiloMural.ayuda') });
       s.push({ id: 'tamano_mural', pregunta: i18n('wizard.tamanoMural.pregunta'), ayuda: i18n('wizard.tamanoMural.ayuda') });
     } else if (trabajo === 'restauracion') {
       s.push({ id: 'tipo_restauracion', pregunta: i18n('wizard.restauracion.pregunta2'), ayuda: i18n('wizard.restauracion.ayuda2') });
@@ -699,6 +699,11 @@
     if (bar) bar.hidden = !listo;
     if (vivo && listo) vivo.textContent = txt;
     if ($('asistente-precio') && listo) $('asistente-precio').textContent = txt;
+    const iva = $('asistente-iva');
+    if (iva) {
+      const consultar = !!(p && (p.consultar || p.evaluar || p.consultarArtista)) || /consultar/i.test(txt || '');
+      iva.hidden = !listo || consultar;
+    }
     const pie = root.querySelector('.asistente-pie');
     if (pie) pie.classList.toggle('con-precio', listo);
     const chipItems = chipsDe();
@@ -988,7 +993,22 @@
     actualizarAcciones();
     const cambio = ultimoPasoPintado !== paso.id;
     ultimoPasoPintado = paso.id;
-    if (cambio || paso.id === 'datos') irArribaDelPaso(paso);
+    if (cambio || paso.id === 'datos') {
+      irArribaDelPaso(paso);
+      const cuerpo = cuerpoAsistente();
+      const keepTop = () => {
+        if (ultimoPasoPintado !== paso.id) return;
+        if (paso.id === 'datos') { irArribaDelPaso(paso); return; }
+        if (cuerpo) cuerpo.scrollTop = 0;
+      };
+      if (typeof requestAnimationFrame === 'function') requestAnimationFrame(keepTop);
+      const grid = $('asistente-opciones');
+      if (cambio && grid && cuerpo) {
+        grid.querySelectorAll('img').forEach((img) => {
+          if (!img.complete) img.addEventListener('load', keepTop, { once: true });
+        });
+      }
+    }
   }
 
   function actualizarAcciones() {

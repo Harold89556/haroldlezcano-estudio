@@ -1224,5 +1224,93 @@ test('42. Escala: figura de 1,70 m, centro a 158 cm y regla de curador',()=>{
   assert.match(v.txt,/Persona de 1,70 m/);
 });
 
+
+test('43. Escultura: el material sigue el tipo, las fotos no se rompen ni se repiten, y el IVA se oculta al consultar',()=>{
+  const a=iniciar();a.listo();
+  const items=a.w.ESTUDIO_GUIAS_DEFAULT.items;
+  for(const [k,v] of Object.entries(items)){
+    assert.ok(v&&v.url,k);
+    if(String(v.url).startsWith('img/')) assert.ok(fs.existsSync(path.join(base,v.url)),'falta '+v.url+' ('+k+')');
+  }
+  const mats=['Arcilla','Cemento','Fibra','Chapa','Chatarra'];
+  const tipos={
+    Animal:/escultura-material-\w+-animal\.webp$/,
+    Busto:/escultura-material-\w+-busto\.webp$/,
+    'Figura completa':/escultura-material-\w+-figura\.webp$/,
+    'Medio cuerpo':/escultura-material-\w+-medio\.webp$/,
+    Relieve:/escultura-material-\w+-relieve\.webp$/,
+    Abstracto:/escultura-material-\w+-abstracto\.webp$/,
+    Objeto:/escultura-material-\w+-objeto\.webp$/,
+    Otro:/escultura-material-\w+-otro\.webp$/
+  };
+  const W=a.w.AsistentePedido;
+  const elige=(v)=>{const c=a.d.querySelector('#asistente-opciones .guia-card[data-value="'+v+'"]');assert.ok(c,'no está '+v);c.click();};
+  const srcs=()=>Object.fromEntries([...a.d.querySelectorAll('#asistente-opciones .guia-card')].map(c=>[c.getAttribute('data-value'),(c.querySelector('img')||{}).getAttribute('src')||'']));
+  W.abrir();
+  W.irA('trabajo');elige('escultura');
+  for(const [tipo,re] of Object.entries(tipos)){
+    a.set('tipo_escultura',tipo);if(a.w.onTipoEsculturaChange)a.w.onTipoEsculturaChange();
+    W.irA('material_escultura');
+    const s=srcs();
+    const urls=mats.map(m=>s[m]);
+    mats.forEach(m=>{
+      assert.ok(s[m],tipo+' falta '+m+' '+JSON.stringify(s));
+      assert.match(s[m],re,tipo+' '+m+' → '+s[m]);
+    });
+    assert.equal(new Set(urls).size,5,tipo+' fotos repetidas '+JSON.stringify(s));
+    const k=a.w.CotizadorVisual.clavesGuia('material_escultura:Arcilla');
+    assert.equal(k[0],'material_escultura:Arcilla:'+tipo);
+  }
+
+  const cardSteps=new Set(['estilo','tema','fondo','sujetos','forma','color','tipo_escultura','material_escultura','tipo_restauracion','estilo_mural']);
+  const recorrer=(trabajo,estilo,antes)=>{
+    W.irA('trabajo');elige(trabajo);
+    if(estilo){W.irA('estilo');elige(estilo);}
+    if(antes) antes();
+    const dups=[];
+    W.pasos().forEach((p)=>{
+      if(!cardSteps.has(p.id)) return;
+      W.irA(p.id);
+      const urls=[...a.d.querySelectorAll('#asistente-opciones .guia-card img')].map(i=>i.getAttribute('src')||'').filter(Boolean);
+      /* En Forma las cuatro opciones comparten a propósito la misma foto del tema, recortada a cada silueta. */
+      if(p.id!=='forma' && urls.length>=2 && new Set(urls).size!==urls.length) dups.push({paso:p.id,trabajo,estilo,urls});
+      urls.forEach((u)=>{
+        if(u.startsWith('img/')) assert.ok(fs.existsSync(path.join(base,u)),'rota '+u+' en '+trabajo+'/'+p.id);
+      });
+    });
+    assert.equal(dups.length,0,JSON.stringify(dups));
+  };
+  recorrer('oleo','Realista');
+  recorrer('oleo','Hiperrealista');
+  recorrer('oleo','Espatulado');
+  recorrer('oleo','Bocetado');
+  recorrer('oleo','Abstracto');
+  recorrer('acrilico','Realista');
+  recorrer('acrilico','Abstracto');
+  recorrer('carbonilla','Realista');
+  recorrer('carbonilla','Bocetado');
+  recorrer('escultura',null,()=>{W.irA('tipo_escultura');elige('Animal');});
+  recorrer('escultura',null,()=>{W.irA('tipo_escultura');elige('Busto');});
+  recorrer('escultura',null,()=>{W.irA('tipo_escultura');elige('Figura completa');});
+  recorrer('escultura',null,()=>{W.irA('tipo_escultura');elige('Relieve');});
+  recorrer('mural');
+  recorrer('restauracion');
+
+  a.set('estilo','Escultura');a.w.onEstiloChange();
+  a.set('tipo_escultura','Animal');a.w.onTipoEsculturaChange();a.w.calcular();
+  W.irA('material_escultura');
+  assert.match(a.d.getElementById('asistente-precio-vivo').textContent,/A consultar/);
+  assert.equal(a.d.getElementById('asistente-iva').hidden,true,'IVA debe ocultarse cuando el precio es a consultar');
+
+  a.set('estilo','Realista');a.w.onEstiloChange();
+  a.set('tecnica','Oleo');a.w.onTecnicaChange();
+  a.set('tamano_predefinido','30x40');a.w.handleTamanoChange();
+  a.w.calcular();
+  W.irA('trabajo');elige('oleo');
+  W.irA('tamano');
+  assert.match(a.d.getElementById('asistente-precio-vivo').textContent,/\d/);
+  assert.equal(a.d.getElementById('asistente-iva').hidden,false);
+});
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));
 
