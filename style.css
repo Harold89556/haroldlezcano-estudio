@@ -635,7 +635,7 @@ body.editor-abierto .admin-bottom-nav, body:has(#admin-workspace[hidden]) .admin
 .asistente-grid .guia-cap strong { font-size: 15px; }
 .asistente-grid .guia-cap span { font-size: 13px; }
 .asistente-extra { margin-top: 8px; }
-.asistente-extra .en-asistente, .en-asistente { display: block !important; }
+.asistente-extra .en-asistente:not([hidden]), .en-asistente:not([hidden]) { display: block !important; }
 /* En el asistente, Ancho/Alto y su nota solo aparecen con el tamaño "Personalizado" */
 #tamano_manual_container.en-asistente:not(.manual-visible) { display: none !important; }
 .asistente-extra .form-card { margin: 0; }

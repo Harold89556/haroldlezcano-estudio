@@ -169,6 +169,39 @@ let base;
   assert.ok(new URL(page.url()).pathname.endsWith('/index.html')||new URL(page.url()).pathname.endsWith('/'));
   await context.close();
  });
+ await test('En el resumen del asistente, Enviar pedido es la única acción de WhatsApp',async()=>{
+  const {page,context}=await session();
+  await page.setViewportSize({width:412,height:915});
+  await page.goto(base+'/index.html#cotizacion');
+  await page.waitForSelector('#asistente-pedido:not([hidden])');
+  await elegirAsistente(page,'oleo'); await siguienteAsistente(page);
+  await elegirAsistente(page,'Realista'); await siguienteAsistente(page);
+  await elegirAsistente(page,'Retrato'); await siguienteAsistente(page);
+  await elegirAsistente(page,'1'); await siguienteAsistente(page);
+  await elegirAsistente(page,'simple'); await siguienteAsistente(page);
+  await elegirAsistente(page,'Estandar'); await siguienteAsistente(page);
+  await page.waitForSelector('#tamano_predefinido');
+  await page.selectOption('#tamano_predefinido','30x40');
+  await siguienteAsistente(page);
+  await elegirAsistente(page,'SinMarco'); await siguienteAsistente(page);
+  await page.waitForSelector('#fotos_referencia');
+  await page.selectOption('#fotos_referencia','No, necesito asesoramiento');
+  await siguienteAsistente(page);
+  await page.waitForSelector('#envio_nombre');
+  await page.fill('#envio_nombre','Prueba local');
+  await siguienteAsistente(page);
+  await page.waitForFunction(()=>document.getElementById('enviar-obra')&&document.getElementById('enviar-obra').classList.contains('asistente-enviar'));
+  assert.equal(await page.locator('#enviar-obra').isVisible(),true);
+  assert.equal(await page.locator('#whatsapp-continuar').isVisible(),false);
+  assert.equal(await page.locator('#referencias-compartir').isVisible(),false);
+  const disp=await page.evaluate(()=>({
+   continuar:getComputedStyle(document.getElementById('whatsapp-continuar')).display,
+   share:getComputedStyle(document.getElementById('referencias-compartir')).display
+  }));
+  assert.equal(disp.continuar,'none');
+  assert.equal(disp.share,'none');
+  await context.close();
+ });
  await test('Inicio, menú inferior y hashes',async()=>{
   const {page,context}=await session();await page.setViewportSize({width:390,height:844});await page.goto(base+'/index.html');
   assert.equal(await page.locator('#tab-inicio').isVisible(),true);assert.equal(await page.locator('#tab-cotizacion').isVisible(),false);
