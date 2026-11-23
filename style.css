@@ -799,3 +799,32 @@ html[lang="zh-CN"] .tab-btn, html[lang="ja"] .tab-btn, html[lang="ko"] .tab-btn,
 @media (min-width: 700px) {
   .admin-album-folders { grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); }
 }
+
+#step-enmarcado { display: none !important; }
+.nota-enmarcado, .nota-enmarcado-sitio .nota-enmarcado {
+  margin: 14px 0 10px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  color: #b8b8b8;
+  font-size: 13px;
+  line-height: 1.55;
+  font-weight: 400;
+  text-align: left;
+}
+.nota-enmarcado p { margin: 0 0 8px; }
+.nota-enmarcado-contactos { list-style: none; margin: 0; padding: 0; }
+.nota-enmarcado-contactos li { margin: 4px 0; }
+.nota-enmarcado-nombre { color: #d0d0d0; }
+a.nota-enmarcado-tel {
+  color: #c8c8c8;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 400;
+  background: none;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+}
+a.nota-enmarcado-tel:hover { color: #eee; }

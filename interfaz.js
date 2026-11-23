@@ -337,32 +337,22 @@
             document.getElementById('contenedor-cuadros').style.display = 'none';
         } else {
             document.getElementById('contenedor-cuadros').style.display = 'block';
-            document.getElementById('step-enmarcado').style.display = 'block';
         }
+        const stepEnm=document.getElementById('step-enmarcado');
+        if(stepEnm) stepEnm.style.display='none';
+        const enmFijo=document.getElementById('enmarcado');
+        if(enmFijo) enmFijo.value='SinMarco';
         
         let te = document.getElementById('tecnica').value;
-        const sinMarco=document.querySelector('#enmarcado option[value="SinMarco"]');
-        if(sinMarco)sinMarco.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t(te==='Carbonilla'?'opt.marco.sinPapel':'opt.marco.sin'):(te==='Carbonilla'?'Sin marco (lámina sobre papel)':'Sin marco (bordes pintados, listo para colgar)');
-        const estOpt=document.querySelector('#enmarcado option[value="Estandar"]');
-        if(estOpt)estOpt.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t(te==='Carbonilla'?'opt.marco.estandarPapel':'opt.marco.estandar'):(te==='Carbonilla'?'Marco estándar (vidrio y paspartú)':'Marco estándar');
-        const claOpt=document.querySelector('#enmarcado option[value="Clasico"]');
-        if(claOpt)claOpt.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t(te==='Carbonilla'?'opt.marco.clasicoPapel':'opt.marco.clasico'):(te==='Carbonilla'?'Marco clásico (vidrio y paspartú)':'Marco clásico');
         const paperOnly=te==='Carbonilla';
-        ['Cajon','SemiRelieve','GruesoRelieves'].forEach(v=>{
-            const o=document.querySelector('#enmarcado option[value="'+v+'"]');
-            if(o) o.hidden=paperOnly;
-        });
         const esp=document.querySelector('#estilo option[value="Espatulado"]');
         if(esp) esp.hidden=paperOnly;
         const boc=document.querySelector('#estilo option[value="Bocetado"]');
         if(boc) boc.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t(paperOnly?'opt.estilo.boceto':'opt.estilo.monocromatico'):(paperOnly?'Boceto':'Monocromático');
         if(paperOnly){
-            const enm=document.getElementById('enmarcado');
-            if(enm && ['Cajon','SemiRelieve','GruesoRelieves'].includes(enm.value)){enm.value='Estandar';}
             const est=document.getElementById('estilo');
             if(est && est.value==='Espatulado'){est.value='Realista';}
         }
-        if(te==='Carbonilla' && document.getElementById('enmarcado').value==='SinMarco') document.getElementById('info-enmarcado').textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('info.sinMarcoPapel'):'Dibujo sobre papel, sin marco (lámina suelta).';
         document.getElementById('formato-lienzo-container').style.display = (t!=='Mural' && t!=='Restauracion' && t!=='Escultura' && (te==='Oleo'||te==='Acrilico')) ? 'block' : 'none';
         const labForm=document.querySelector('label[for="forma_lienzo"]');
         if(labForm && !paperOnly) labForm.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('form.formatoLienzo'):'Formato del lienzo';
@@ -628,8 +618,7 @@
                     texto += "📏 *Tamaño:* " + describirDimensiones(obtenerDimensiones()) + "\n";
                 }
                 
-                let enm = document.getElementById('enmarcado');
-                if(enm.value) texto += "🖼️ *Enmarcado:* " + enm.options[enm.selectedIndex].text + "\n";
+                if (window.NotaEnmarcado) texto += "🖼️ *Enmarcado:* " + NotaEnmarcado.whatsapp() + "\n";
             }
         }
         

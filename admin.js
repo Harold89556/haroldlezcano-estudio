@@ -284,7 +284,7 @@ function renderGallery() {
  }
 }
 const numericLabels = {
- matriz:'Óleo, carbonilla, personas extra y marcos',escultura:'Escultura modelada a mano',ajustes:'Otros importes y factores de cotización',cursos:'Cursos',
+ matriz:'Óleo, carbonilla y personas extra',escultura:'Escultura modelada a mano',ajustes:'Otros importes y factores de cotización',cursos:'Cursos',
  espatulado:'Espatulado',realista:'Realista',hiper:'Hiperrealista',boceto:'Monocromático',extraPersona:'Persona extra',marcos:'Marcos',base:'Base carbonilla',
  Estandar:'Estándar',Cajon:'Cajón',Clasico:'Clásico',SemiRelieve:'Semi relieve',GruesoRelieves:'Grueso con relieves',
  min:'Altura mínima (cm)',max:'Altura máxima (cm)',step:'Paso de altura (cm)',def:'Altura inicial (cm)',minimo:'Precio mínimo',fijo:'Importe fijo',porCm:'Precio por cm',redondeo:'Redondear al múltiplo de',
@@ -305,7 +305,7 @@ function renderPrices() {
    if(typeof value==='object') {
     const details=document.createElement('details');details.className='admin-price-group';details.open=path.length===0;
     const summary=document.createElement('summary');summary.textContent=numericLabels[key] || (/^\d+x\d+$/.test(key) ? key.replace('x',' × ')+' cm' : key);
-    details.append(summary);if(key.startsWith('personalizado'))details.hidden=true;walk(value,details,next);parent.append(details);
+    details.append(summary);if(key.startsWith('personalizado')||key==='marcos')details.hidden=true;walk(value,details,next);parent.append(details);
    } else {
     const row=document.createElement('div');row.className='admin-number-row';
     const input=document.createElement('input');input.id='price-'+next.join('-').replaceAll(' ','-');input.type='number';input.min='0';input.max='1000000000000';input.step='any';input.required=true;input.value=String(value);input.dataset.path=JSON.stringify(next);

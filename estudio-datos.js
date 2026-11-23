@@ -25,12 +25,6 @@ window.ESTUDIO_GUIAS_DEFAULT = { items: {
   "forma_lienzo:Circular": { url: "img/guias/forma-circular.webp", text: "Lienzo redondo.", kind: "foto" },
   "forma_lienzo:Ovalado": { url: "img/guias/forma-ovalado.webp", text: "Lienzo ovalado.", kind: "foto" },
   "forma_lienzo:Hexagonal": { url: "img/guias/forma-hexagonal.webp", text: "Lienzo de seis lados.", kind: "foto" },
-  "enmarcado:SinMarco": { url: "img/guias/marco-sin-marco.webp", text: "Sin marco; bordes listos para colgar.", kind: "foto" },
-  "enmarcado:Estandar": { url: "img/guias/marco-estandar.webp", text: "Marco simple y discreto.", kind: "foto" },
-  "enmarcado:Cajon": { url: "img/guias/marco-cajon.webp", text: "Marco tipo cajón, con profundidad.", kind: "foto" },
-  "enmarcado:Clasico": { url: "img/guias/marco-clasico.webp", text: "Marco clásico, más ornamentado.", kind: "foto" },
-  "enmarcado:SemiRelieve": { url: "img/guias/marco-semirelieve.webp", text: "Marco con relieve suave.", kind: "foto" },
-  "enmarcado:GruesoRelieves": { url: "img/guias/marco-grueso.webp", text: "Marco grueso con relieves marcados.", kind: "foto" },
   "tipo_escultura:Busto": { url: "img/guias/escultura-busto.webp", text: "Cabeza y parte superior del torso.", kind: "foto" },
   "tipo_escultura:Medio cuerpo": { url: "img/guias/escultura-medio-cuerpo.webp", text: "De la cabeza hasta la cintura.", kind: "foto" },
   "tipo_escultura:Figura completa": { url: "img/guias/escultura-figura.webp", text: "Figura de cuerpo entero.", kind: "foto" },
@@ -62,9 +56,6 @@ window.ESTUDIO_GUIAS_DEFAULT = { items: {
   "tema:Bodegon:Carbonilla": { url: "img/guias/carbonilla-tema-bodegon.webp", text: "Objetos o flores, naturaleza muerta en dibujo.", kind: "foto" },
   "fondo:simple:Carbonilla": { url: "img/guias/carbonilla-fondo-simple.webp", text: "Fondo de papel, claro o apenas difuminado, sin una escena detrás.", kind: "foto" },
   "fondo:detallado:Carbonilla": { url: "img/guias/carbonilla-fondo-detallado.webp", text: "Fondo trabajado: un ambiente, una habitación u otros detalles detrás.", kind: "foto" },
-  "enmarcado:SinMarco:Carbonilla": { url: "img/guias/carbonilla-marco-sin.webp", text: "Lámina suelta, sin marco, lista para guardar o enmarcar después.", kind: "foto" },
-  "enmarcado:Estandar:Carbonilla": { url: "img/guias/carbonilla-marco-estandar.webp", text: "Marco sencillo, con vidrio y paspartú para proteger el dibujo.", kind: "foto" },
-  "enmarcado:Clasico:Carbonilla": { url: "img/guias/carbonilla-marco-clasico.webp", text: "Marco clásico, con vidrio y paspartú.", kind: "foto" },
   "sujetos:1:Carbonilla": { url: "img/guias/carbonilla-sujetos-1.webp", text: "Una sola persona (ya incluida en el precio base).", kind: "foto" },
   "sujetos:2:Carbonilla": { url: "img/guias/carbonilla-sujetos-2.webp", text: "Dos personas: se suma el valor de un sujeto extra.", kind: "foto" },
   "sujetos:mascota:Carbonilla": { url: "img/guias/carbonilla-sujetos-mascota.webp", text: "Sumá una mascota junto a la persona.", kind: "foto" },
@@ -160,36 +151,6 @@ window.ESTUDIO_GUIAS_DEFAULT = { items: {
   "forma_lienzo:Hexagonal:Abstracto": { url: "img/guias/forma-hexagonal-abstracto.webp", text: "Lienzo de seis lados.", kind: "foto" },
   "forma_lienzo:Hexagonal:Espatulado": { url: "img/guias/forma-hexagonal-espatulado.webp", text: "Lienzo de seis lados.", kind: "foto" },
   "forma_lienzo:Hexagonal:Bocetado": { url: "img/guias/forma-hexagonal-monocromatico.webp", text: "Lienzo de seis lados.", kind: "foto" },
-  "enmarcado:SinMarco:Realista": { url: "img/guias/marco-sin-marco.webp", text: "Sin marco; bordes listos para colgar.", kind: "foto" },
-  "enmarcado:SinMarco:Hiperrealista": { url: "img/guias/marco-sin-marco-hiperrealista.webp", text: "Sin marco; bordes listos para colgar.", kind: "foto" },
-  "enmarcado:SinMarco:Abstracto": { url: "img/guias/marco-sin-marco-abstracto.webp", text: "Sin marco; bordes listos para colgar.", kind: "foto" },
-  "enmarcado:Estandar:Realista": { url: "img/guias/marco-estandar.webp", text: "Marco simple y discreto.", kind: "foto" },
-  "enmarcado:Estandar:Hiperrealista": { url: "img/guias/marco-estandar-hiperrealista.webp", text: "Marco simple y discreto.", kind: "foto" },
-  "enmarcado:Estandar:Abstracto": { url: "img/guias/marco-estandar-abstracto.webp", text: "Marco simple y discreto.", kind: "foto" },
-  "enmarcado:Cajon:Realista": { url: "img/guias/marco-cajon.webp", text: "Marco tipo cajón, con profundidad.", kind: "foto" },
-  "enmarcado:Cajon:Hiperrealista": { url: "img/guias/marco-cajon-hiperrealista.webp", text: "Marco tipo cajón, con profundidad.", kind: "foto" },
-  "enmarcado:Cajon:Abstracto": { url: "img/guias/marco-cajon-abstracto.webp", text: "Marco tipo cajón, con profundidad.", kind: "foto" },
-  "enmarcado:Clasico:Realista": { url: "img/guias/marco-clasico.webp", text: "Marco clásico, más ornamentado.", kind: "foto" },
-  "enmarcado:Clasico:Hiperrealista": { url: "img/guias/marco-clasico-hiperrealista.webp", text: "Marco clásico, más ornamentado.", kind: "foto" },
-  "enmarcado:Clasico:Abstracto": { url: "img/guias/marco-clasico-abstracto.webp", text: "Marco clásico, más ornamentado.", kind: "foto" },
-  "enmarcado:SemiRelieve:Realista": { url: "img/guias/marco-semirelieve.webp", text: "Marco con relieve suave.", kind: "foto" },
-  "enmarcado:SemiRelieve:Hiperrealista": { url: "img/guias/marco-semirelieve-hiperrealista.webp", text: "Marco con relieve suave.", kind: "foto" },
-  "enmarcado:SemiRelieve:Abstracto": { url: "img/guias/marco-semirelieve-abstracto.webp", text: "Marco con relieve suave.", kind: "foto" },
-  "enmarcado:GruesoRelieves:Realista": { url: "img/guias/marco-grueso.webp", text: "Marco grueso con relieves marcados.", kind: "foto" },
-  "enmarcado:GruesoRelieves:Hiperrealista": { url: "img/guias/marco-grueso-hiperrealista.webp", text: "Marco grueso con relieves marcados.", kind: "foto" },
-  "enmarcado:GruesoRelieves:Abstracto": { url: "img/guias/marco-grueso-abstracto.webp", text: "Marco grueso con relieves marcados.", kind: "foto" },
-  "enmarcado:SinMarco:Espatulado": { url: "img/guias/marco-sin-marco-espatulado.webp", text: "Sin marco; bordes listos para colgar.", kind: "foto" },
-  "enmarcado:Estandar:Espatulado": { url: "img/guias/marco-estandar-espatulado.webp", text: "Marco simple y discreto.", kind: "foto" },
-  "enmarcado:Cajon:Espatulado": { url: "img/guias/marco-cajon-espatulado.webp", text: "Marco tipo cajón, con profundidad.", kind: "foto" },
-  "enmarcado:Clasico:Espatulado": { url: "img/guias/marco-clasico-espatulado.webp", text: "Marco clásico, más ornamentado.", kind: "foto" },
-  "enmarcado:SemiRelieve:Espatulado": { url: "img/guias/marco-semirelieve-espatulado.webp", text: "Marco con relieve suave.", kind: "foto" },
-  "enmarcado:GruesoRelieves:Espatulado": { url: "img/guias/marco-grueso-espatulado.webp", text: "Marco grueso con relieves marcados.", kind: "foto" },
-  "enmarcado:SinMarco:Bocetado": { url: "img/guias/marco-sin-marco-monocromatico.webp", text: "Sin marco; bordes listos para colgar.", kind: "foto" },
-  "enmarcado:Estandar:Bocetado": { url: "img/guias/marco-estandar-monocromatico.webp", text: "Marco simple y discreto.", kind: "foto" },
-  "enmarcado:Cajon:Bocetado": { url: "img/guias/marco-cajon-monocromatico.webp", text: "Marco tipo cajón, con profundidad.", kind: "foto" },
-  "enmarcado:Clasico:Bocetado": { url: "img/guias/marco-clasico-monocromatico.webp", text: "Marco clásico, más ornamentado.", kind: "foto" },
-  "enmarcado:SemiRelieve:Bocetado": { url: "img/guias/marco-semirelieve-monocromatico.webp", text: "Marco con relieve suave.", kind: "foto" },
-  "enmarcado:GruesoRelieves:Bocetado": { url: "img/guias/marco-grueso-monocromatico.webp", text: "Marco grueso con relieves marcados.", kind: "foto" },
   "tema:CampoColor:Carbonilla": { url: "img/guias/carbonilla-tema-abstracto-campo-color.webp", text: "Grandes planos de color, sin una escena literal.", kind: "foto" },
   "tema:CampoColor:Abstracto:Carbonilla": { url: "img/guias/carbonilla-tema-abstracto-campo-color.webp", text: "Grandes planos de color, sin una escena literal.", kind: "foto" },
   "tema:Geometrico:Carbonilla": { url: "img/guias/carbonilla-tema-abstracto-geometrico.webp", text: "Formas geométricas, ritmos y contrastes.", kind: "foto" },
@@ -200,6 +161,39 @@ window.ESTUDIO_GUIAS_DEFAULT = { items: {
   "tema:Materia:Abstracto:Carbonilla": { url: "img/guias/carbonilla-tema-abstracto-materia.webp", text: "Textura y materia: empaste, arena, relieve.", kind: "foto" },
   "tema:Emocion:Carbonilla": { url: "img/guias/carbonilla-tema-abstracto-emocion.webp", text: "Una abstracción inspirada en un sentimiento o una idea.", kind: "foto" },
   "tema:Emocion:Abstracto:Carbonilla": { url: "img/guias/carbonilla-tema-abstracto-emocion.webp", text: "Una abstracción inspirada en un sentimiento o una idea.", kind: "foto" },
+  "color:Sin color:Carbonilla": { url: "img/guias/carbonilla.webp", text: "Dibujo en blanco y negro, sin color.", kind: "foto" },
+  "color:A color:Carbonilla": { url: "img/guias/carbonilla-a-color.webp", text: "El mismo tipo de dibujo, pero con color.", kind: "foto" },
+  "color:Sin color:Realista": { url: "img/guias/carbonilla.webp", text: "Dibujo en blanco y negro, sin color.", kind: "foto" },
+  "color:Sin color:Realista:Carbonilla": { url: "img/guias/carbonilla.webp", text: "Dibujo en blanco y negro, sin color.", kind: "foto" },
+  "color:A color:Realista": { url: "img/guias/carbonilla-a-color.webp", text: "El mismo tipo de dibujo, pero con color.", kind: "foto" },
+  "color:A color:Realista:Carbonilla": { url: "img/guias/carbonilla-a-color.webp", text: "El mismo tipo de dibujo, pero con color.", kind: "foto" },
+  "color:Sin color:Hiperrealista": { url: "img/guias/carbonilla-color-sin-hiperrealista.webp", text: "Dibujo en blanco y negro, sin color.", kind: "foto" },
+  "color:Sin color:Hiperrealista:Carbonilla": { url: "img/guias/carbonilla-color-sin-hiperrealista.webp", text: "Dibujo en blanco y negro, sin color.", kind: "foto" },
+  "color:A color:Hiperrealista": { url: "img/guias/carbonilla-color-a-color-hiperrealista.webp", text: "El mismo tipo de dibujo, pero con color.", kind: "foto" },
+  "color:A color:Hiperrealista:Carbonilla": { url: "img/guias/carbonilla-color-a-color-hiperrealista.webp", text: "El mismo tipo de dibujo, pero con color.", kind: "foto" },
+  "color:Sin color:Bocetado": { url: "img/guias/carbonilla-color-sin-bocetado.webp", text: "Dibujo en blanco y negro, sin color.", kind: "foto" },
+  "color:Sin color:Bocetado:Carbonilla": { url: "img/guias/carbonilla-color-sin-bocetado.webp", text: "Dibujo en blanco y negro, sin color.", kind: "foto" },
+  "color:A color:Bocetado": { url: "img/guias/carbonilla-color-a-color-bocetado.webp", text: "El mismo tipo de dibujo, pero con color.", kind: "foto" },
+  "color:A color:Bocetado:Carbonilla": { url: "img/guias/carbonilla-color-a-color-bocetado.webp", text: "El mismo tipo de dibujo, pero con color.", kind: "foto" },
+  "color:Sin color:Abstracto": { url: "img/guias/carbonilla-color-sin-abstracto.webp", text: "Dibujo en blanco y negro, sin color.", kind: "foto" },
+  "color:Sin color:Abstracto:Carbonilla": { url: "img/guias/carbonilla-color-sin-abstracto.webp", text: "Dibujo en blanco y negro, sin color.", kind: "foto" },
+  "color:A color:Abstracto": { url: "img/guias/carbonilla-color-a-color-abstracto.webp", text: "El mismo tipo de dibujo, pero con color.", kind: "foto" },
+  "color:A color:Abstracto:Carbonilla": { url: "img/guias/carbonilla-color-a-color-abstracto.webp", text: "El mismo tipo de dibujo, pero con color.", kind: "foto" },
+  "fondo:simple:Hiperrealista:Carbonilla": { url: "img/guias/carbonilla-fondo-simple-hiperrealista.webp", text: "Fondo de papel, claro o apenas difuminado, sin una escena detrás.", kind: "foto" },
+  "fondo:detallado:Hiperrealista:Carbonilla": { url: "img/guias/carbonilla-fondo-detallado-hiperrealista.webp", text: "Fondo trabajado: un ambiente, una habitación u otros detalles detrás.", kind: "foto" },
+  "fondo:simple:Bocetado:Carbonilla": { url: "img/guias/carbonilla-fondo-simple-bocetado.webp", text: "Fondo de papel, claro o apenas difuminado, sin una escena detrás.", kind: "foto" },
+  "fondo:detallado:Bocetado:Carbonilla": { url: "img/guias/carbonilla-fondo-detallado-bocetado.webp", text: "Fondo trabajado: un ambiente, una habitación u otros detalles detrás.", kind: "foto" },
+  "fondo:simple:Abstracto:Carbonilla": { url: "img/guias/carbonilla-fondo-simple-abstracto.webp", text: "Fondo de papel, claro o apenas difuminado, sin una escena detrás.", kind: "foto" },
+  "fondo:detallado:Abstracto:Carbonilla": { url: "img/guias/carbonilla-fondo-detallado-abstracto.webp", text: "Fondo trabajado: un ambiente, una habitación u otros detalles detrás.", kind: "foto" },
+  "sujetos:1:Hiperrealista:Carbonilla": { url: "img/guias/carbonilla-sujetos-1-hiperrealista.webp", text: "Una sola persona (ya incluida en el precio base).", kind: "foto" },
+  "sujetos:2:Hiperrealista:Carbonilla": { url: "img/guias/carbonilla-sujetos-2-hiperrealista.webp", text: "Dos personas: se suma el valor de un sujeto extra.", kind: "foto" },
+  "sujetos:mascota:Hiperrealista:Carbonilla": { url: "img/guias/carbonilla-sujetos-mascota-hiperrealista.webp", text: "Sumá una mascota junto a la persona.", kind: "foto" },
+  "sujetos:1:Bocetado:Carbonilla": { url: "img/guias/carbonilla-sujetos-1-bocetado.webp", text: "Una sola persona (ya incluida en el precio base).", kind: "foto" },
+  "sujetos:2:Bocetado:Carbonilla": { url: "img/guias/carbonilla-sujetos-2-bocetado.webp", text: "Dos personas: se suma el valor de un sujeto extra.", kind: "foto" },
+  "sujetos:mascota:Bocetado:Carbonilla": { url: "img/guias/carbonilla-sujetos-mascota-bocetado.webp", text: "Sumá una mascota junto a la persona.", kind: "foto" },
+  "sujetos:1:Abstracto:Carbonilla": { url: "img/guias/carbonilla-sujetos-1-abstracto.webp", text: "Una sola persona (ya incluida en el precio base).", kind: "foto" },
+  "sujetos:2:Abstracto:Carbonilla": { url: "img/guias/carbonilla-sujetos-2-abstracto.webp", text: "Dos personas: se suma el valor de un sujeto extra.", kind: "foto" },
+  "sujetos:mascota:Abstracto:Carbonilla": { url: "img/guias/carbonilla-sujetos-mascota-abstracto.webp", text: "Sumá una mascota junto a la persona.", kind: "foto" },
 } };
 
 window.ESTUDIO_DEFAULTS = {
@@ -533,7 +527,12 @@ window.ESTUDIO_DEFAULTS = {
       "kit-5": "Sacapuntas o cúter, y regla de 30 cm.",
       "horarioCurso": "Viernes 18:00 a 20:00 hs.",
       "direccionCurso": "📍 Las Residentas 460, Fernando de la Mora, Paraguay.",
-      "flexibilidadCurso": "Flexibilidad total de horario y recuperación."
+      "flexibilidadCurso": "Flexibilidad total de horario y recuperación.",
+      "enmarcadoNota": "Las obras se entregan sin enmarcar. El lienzo va con los bordes pintados, listo para colgar; el dibujo, como lámina suelta. El enmarcado es un servicio aparte que yo no realizo. Si querés presupuesto para enmarcar tu cuadro, podés consultar a:",
+      "enmarcadoLidiaNombre": "Lidia Martínez",
+      "enmarcadoLidiaTel": "+595 981 714 306",
+      "enmarcadoNuevoNombre": "Nuevo Arte Galería",
+      "enmarcadoNuevoTel": "+595 986 185 056"
     },
     "textosI18n": {
       "en": {
@@ -560,7 +559,12 @@ window.ESTUDIO_DEFAULTS = {
         "kit-5": "Sharpener or craft knife, and a 30 cm ruler.",
         "horarioCurso": "Fridays, 6:00 p.m. to 8:00 p.m.",
         "direccionCurso": "📍 Las Residentas 460, Fernando de la Mora, Paraguay.",
-        "flexibilidadCurso": "Full flexibility of schedule, including make-up classes."
+        "flexibilidadCurso": "Full flexibility of schedule, including make-up classes.",
+      "enmarcadoNota": "Works are delivered unframed. Paintings come with painted edges, ready to hang; drawings are delivered as loose sheets. Framing is a separate service that I do not provide. If you would like a quote to frame your work, you can contact:",
+      "enmarcadoLidiaNombre": "Lidia Martínez",
+      "enmarcadoLidiaTel": "+595 981 714 306",
+      "enmarcadoNuevoNombre": "Nuevo Arte Galería",
+      "enmarcadoNuevoTel": "+595 986 185 056"
       },
       "pt": {
         "subtitulo": "Artista plástico | Professor de arte",
@@ -586,7 +590,12 @@ window.ESTUDIO_DEFAULTS = {
         "kit-5": "Apontador ou estilete, e régua de 30 cm.",
         "horarioCurso": "Sextas-feiras, das 18:00 às 20:00.",
         "direccionCurso": "📍 Las Residentas 460, Fernando de la Mora, Paraguai.",
-        "flexibilidadCurso": "Flexibilidade total de horário e reposição de aulas."
+        "flexibilidadCurso": "Flexibilidade total de horário e reposição de aulas.",
+      "enmarcadoNota": "As obras são entregues sem moldura. A pintura vai com as bordas pintadas, pronta para pendurar; o desenho, como lâmina solta. A moldura é um serviço à parte, que eu não realizo. Se quiseres um orçamento para emoldurar o teu quadro, podes consultar:",
+      "enmarcadoLidiaNombre": "Lidia Martínez",
+      "enmarcadoLidiaTel": "+595 981 714 306",
+      "enmarcadoNuevoNombre": "Nuevo Arte Galería",
+      "enmarcadoNuevoTel": "+595 986 185 056"
       },
       "fr": {
         "subtitulo": "Artiste plasticien | Maître d’art",
@@ -612,7 +621,12 @@ window.ESTUDIO_DEFAULTS = {
         "kit-5": "Taille-crayon ou cutter, et règle de 30 cm.",
         "horarioCurso": "Vendredis, de 18 h 00 à 20 h 00.",
         "direccionCurso": "📍 Las Residentas 460, Fernando de la Mora, Paraguay.",
-        "flexibilidadCurso": "Toute flexibilité d’horaire, avec des cours de rattrapage."
+        "flexibilidadCurso": "Toute flexibilité d’horaire, avec des cours de rattrapage.",
+      "enmarcadoNota": "Les œuvres sont livrées sans cadre. La peinture est livrée avec les bords peints, prête à accrocher ; le dessin, en feuille libre. L’encadrement est un service à part que je ne réalise pas. Pour un devis d’encadrement, vous pouvez vous adresser à :",
+      "enmarcadoLidiaNombre": "Lidia Martínez",
+      "enmarcadoLidiaTel": "+595 981 714 306",
+      "enmarcadoNuevoNombre": "Nuevo Arte Galería",
+      "enmarcadoNuevoTel": "+595 986 185 056"
       },
       "it": {
         "subtitulo": "Artista visivo | Maestro d’arte",
@@ -638,7 +652,12 @@ window.ESTUDIO_DEFAULTS = {
         "kit-5": "Temperamatite o cutter, e riga da 30 cm.",
         "horarioCurso": "Venerdì, dalle 18:00 alle 20:00.",
         "direccionCurso": "📍 Las Residentas 460, Fernando de la Mora, Paraguay.",
-        "flexibilidadCurso": "Piena flessibilità di orario e recupero delle lezioni."
+        "flexibilidadCurso": "Piena flessibilità di orario e recupero delle lezioni.",
+      "enmarcadoNota": "Le opere vengono consegnate senza cornice. Il dipinto arriva con i bordi dipinti, pronto da appendere; il disegno, come foglio sciolto. La cornice è un servizio a parte che non realizzo. Se desideri un preventivo per incorniciare il tuo quadro, puoi rivolgerti a:",
+      "enmarcadoLidiaNombre": "Lidia Martínez",
+      "enmarcadoLidiaTel": "+595 981 714 306",
+      "enmarcadoNuevoNombre": "Nuevo Arte Galería",
+      "enmarcadoNuevoTel": "+595 986 185 056"
       },
       "de": {
         "subtitulo": "Bildender Künstler | Kunstlehrer",
@@ -664,7 +683,47 @@ window.ESTUDIO_DEFAULTS = {
         "kit-5": "Spitzer oder Cutter und ein 30-cm-Lineal.",
         "horarioCurso": "Freitags, 18:00 bis 20:00 Uhr.",
         "direccionCurso": "📍 Las Residentas 460, Fernando de la Mora, Paraguay.",
-        "flexibilidadCurso": "Volle zeitliche Flexibilität, einschließlich Nachholstunden."
+        "flexibilidadCurso": "Volle zeitliche Flexibilität, einschließlich Nachholstunden.",
+      "enmarcadoNota": "Die Werke werden ungerahmt geliefert. Das Gemälde hat bemalte Kanten und ist bereit zum Aufhängen; die Zeichnung wird als loses Blatt geliefert. Das Rahmen ist ein gesonderter Service, den ich nicht anbiete. Für ein Angebot zur Rahmung kannst du dich wenden an:",
+      "enmarcadoLidiaNombre": "Lidia Martínez",
+      "enmarcadoLidiaTel": "+595 981 714 306",
+      "enmarcadoNuevoNombre": "Nuevo Arte Galería",
+      "enmarcadoNuevoTel": "+595 986 185 056"
+      },
+      "zh": {
+        "enmarcadoNota": "作品不加框交付。油画画边已涂色，可直接悬挂；素描以单页纸交付。装框是我本人不提供的单独服务。如需为画作装框报价，可咨询：",
+        "enmarcadoLidiaNombre": "Lidia Martínez",
+        "enmarcadoLidiaTel": "+595 981 714 306",
+        "enmarcadoNuevoNombre": "Nuevo Arte Galería",
+        "enmarcadoNuevoTel": "+595 986 185 056"
+      },
+      "ja": {
+        "enmarcadoNota": "作品は額装なしでお渡しします。油絵は端まで着色してあり、そのまま掛けられます。素描はばらの紙でお渡しします。額装は私が行わない別サービスです。額装の見積もりは、次の連絡先へご相談ください：",
+        "enmarcadoLidiaNombre": "Lidia Martínez",
+        "enmarcadoLidiaTel": "+595 981 714 306",
+        "enmarcadoNuevoNombre": "Nuevo Arte Galería",
+        "enmarcadoNuevoTel": "+595 986 185 056"
+      },
+      "ko": {
+        "enmarcadoNota": "작품은 액자 없이 전달됩니다. 유화는 가장자리까지 칠해져 바로 걸 수 있고, 소묘는 낱장으로 전달됩니다. 액자 제작은 제가 하지 않는 별도 서비스입니다. 액자 견적이 필요하시면 다음으로 문의하세요:",
+        "enmarcadoLidiaNombre": "Lidia Martínez",
+        "enmarcadoLidiaTel": "+595 981 714 306",
+        "enmarcadoNuevoNombre": "Nuevo Arte Galería",
+        "enmarcadoNuevoTel": "+595 986 185 056"
+      },
+      "hi": {
+        "enmarcadoNota": "कृतियाँ बिना फ्रेम के दी जाती हैं। चित्र के किनारे रंगे होते हैं और टांगने के लिए तैयार रहते हैं; रेखाचित्र ढीली शीट के रूप में दिया जाता है। फ्रेमिंग एक अलग सेवा है जिसे मैं नहीं करता। अपने चित्र के फ्रेम का अनुमान पाने के लिए आप इनसे संपर्क कर सकते हैं:",
+        "enmarcadoLidiaNombre": "Lidia Martínez",
+        "enmarcadoLidiaTel": "+595 981 714 306",
+        "enmarcadoNuevoNombre": "Nuevo Arte Galería",
+        "enmarcadoNuevoTel": "+595 986 185 056"
+      },
+      "ru": {
+        "enmarcadoNota": "Работы передаются без рамы. Живопись поставляется с прокрашенными торцами, готовая к развеске; рисунок — отдельным листом. Оформление в раму — отдельная услуга, которую я не выполняю. Для сметы на раму можно обратиться к:",
+        "enmarcadoLidiaNombre": "Lidia Martínez",
+        "enmarcadoLidiaTel": "+595 981 714 306",
+        "enmarcadoNuevoNombre": "Nuevo Arte Galería",
+        "enmarcadoNuevoTel": "+595 986 185 056"
       }
     }
   },
@@ -707,7 +766,12 @@ window.ESTUDIO_DEFAULTS = {
     "kit-5": "Material de inicio 5",
     "horarioCurso": "Horario de cursos",
     "direccionCurso": "Dirección del curso",
-    "flexibilidadCurso": "Aclaración de horarios"
+    "flexibilidadCurso": "Aclaración de horarios",
+    "enmarcadoNota": "Nota: obras sin enmarcar",
+    "enmarcadoLidiaNombre": "Enmarcado: nombre de Lidia Martínez",
+    "enmarcadoLidiaTel": "Enmarcado: WhatsApp de Lidia Martínez",
+    "enmarcadoNuevoNombre": "Enmarcado: nombre de Nuevo Arte Galería",
+    "enmarcadoNuevoTel": "Enmarcado: WhatsApp de Nuevo Arte Galería"
   }
 };
 
@@ -751,8 +815,13 @@ window.EstudioDatos = (() => {
   if (map.protocol !== 'https:') throw Error('El enlace del mapa debe comenzar con https://.');
   const textos = {};
   for (const key of Object.keys(defaults.sitio.textos)) {
-   if (typeof value.textos?.[key] !== 'string' || value.textos[key].length > 6000) throw Error('Texto inválido: ' + key);
-   textos[key] = value.textos[key];
+   const raw = value.textos?.[key];
+   if (typeof raw === 'string') {
+    if (raw.length > 6000) throw Error('Texto inválido: ' + key);
+    textos[key] = raw;
+   } else {
+    textos[key] = defaults.sitio.textos[key];
+   }
   }
   const out = { whatsapp:value.whatsapp, mapaCurso:map.href, textos };
   if (value.textosI18n && typeof value.textosI18n === 'object' && !Array.isArray(value.textosI18n)) {
@@ -909,4 +978,56 @@ window.EstudioDatos = (() => {
   return { items };
  }
  return { clone, validatePrices, validateSite, validateCategories, mergeGallery, validateGuias, traducirNombreAlbum, I18N_LANGS };
+})();
+
+window.NotaEnmarcado = (function () {
+  const DEF = {
+    lidiaNombre: 'Lidia Martínez',
+    lidiaTel: '595981714306',
+    nuevoNombre: 'Nuevo Arte Galería',
+    nuevoTel: '595986185056',
+    nota: 'Las obras se entregan sin enmarcar. El lienzo va con los bordes pintados, listo para colgar; el dibujo, como lámina suelta. El enmarcado es un servicio aparte que yo no realizo. Si querés presupuesto para enmarcar tu cuadro, podés consultar a:'
+  };
+  function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function site(key, fb) {
+    if (window.EstudioI18n && typeof EstudioI18n.textoSitio === 'function') {
+      const v = EstudioI18n.textoSitio(key);
+      if (v && String(v).trim()) return v;
+    }
+    if (window.EstudioI18n && typeof EstudioI18n.t === 'function' && key === 'enmarcadoNota') {
+      const v = EstudioI18n.t('nota.enmarcado');
+      if (v && v !== 'nota.enmarcado') return v;
+    }
+    const sitio = window.sitioActual || (window.ESTUDIO_DEFAULTS && ESTUDIO_DEFAULTS.sitio);
+    const fromSitio = sitio && sitio.textos && sitio.textos[key];
+    if (fromSitio) return fromSitio;
+    return fb || '';
+  }
+  function digits(s) { return String(s || '').replace(/\D/g, ''); }
+  function formatTel(d) {
+    d = digits(d);
+    if (d.startsWith('595') && d.length === 12) return '+595 ' + d.slice(3, 6) + ' ' + d.slice(6, 9) + ' ' + d.slice(9);
+    return d ? '+' + d : '';
+  }
+  function contactos() {
+    return [
+      { nombre: site('enmarcadoLidiaNombre', DEF.lidiaNombre), tel: digits(site('enmarcadoLidiaTel', DEF.lidiaTel)) || DEF.lidiaTel },
+      { nombre: site('enmarcadoNuevoNombre', DEF.nuevoNombre), tel: digits(site('enmarcadoNuevoTel', DEF.nuevoTel)) || DEF.nuevoTel }
+    ];
+  }
+  function parrafo() { return site('enmarcadoNota', DEF.nota); }
+  function html() {
+    const items = contactos().map((c) => '<li><span class="nota-enmarcado-nombre">' + escapeHtml(c.nombre) + '</span> <a class="nota-enmarcado-tel" href="https://wa.me/' + escapeHtml(c.tel) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(formatTel(c.tel)) + '</a></li>').join('');
+    return '<aside class="nota-enmarcado"><p>' + escapeHtml(parrafo()) + '</p><ul class="nota-enmarcado-contactos">' + items + '</ul></aside>';
+  }
+  function whatsapp() {
+    return parrafo() + '\n' + contactos().map((c) => '• ' + c.nombre + ': ' + formatTel(c.tel)).join('\n');
+  }
+  function pintar(root) {
+    if (!root) return;
+    root.innerHTML = html();
+  }
+  return { html, whatsapp, contactos, parrafo, formatTel, pintar };
 })();

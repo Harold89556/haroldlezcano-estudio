@@ -214,7 +214,9 @@ function presupuesto(){
    extras=Math.max(0,Number(valor('personas'))||0)*config.extraPersona+Math.max(0,Number(valor('mascotas'))||0)*Math.round(config.extraPersona*AJUSTES.mascota);
    if(est!=='Espatulado'&&marcado('fondo'))fondo=Math.round(base*AJUSTES.fondo);
   }
-  marco=config.marcos?.[valor('enmarcado')]||0;
+  marco=0;
+  const enm=document.getElementById('enmarcado');
+  if(enm && enm.value!=='SinMarco') enm.value='SinMarco';
  }
  const sub=base+extras+marco+fondo+andamio;
  const cuotas=valor('cuotas')==='3'&&sub>=AJUSTES.cuotasMinimo&&t!=='Restauracion';

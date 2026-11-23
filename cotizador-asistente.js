@@ -86,7 +86,6 @@
         s.push({ id: 'forma', pregunta: i18n('wizard.forma.pregunta2'), ayuda: i18n('wizard.forma.ayuda2') });
       }
       s.push({ id: 'tamano', pregunta: i18n('wizard.tamano.pregunta'), ayuda: trabajo === 'carbonilla' ? i18n('wizard.tamano.ayudaCarbonilla') : i18n('wizard.tamano.ayuda') });
-      s.push({ id: 'marco', pregunta: i18n('wizard.marco.pregunta2'), ayuda: trabajo === 'carbonilla' ? i18n('wizard.marco.ayudaCarbonilla2') : i18n('wizard.marco.ayudaPintura') });
     } else if (trabajo === 'escultura') {
       s.push({ id: 'tipo_escultura', pregunta: i18n('wizard.tipoEscultura.pregunta'), ayuda: i18n('wizard.tipoEscultura.ayuda') });
       s.push({ id: 'material_escultura', pregunta: i18n('wizard.material.pregunta'), ayuda: i18n('wizard.material.ayuda') });
@@ -196,18 +195,6 @@
         { value: 'Hexagonal', key: 'forma_lienzo:Hexagonal', title: i18n('card.hexagonal') }
       ].map((o) => ({ ...o, text: textoGuia(o.key), url: guia(o.key).url, selected: valor('forma_lienzo') === o.value }));
     }
-    if (paso.id === 'marco') {
-      let list = [
-        { value: 'SinMarco', key: 'enmarcado:SinMarco', title: trabajo === 'carbonilla' ? i18n('card.sinMarcoPapel') : i18n('card.sinMarco') },
-        { value: 'Estandar', key: 'enmarcado:Estandar', title: trabajo === 'carbonilla' ? i18n('card.marcoEstandarPapel') : i18n('card.marcoEstandar') },
-        { value: 'Cajon', key: 'enmarcado:Cajon', title: i18n('card.marcoCajon') },
-        { value: 'Clasico', key: 'enmarcado:Clasico', title: trabajo === 'carbonilla' ? i18n('card.marcoClasicoPapel') : i18n('card.marcoClasico') },
-        { value: 'SemiRelieve', key: 'enmarcado:SemiRelieve', title: i18n('card.marcoSemi') },
-        { value: 'GruesoRelieves', key: 'enmarcado:GruesoRelieves', title: i18n('card.marcoGrueso') }
-      ];
-      if (trabajo === 'carbonilla') list = list.filter((o) => ['SinMarco', 'Estandar', 'Clasico'].includes(o.value));
-      return list.map((o) => ({ ...o, text: textoGuia(o.key), url: guia(o.key).url, selected: valor('enmarcado') === o.value }));
-    }
     if (paso.id === 'tipo_escultura') {
       return [
         { value: 'Busto', key: 'tipo_escultura:Busto', title: i18n('escultura.busto') },
@@ -264,7 +251,6 @@
       if ($('fondo')) { $('fondo').checked = value === 'detallado'; if (window.calcular) calcular(); }
     } else if (paso.id === 'color') setVal('color_lapiz', value);
     else if (paso.id === 'forma') { setVal('forma_lienzo', value); if (window.onFormaChange) onFormaChange(); }
-    else if (paso.id === 'marco') setVal('enmarcado', value);
     else if (paso.id === 'tipo_escultura') setVal('tipo_escultura', value);
     else if (paso.id === 'material_escultura') { setVal('material_escultura', value); if (window.onMaterialEsculturaChange) onMaterialEsculturaChange(); }
     else if (paso.id === 'estilo_mural') setVal('estilo_mural', value);
@@ -278,7 +264,7 @@
     if (paso.id === 'estilo') return ['Realista', 'Hiperrealista', 'Espatulado', 'Bocetado', 'Abstracto'].includes(valor('estilo'));
     if (paso.id === 'tema') return !!valor('tema');
     if (paso.id === 'sujetos') return true;
-    if (paso.id === 'fondo' || paso.id === 'color' || paso.id === 'forma' || paso.id === 'marco') return true;
+    if (paso.id === 'fondo' || paso.id === 'color' || paso.id === 'forma') return true;
     if (paso.id === 'tipo_escultura') return !!valor('tipo_escultura');
     if (paso.id === 'material_escultura') return !!valor('material_escultura');
     if (paso.id === 'estilo_mural') return !!valor('estilo_mural');
@@ -296,7 +282,7 @@
   }
 
   const AUTO_PASOS = {
-    trabajo:1, estilo:1, tema:1, fondo:1, color:1, forma:1, marco:1,
+    trabajo:1, estilo:1, tema:1, fondo:1, color:1, forma:1,
     tipo_escultura:1, material_escultura:1, estilo_mural:1, tipo_restauracion:1
   };
   const AVANCE_MS = 400;
@@ -414,7 +400,6 @@
       }
       add(i18n('chip.forma'), etiquetaOpcion('forma_lienzo'));
       add(i18n('chip.tamano'), etiquetaOpcion('tamano_predefinido')||($('tamano_predefinido')?.selectedOptions[0]?.text)||'');
-      add(i18n('chip.marco'), etiquetaOpcion('enmarcado'));
     } else if (trabajo === 'escultura') {
       add(i18n('chip.trabajo'), i18n('trabajo.escultura'));
       add(i18n('chip.tipo'), etiquetaOpcion('tipo_escultura'));
@@ -433,7 +418,8 @@
     add(i18n('chip.referencias'), etiquetaOpcion('fotos_referencia'));
     add(i18n('chip.nombre'), valor('envio_nombre'));
     const nota = trabajo === 'mural' ? i18n('precio.muralDetalle') : i18n('precio.ivaEnvio');
-    return '<ul class="asistente-resumen">' + filas.join('') + '</ul><p class="asistente-precio" id="asistente-precio">' + precio + '</p><p class="vista-escala-nota">' + nota + '</p>';
+    const aviso = (esPintura() && window.NotaEnmarcado) ? NotaEnmarcado.html() : '';
+    return '<ul class="asistente-resumen">' + filas.join('') + '</ul>' + aviso + '<p class="asistente-precio" id="asistente-precio">' + precio + '</p><p class="vista-escala-nota">' + nota + '</p>';
   }
 
 

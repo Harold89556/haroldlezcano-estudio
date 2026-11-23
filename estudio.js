@@ -255,6 +255,8 @@
   }
   if($('bioText')) $('bioText').textContent=textoSitio('biografia');
   if($('bioCurso')){$('bioCurso').textContent=textoSitio('introduccionCurso');$('bioCurso').dataset.listo='1';}
+  const notaSitio=document.getElementById('nota-enmarcado-sitio');
+  if(notaSitio && window.NotaEnmarcado) NotaEnmarcado.pintar(notaSitio);
   const matricula=document.getElementById('curso-matricula-unica');
   if(matricula && window.preciosActuales){
    const n=window.preciosActuales.cursos.matricula.toLocaleString((window.EstudioI18n&&EstudioI18n.locale&&EstudioI18n.locale())||'es-PY');

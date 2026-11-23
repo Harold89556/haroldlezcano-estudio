@@ -135,9 +135,10 @@ test('21. Carbonilla muestra guías de dibujo, sin espatulado ni marcos de lienz
   assert.ok(real&&/carbonilla-estilo-realista/.test(real.getAttribute('src')),real&&real.getAttribute('src'));
   const hiper=a.d.querySelector('#guias-estilo .guia-card[data-value="Hiperrealista"] img');
   assert.ok(hiper&&/carbonilla-estilo-hiperrealista/.test(hiper.getAttribute('src')));
-  const marcos=[...a.d.querySelectorAll('#enmarcado option')].filter(o=>o.value&&!o.hidden).map(o=>o.value);
-  assert.deepEqual(marcos,['SinMarco','Estandar','Clasico']);
-  assert.match(a.d.querySelector('#enmarcado option[value="Estandar"]').textContent,/paspartú|vidrio/i);
+  const stepEnm=a.d.getElementById('step-enmarcado');
+  assert.equal(stepEnm && stepEnm.style.display,'none');
+  a.w.AsistentePedido.abrir();
+  assert.ok(!a.w.AsistentePedido.pasos().some(s=>s.id==='marco'));
   a.set('estilo','Hiperrealista');a.w.onEstiloChange();
   a.set('color_lapiz','Sin color');
   a.set('tamano_predefinido','21x30');a.w.handleTamanoChange();a.w.calcular();
@@ -619,9 +620,9 @@ test('35. En un mismo paso del asistente, cada opción tiene una imagen distinta
     a.set('tema','Retrato');if(a.w.onTemaChange)a.w.onTemaChange();
     for(const id of pasos) revisar(id,2);
   };
-  pintura('oleo',['estilo','tema','sujetos','fondo','forma','marco']);
-  pintura('acrilico',['estilo','tema','sujetos','fondo','forma','marco']);
-  pintura('carbonilla',['estilo','tema','sujetos','fondo','color','marco']);
+  pintura('oleo',['estilo','tema','sujetos','fondo','forma']);
+  pintura('acrilico',['estilo','tema','sujetos','fondo','forma']);
+  pintura('carbonilla',['estilo','tema','sujetos','fondo','color']);
   W.irA('trabajo');elige('escultura');
   revisar('tipo_escultura',6);revisar('material_escultura',4);
   W.irA('trabajo');elige('mural');
@@ -690,7 +691,7 @@ test('37. Las imágenes de Tema, Fondo, Sujetos, Forma y Marco cambian con el es
   const ids=W.pasos().map(s=>s.id);
   assert.ok(!ids.includes('sujetos'),'Abstracto no debe pedir sujetos');
   assert.ok(!ids.includes('fondo'),'Abstracto no debe pedir fondo simple/complejo');
-  assert.ok(ids.includes('forma') && ids.includes('marco') && ids.includes('tema'));
+  assert.ok(ids.includes('forma') && !ids.includes('marco') && ids.includes('tema'));
   assert.equal(a.d.getElementById('retratos-extras').style.display,'none');
   // Forma images follow the style
   const irForma=(estilo)=>{
@@ -741,22 +742,47 @@ test('37. Las imágenes de Tema, Fondo, Sujetos, Forma y Marco cambian con el es
   assert.match(sReal['1'],/sujetos-1\.webp/);
   assert.match(sHiper['1'],/sujetos-1-hiperrealista\.webp/);
   assert.notEqual(sReal['1'],sHiper['1']);
-  // Marco follows the style for hiper and abstracto
-  const irMarco=(estilo)=>{
-    W.irA('trabajo');elige('oleo');
+  // Carbonilla Color, Fondo y Sujetos siguen el estilo
+  const irColor=(estilo)=>{
+    W.irA('trabajo');elige('carbonilla');
     a.set('estilo',estilo);if(a.w.onEstiloChange)a.w.onEstiloChange();
-    if(estilo==='Abstracto') a.set('tema','CampoColor'); else a.set('tema','Retrato');
-    if(a.w.onTemaChange)a.w.onTemaChange();
-    W.irA('marco');
+    a.set('tema','Retrato');if(a.w.onTemaChange)a.w.onTemaChange();
+    W.irA('color');
     return srcs();
   };
-  const mReal=irMarco('Realista');
-  const mHiper=irMarco('Hiperrealista');
-  const mAbs=irMarco('Abstracto');
-  assert.match(mReal.Estandar,/marco-estandar\.webp/);
-  assert.match(mHiper.Estandar,/marco-estandar-hiperrealista\.webp/);
-  assert.match(mAbs.Estandar,/marco-estandar-abstracto\.webp/);
-  assert.notEqual(mHiper.Estandar,mReal.Estandar);
+  const cReal=irColor('Realista');
+  const cHiper=irColor('Hiperrealista');
+  const cBoc=irColor('Bocetado');
+  const cAbs=irColor('Abstracto');
+  assert.match(cReal['Sin color'],/carbonilla\.webp/);
+  assert.match(cHiper['Sin color'],/carbonilla-color-sin-hiperrealista\.webp/);
+  assert.match(cBoc['Sin color'],/carbonilla-color-sin-bocetado\.webp/);
+  assert.match(cAbs['Sin color'],/carbonilla-color-sin-abstracto\.webp/);
+  assert.match(cHiper['A color'],/carbonilla-color-a-color-hiperrealista\.webp/);
+  assert.notEqual(cHiper['Sin color'], cReal['Sin color']);
+  assert.equal(new Set([cReal['Sin color'],cHiper['Sin color'],cBoc['Sin color'],cAbs['Sin color']]).size,4);
+  const irFondoC=(estilo)=>{
+    W.irA('trabajo');elige('carbonilla');
+    a.set('estilo',estilo);if(a.w.onEstiloChange)a.w.onEstiloChange();
+    a.set('tema','Retrato');if(a.w.onTemaChange)a.w.onTemaChange();
+    W.irA('fondo');
+    return srcs();
+  };
+  const fbReal=irFondoC('Realista');
+  const fbHiper=irFondoC('Hiperrealista');
+  assert.match(fbReal.simple,/carbonilla-fondo-simple\.webp/);
+  assert.match(fbHiper.simple,/carbonilla-fondo-simple-hiperrealista\.webp/);
+  const irSujC=(estilo)=>{
+    W.irA('trabajo');elige('carbonilla');
+    a.set('estilo',estilo);if(a.w.onEstiloChange)a.w.onEstiloChange();
+    a.set('tema','Retrato');if(a.w.onTemaChange)a.w.onTemaChange();
+    W.irA('sujetos');
+    return srcs();
+  };
+  const sjReal=irSujC('Realista');
+  const sjHiper=irSujC('Hiperrealista');
+  assert.match(sjReal['1'],/carbonilla-sujetos-1\.webp/);
+  assert.match(sjHiper['1'],/carbonilla-sujetos-1-hiperrealista\.webp/);
   // Changing style via the form updates later-step images immediately
   a.set('estilo','Hiperrealista');if(a.w.onEstiloChange)a.w.onEstiloChange();
   a.set('tema','Retrato');if(a.w.onTemaChange)a.w.onTemaChange();
@@ -768,6 +794,7 @@ test('37. Las imágenes de Tema, Fondo, Sujetos, Forma y Marco cambian con el es
   const afterReal=srcs();
   assert.match(afterReal.Retrato,/tema-retrato\.webp/);
   // Abstracto keeps A consultar and does not invent a price
+  W.irA('trabajo');elige('oleo');
   a.set('estilo','Abstracto');a.w.onEstiloChange();a.set('tema','Geometrico');a.w.onTemaChange();
   a.set('tamano_predefinido','30x40');a.w.handleTamanoChange();a.w.calcular();
   assert.equal(a.price(),'A consultar');
@@ -799,6 +826,56 @@ test('36. El historial vuelve un paso en el cotizador, el álbum y el visor',()=
   b.w.closeAlbum();
   assert.equal(b.w.location.hash,'#galeria');
   assert.equal(b.d.getElementById('vista-albumes').style.display,'grid');
+});
+
+
+test('38. Sin paso de marco, la nota y los contactos aparecen, el WhatsApp lo dice y el precio no cambia',()=>{
+  const a=iniciar();a.listo();
+  a.w.calcular();
+  const precioSin=a.price();
+  assert.equal(precioSin,'700.000 ₲');
+  a.set('enmarcado','Estandar');a.w.calcular();
+  assert.equal(a.price(),precioSin,'Estandar ya no debe sumar marco');
+  assert.equal(a.d.getElementById('enmarcado').value,'SinMarco');
+  const W=a.w.AsistentePedido;
+  W.abrir();
+  const elige=(v)=>{const c=a.d.querySelector('#asistente-opciones .guia-card[data-value="'+v+'"]');assert.ok(c,v);c.click();};
+  elige('oleo');
+  assert.ok(W.pasos().every(s=>s.id!=='marco'),JSON.stringify(W.pasos().map(s=>s.id)));
+  assert.equal(a.d.getElementById('step-enmarcado').style.display,'none');
+  a.set('fotos_referencia','No, necesito asesoramiento');
+  a.set('envio_nombre','Cliente de prueba');
+  W.irA('resumen');
+  const box=a.d.querySelector('#asistente-pedido .nota-enmarcado');
+  assert.ok(box, 'falta la nota de enmarcado en el resumen');
+  assert.match(box.textContent,/sin enmarcar/i);
+  assert.match(box.textContent,/Lidia Martínez/);
+  assert.match(box.textContent,/Nuevo Arte Galería/);
+  const links=[...box.querySelectorAll('a.nota-enmarcado-tel')].map(a=>a.getAttribute('href'));
+  assert.ok(links.some(h=>/wa\.me\/595981714306/.test(h)),JSON.stringify(links));
+  assert.ok(links.some(h=>/wa\.me\/595986185056/.test(h)),JSON.stringify(links));
+  const sitio=a.d.getElementById('nota-enmarcado-sitio');
+  if(a.w.NotaEnmarcado) a.w.NotaEnmarcado.pintar(sitio);
+  assert.match(sitio.textContent,/Lidia Martínez/);
+  a.opens.length=0;
+  a.w.enviarObra();
+  assert.equal(a.opens.length,1);
+  const txt=decodeURIComponent(a.opens[0].split('text=')[1]||'');
+  assert.match(txt,/sin enmarcar/i);
+  assert.match(txt,/Lidia Martínez/);
+  assert.match(txt,/Nuevo Arte Galería/);
+  assert.match(txt,/\+595 981 714 306/);
+  assert.match(txt,/\+595 986 185 056/);
+  assert.ok(!/Marco estándar|Marco clásico|medio relieve/i.test(txt),txt);
+  const missing=a.w.EstudioDatos.validateSite({...a.w.EstudioDatos.clone({...a.w.ESTUDIO_DEFAULTS.sitio,textos:{...a.w.ESTUDIO_DEFAULTS.sitio.textos}})});
+  const sinNuevas={...a.w.EstudioDatos.clone(a.w.ESTUDIO_DEFAULTS.sitio)};
+  delete sinNuevas.textos.enmarcadoNota;
+  delete sinNuevas.textos.enmarcadoLidiaNombre;
+  delete sinNuevas.textos.enmarcadoLidiaTel;
+  delete sinNuevas.textos.enmarcadoNuevoNombre;
+  delete sinNuevas.textos.enmarcadoNuevoTel;
+  const merged=a.w.EstudioDatos.validateSite(sinNuevas);
+  assert.match(merged.textos.enmarcadoNota,/sin enmarcar/i);
 });
 
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));
