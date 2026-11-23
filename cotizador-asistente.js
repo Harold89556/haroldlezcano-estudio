@@ -10,19 +10,15 @@
     return valor('tecnica') || (trabajo === 'oleo' ? 'Oleo' : trabajo === 'acrilico' ? 'Acrilico' : trabajo === 'carbonilla' ? 'Carbonilla' : '');
   }
   function guia(key) {
-    const te = tecnicaGuia();
-    const special = /Mural|Escultura|Restauracion/.test(key);
-    const keys = [];
-    if (te && !special && /^(estilo|tema|fondo|enmarcado|sujetos):/.test(key)) keys.push(key + ':' + te);
-    keys.push(key);
     if (window.CotizadorVisual && typeof CotizadorVisual.item === 'function') {
-      for (const k of keys) {
-        const src = CotizadorVisual.item(k);
-        if (src && (src.url || src.text)) return { url: src.url || '', text: src.text || '' };
-      }
+      const src = CotizadorVisual.item(key);
+      if (src && (src.url || src.text)) return { url: src.url || '', text: src.text || '' };
     }
     const d = (window.ESTUDIO_GUIAS_DEFAULT && window.ESTUDIO_GUIAS_DEFAULT.items) || {};
     const o = (window.guiasActual && window.guiasActual.items) || {};
+    const keys = (window.CotizadorVisual && typeof CotizadorVisual.clavesGuia === 'function')
+      ? CotizadorVisual.clavesGuia(key)
+      : [key];
     for (const k of keys) {
       const src = o[k] || d[k];
       if (src && (src.url || src.text)) return { url: src.url || '', text: src.text || '' };
@@ -72,7 +68,11 @@
     const s = [{ id: 'trabajo', pregunta: i18n('wizard.trabajo.pregunta'), ayuda: i18n('wizard.trabajo.ayuda') }];
     if (esPintura()) {
       s.push({ id: 'estilo', pregunta: trabajo === 'carbonilla' ? i18n('wizard.estilo.preguntaCarbonilla') : i18n('wizard.estilo.pregunta'), ayuda: trabajo === 'carbonilla' ? i18n('wizard.estilo.ayudaCarbonilla') : i18n('wizard.estilo.ayuda') });
-      s.push({ id: 'tema', pregunta: i18n('wizard.tema.pregunta2'), ayuda: i18n('wizard.tema.ayuda2') });
+      s.push({
+        id: 'tema',
+        pregunta: valor('estilo') === 'Abstracto' ? i18n('wizard.tema.preguntaAbstracto') : i18n('wizard.tema.pregunta2'),
+        ayuda: valor('estilo') === 'Abstracto' ? i18n('wizard.tema.ayudaAbstracto') : i18n('wizard.tema.ayuda2')
+      });
       if (valor('tema') === 'Retrato') {
         s.push({ id: 'sujetos', pregunta: i18n('wizard.sujetos.pregunta2'), ayuda: i18n('wizard.sujetos.ayuda2') });
         if (valor('estilo') !== 'Espatulado') {
@@ -153,11 +153,18 @@
       return list.map((o) => ({ ...o, text: textoGuia(o.key), url: guia(o.key).url, selected: valor('estilo') === o.value }));
     }
     if (paso.id === 'tema') {
-      return [
+      const list = valor('estilo') === 'Abstracto' ? [
+        { value: 'CampoColor', key: 'tema:CampoColor', title: i18n('card.campoColor') },
+        { value: 'Geometrico', key: 'tema:Geometrico', title: i18n('card.geometrico') },
+        { value: 'Gestual', key: 'tema:Gestual', title: i18n('card.gestual') },
+        { value: 'Materia', key: 'tema:Materia', title: i18n('card.materia') },
+        { value: 'Emocion', key: 'tema:Emocion', title: i18n('card.emocion') }
+      ] : [
         { value: 'Retrato', key: 'tema:Retrato', title: i18n('card.retrato') },
         { value: 'Paisaje', key: 'tema:Paisaje', title: i18n('card.paisaje') },
         { value: 'Bodegon', key: 'tema:Bodegon', title: i18n('card.bodegon') }
-      ].map((o) => ({ ...o, text: textoGuia(o.key), url: guia(o.key).url, selected: valor('tema') === o.value }));
+      ];
+      return list.map((o) => ({ ...o, text: textoGuia(o.key), url: guia(o.key).url, selected: valor('tema') === o.value }));
     }
     if (paso.id === 'sujetos') {
       const p = Number(valor('personas') || 0);
@@ -945,7 +952,7 @@
     if (location.hash === '#cotizacion' || document.body.dataset.pantalla === 'cotizacion') abrir();
   }
 
-  window.AsistentePedido = { abrir, cerrar, pintar, iniciar, irA, restaurarPaso, pasoAnterior, hashPaso, aplicarSugerencia, sugerencias: sugerenciasPresupuesto, actualizarBarra, esAutoPaso, cancelarAvance, AVANCE_MS };
+  window.AsistentePedido = { abrir, cerrar, pintar, iniciar, irA, restaurarPaso, pasoAnterior, hashPaso, aplicarSugerencia, sugerencias: sugerenciasPresupuesto, actualizarBarra, esAutoPaso, cancelarAvance, AVANCE_MS, pasos };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
   else iniciar();
 })();

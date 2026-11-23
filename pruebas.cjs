@@ -35,7 +35,11 @@ test('18. Abstracto es un estilo, sin precio inventado, y las guías por defecto
   const guiaEstilos=[...a.d.querySelectorAll('#guias-estilo .guia-card')].map(c=>c.getAttribute('data-value'));
   assert.ok(guiaEstilos.includes('Abstracto'));
   assert.ok(![...a.d.querySelectorAll('#guias-tema .guia-card')].some(c=>c.getAttribute('data-value')==='Abstracto'));
-  a.set('estilo','Abstracto');a.w.onEstiloChange();a.set('tecnica','Oleo');a.w.onTecnicaChange();a.set('tema','Paisaje');a.w.onTemaChange();a.set('tamano_predefinido','30x40');a.w.handleTamanoChange();a.w.calcular();
+  a.set('estilo','Abstracto');a.w.onEstiloChange();a.set('tecnica','Oleo');a.w.onTecnicaChange();
+  const temasAbs=[...a.d.querySelectorAll('#tema option')].map(o=>o.value).filter(Boolean);
+  assert.ok(temasAbs.includes('CampoColor') && temasAbs.includes('Geometrico') && temasAbs.includes('Gestual') && temasAbs.includes('Materia') && temasAbs.includes('Emocion'));
+  assert.ok(!temasAbs.includes('Retrato') && !temasAbs.includes('Paisaje') && !temasAbs.includes('Bodegon'));
+  a.set('tema','CampoColor');a.w.onTemaChange();a.set('tamano_predefinido','30x40');a.w.handleTamanoChange();a.w.calcular();
   assert.equal(a.price(),'A consultar');assert.equal(a.w.presupuesto().consultar,true);
   a.set('tecnica','Carbonilla');a.w.onTecnicaChange();a.set('color_lapiz','Sin color');a.set('tamano_predefinido','21x30');a.w.handleTamanoChange();a.w.calcular();
   const carb=a.w.presupuesto();assert.ok(carb&&!carb.consultar);assert.match(a.price(),/\d/);
@@ -642,6 +646,132 @@ test('35. En un mismo paso del asistente, cada opción tiene una imagen distinta
   assert.match(col['A color'],/carbonilla-a-color\.webp/);
 });
 
+
+
+test('37. Las imágenes de Tema, Fondo, Sujetos, Forma y Marco cambian con el estilo, y Abstracto no ofrece temas figurativos',()=>{
+  const a=iniciar();a.listo();
+  const W=a.w.AsistentePedido;
+  W.abrir();
+  const elige=(v)=>{const c=a.d.querySelector('#asistente-opciones .guia-card[data-value="'+v+'"]');assert.ok(c,v);c.click();};
+  const srcs=()=>Object.fromEntries([...a.d.querySelectorAll('#asistente-opciones .guia-card')].map(c=>[c.getAttribute('data-value'), (c.querySelector('img')||{}).getAttribute('src')||'']));
+  const irTema=(estilo)=>{
+    W.irA('trabajo');elige('oleo');
+    a.set('estilo',estilo);if(a.w.onEstiloChange)a.w.onEstiloChange();
+    W.irA('tema');
+    return srcs();
+  };
+  const real=irTema('Realista');
+  assert.match(real.Retrato,/tema-retrato\.webp/);
+  assert.match(real.Paisaje,/tema-paisaje\.webp/);
+  assert.match(real.Bodegon,/tema-bodegon\.webp/);
+  const hiper=irTema('Hiperrealista');
+  assert.match(hiper.Retrato,/tema-retrato-hiperrealista\.webp/);
+  assert.match(hiper.Paisaje,/tema-paisaje-hiperrealista\.webp/);
+  assert.match(hiper.Bodegon,/tema-bodegon-hiperrealista\.webp/);
+  assert.notEqual(hiper.Retrato, real.Retrato);
+  assert.notEqual(hiper.Paisaje, real.Paisaje);
+  assert.notEqual(hiper.Bodegon, real.Bodegon);
+  const mono=irTema('Bocetado');
+  assert.match(mono.Retrato,/tema-retrato-monocromatico\.webp/);
+  assert.match(mono.Paisaje,/tema-paisaje-monocromatico\.webp/);
+  assert.match(mono.Bodegon,/tema-bodegon-monocromatico\.webp/);
+  const espa=irTema('Espatulado');
+  assert.match(espa.Retrato,/tema-retrato-espatulado\.webp/);
+  const abs=irTema('Abstracto');
+  const absVals=Object.keys(abs);
+  assert.deepEqual(absVals.sort(),['CampoColor','Emocion','Geometrico','Gestual','Materia'].sort());
+  assert.match(abs.CampoColor,/tema-abstracto-campo-color\.webp/);
+  assert.match(abs.Geometrico,/tema-abstracto-geometrico\.webp/);
+  assert.match(abs.Gestual,/tema-abstracto-gestual\.webp/);
+  assert.match(abs.Materia,/tema-abstracto-materia\.webp/);
+  assert.match(abs.Emocion,/tema-abstracto-emocion\.webp/);
+  assert.equal(new Set(Object.values(abs)).size,5);
+  a.set('tema','CampoColor');if(a.w.onTemaChange)a.w.onTemaChange();
+  const ids=W.pasos().map(s=>s.id);
+  assert.ok(!ids.includes('sujetos'),'Abstracto no debe pedir sujetos');
+  assert.ok(!ids.includes('fondo'),'Abstracto no debe pedir fondo simple/complejo');
+  assert.ok(ids.includes('forma') && ids.includes('marco') && ids.includes('tema'));
+  assert.equal(a.d.getElementById('retratos-extras').style.display,'none');
+  // Forma images follow the style
+  const irForma=(estilo)=>{
+    W.irA('trabajo');elige('oleo');
+    a.set('estilo',estilo);if(a.w.onEstiloChange)a.w.onEstiloChange();
+    if(estilo==='Abstracto'){ a.set('tema','CampoColor'); }
+    else { a.set('tema','Retrato'); }
+    if(a.w.onTemaChange)a.w.onTemaChange();
+    W.irA('forma');
+    return srcs();
+  };
+  const fReal=irForma('Realista');
+  const fHiper=irForma('Hiperrealista');
+  const fAbs=irForma('Abstracto');
+  const fEsp=irForma('Espatulado');
+  const fMono=irForma('Bocetado');
+  assert.match(fReal.Estandar,/forma-estandar\.webp/);
+  assert.match(fHiper.Estandar,/forma-estandar-hiperrealista\.webp/);
+  assert.match(fAbs.Estandar,/forma-estandar-abstracto\.webp/);
+  assert.match(fEsp.Estandar,/forma-estandar-espatulado\.webp/);
+  assert.match(fMono.Estandar,/forma-estandar-monocromatico\.webp/);
+  assert.match(fHiper.Circular,/forma-circular-hiperrealista\.webp/);
+  assert.match(fAbs.Circular,/forma-circular-abstracto\.webp/);
+  assert.notEqual(fHiper.Estandar,fReal.Estandar);
+  assert.notEqual(fAbs.Estandar,fReal.Estandar);
+  // Fondo and sujetos (retrato only) follow the style
+  const irFondo=(estilo)=>{
+    W.irA('trabajo');elige('oleo');
+    a.set('estilo',estilo);if(a.w.onEstiloChange)a.w.onEstiloChange();
+    a.set('tema','Retrato');if(a.w.onTemaChange)a.w.onTemaChange();
+    W.irA('fondo');
+    return srcs();
+  };
+  const bReal=irFondo('Realista');
+  const bHiper=irFondo('Hiperrealista');
+  assert.match(bReal.simple,/fondo-simple\.webp/);
+  assert.match(bHiper.simple,/fondo-simple-hiperrealista\.webp/);
+  assert.notEqual(bReal.simple,bHiper.simple);
+  const irSuj=(estilo)=>{
+    W.irA('trabajo');elige('oleo');
+    a.set('estilo',estilo);if(a.w.onEstiloChange)a.w.onEstiloChange();
+    a.set('tema','Retrato');if(a.w.onTemaChange)a.w.onTemaChange();
+    W.irA('sujetos');
+    return srcs();
+  };
+  const sReal=irSuj('Realista');
+  const sHiper=irSuj('Hiperrealista');
+  assert.match(sReal['1'],/sujetos-1\.webp/);
+  assert.match(sHiper['1'],/sujetos-1-hiperrealista\.webp/);
+  assert.notEqual(sReal['1'],sHiper['1']);
+  // Marco follows the style for hiper and abstracto
+  const irMarco=(estilo)=>{
+    W.irA('trabajo');elige('oleo');
+    a.set('estilo',estilo);if(a.w.onEstiloChange)a.w.onEstiloChange();
+    if(estilo==='Abstracto') a.set('tema','CampoColor'); else a.set('tema','Retrato');
+    if(a.w.onTemaChange)a.w.onTemaChange();
+    W.irA('marco');
+    return srcs();
+  };
+  const mReal=irMarco('Realista');
+  const mHiper=irMarco('Hiperrealista');
+  const mAbs=irMarco('Abstracto');
+  assert.match(mReal.Estandar,/marco-estandar\.webp/);
+  assert.match(mHiper.Estandar,/marco-estandar-hiperrealista\.webp/);
+  assert.match(mAbs.Estandar,/marco-estandar-abstracto\.webp/);
+  assert.notEqual(mHiper.Estandar,mReal.Estandar);
+  // Changing style via the form updates later-step images immediately
+  a.set('estilo','Hiperrealista');if(a.w.onEstiloChange)a.w.onEstiloChange();
+  a.set('tema','Retrato');if(a.w.onTemaChange)a.w.onTemaChange();
+  W.irA('tema');
+  const afterHiper=srcs();
+  assert.match(afterHiper.Retrato,/tema-retrato-hiperrealista\.webp/);
+  a.set('estilo','Realista');if(a.w.onEstiloChange)a.w.onEstiloChange();
+  W.irA('tema');
+  const afterReal=srcs();
+  assert.match(afterReal.Retrato,/tema-retrato\.webp/);
+  // Abstracto keeps A consultar and does not invent a price
+  a.set('estilo','Abstracto');a.w.onEstiloChange();a.set('tema','Geometrico');a.w.onTemaChange();
+  a.set('tamano_predefinido','30x40');a.w.handleTamanoChange();a.w.calcular();
+  assert.equal(a.price(),'A consultar');
+});
 
 test('36. El historial vuelve un paso en el cotizador, el álbum y el visor',()=>{
   const a=iniciar();

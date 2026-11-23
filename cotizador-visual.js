@@ -22,12 +22,28 @@
   function tecnicaActual() {
     return document.getElementById('tecnica')?.value || '';
   }
+  function estiloActual() {
+    return document.getElementById('estilo')?.value || '';
+  }
   function clavesGuia(key) {
     const te = tecnicaActual();
+    const es = estiloActual();
     const special = /Mural|Escultura|Restauracion/.test(key);
     const yaTecnica = /:(Oleo|Acrilico|Carbonilla)$/.test(key);
+    const styleable = /^(tema|fondo|enmarcado|sujetos|forma_lienzo|color):/.test(key);
+    const yaEstilo = styleable && /:(Realista|Hiperrealista|Abstracto|Espatulado|Bocetado)(:|$)/.test(key);
     const keys = [];
-    if (te && !special && !yaTecnica && /^(estilo|tema|fondo|enmarcado|sujetos):/.test(key)) keys.push(key + ':' + te);
+    if (special || yaTecnica || yaEstilo) {
+      keys.push(key);
+      return keys;
+    }
+    if (styleable) {
+      if (es && te) keys.push(key + ':' + es + ':' + te);
+      if (te) keys.push(key + ':' + te);
+      if (es) keys.push(key + ':' + es);
+    } else if (te && /^(estilo):/.test(key)) {
+      keys.push(key + ':' + te);
+    }
     keys.push(key);
     return keys;
   }
@@ -387,6 +403,6 @@
   }
 
   window.CotizadorVisual = {
-    refreshAll, updateEscala, updateEscalaEscultura, renderFondo, renderSujetos, item, defaults, current, GROUPS, svgData
+    refreshAll, updateEscala, updateEscalaEscultura, renderFondo, renderSujetos, item, defaults, current, GROUPS, svgData, clavesGuia, estiloActual, tecnicaActual
   };
 })();

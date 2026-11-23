@@ -963,5 +963,46 @@ let base;
   await context.close();
  });
 
+
+ await test('Las imágenes de Tema siguen el estilo elegido (Hiperrealista, Realista, Abstracto)',async()=>{
+  const {page,context,errors}=await session();
+  await page.setViewportSize({width:390,height:844});
+  await page.goto(base+'/index.html');
+  await page.click('.tab-btn[data-tab="cotizacion"]');
+  await page.waitForSelector('#asistente-pedido:not([hidden]) #asistente-opciones .guia-card[data-value=oleo]');
+  await elegirAsistente(page,'oleo');
+  await siguienteAsistente(page);
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value=Hiperrealista]');
+  await elegirAsistente(page,'Hiperrealista');
+  await siguienteAsistente(page);
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value=Retrato] img');
+  const hiper=await page.locator('#asistente-opciones .guia-card').evaluateAll(els=>Object.fromEntries(els.map(e=>[e.dataset.value,e.querySelector('img')?.getAttribute('src')||''])));
+  assert.ok(/tema-retrato-hiperrealista\.webp/.test(hiper.Retrato),JSON.stringify(hiper));
+  assert.ok(/tema-paisaje-hiperrealista\.webp/.test(hiper.Paisaje),JSON.stringify(hiper));
+  assert.ok(/tema-bodegon-hiperrealista\.webp/.test(hiper.Bodegon),JSON.stringify(hiper));
+  await page.screenshot({path:'/workspace/tema-hiperrealista-t56u.png',animations:'disabled'});
+  await page.goBack();
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value=Realista]');
+  await elegirAsistente(page,'Realista');
+  await siguienteAsistente(page);
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value=Retrato] img');
+  const real=await page.locator('#asistente-opciones .guia-card').evaluateAll(els=>Object.fromEntries(els.map(e=>[e.dataset.value,e.querySelector('img')?.getAttribute('src')||''])));
+  assert.ok(/tema-retrato\.webp$/.test(real.Retrato),JSON.stringify(real));
+  assert.ok(/tema-paisaje\.webp$/.test(real.Paisaje),JSON.stringify(real));
+  await page.screenshot({path:'/workspace/tema-realista-t56u.png',animations:'disabled'});
+  await page.goBack();
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value=Abstracto]');
+  await elegirAsistente(page,'Abstracto');
+  await siguienteAsistente(page);
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value=CampoColor] img');
+  const abs=await page.locator('#asistente-opciones .guia-card').evaluateAll(els=>els.map(e=>e.dataset.value));
+  assert.deepEqual(abs.slice().sort(),['CampoColor','Emocion','Geometrico','Gestual','Materia'].sort());
+  const absSrc=await page.locator('#asistente-opciones .guia-card').evaluateAll(els=>Object.fromEntries(els.map(e=>[e.dataset.value,e.querySelector('img')?.getAttribute('src')||''])));
+  assert.ok(/tema-abstracto-campo-color\.webp/.test(absSrc.CampoColor),JSON.stringify(absSrc));
+  await page.screenshot({path:'/workspace/tema-abstracto-t56u.png',animations:'disabled'});
+  assert.deepEqual(errors,[]);
+  await context.close();
+ });
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(root,'resultados-navegador.json'),JSON.stringify(results,null,2));
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{await browser?.close();server.close();});

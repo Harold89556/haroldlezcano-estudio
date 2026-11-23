@@ -289,6 +289,7 @@
     }
 
     function updateUI() {
+        syncTemaOpciones();
         let est_val = document.getElementById('estilo').value;
         let tema_val = document.getElementById('tema').value;
         let t = (est_val === 'Mural' || est_val === 'Escultura' || est_val === 'Restauracion') ? est_val : tema_val;
@@ -369,6 +370,55 @@
         const labTamEl=document.querySelector('label[for="tamano_predefinido"]');
         if(labTamEl) labTamEl.textContent=(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t(paperOnly?'form.tamanoPapel':'form.tamano'):(paperOnly?'Tamaño del papel':'Tamaño');
     }
+
+    const TEMAS_FIGURATIVOS = [
+        { value: 'Retrato', i18n: 'opt.tema.retrato', fb: 'Retrato (persona o animal)' },
+        { value: 'Paisaje', i18n: 'opt.tema.paisaje', fb: 'Paisaje' },
+        { value: 'Bodegon', i18n: 'opt.tema.bodegon', fb: 'Bodegón / naturaleza muerta' }
+    ];
+    const TEMAS_ABSTRACTOS = [
+        { value: 'CampoColor', i18n: 'opt.tema.campoColor', fb: 'Campo de color' },
+        { value: 'Geometrico', i18n: 'opt.tema.geometrico', fb: 'Geométrico' },
+        { value: 'Gestual', i18n: 'opt.tema.gestual', fb: 'Gestual / expresivo' },
+        { value: 'Materia', i18n: 'opt.tema.materia', fb: 'Texturado / materia' },
+        { value: 'Emocion', i18n: 'opt.tema.emocion', fb: 'Inspirado en un tema o emoción' }
+    ];
+    function syncTemaOpciones() {
+        const sel = document.getElementById('tema');
+        const estEl = document.getElementById('estilo');
+        if (!sel || !estEl) return;
+        const list = estEl.value === 'Abstracto' ? TEMAS_ABSTRACTOS : TEMAS_FIGURATIVOS;
+        const prev = sel.value;
+        const allowed = list.some(o => o.value === prev);
+        const i18 = (k, fb) => {
+            if (window.EstudioI18n && EstudioI18n.t) {
+                const s = EstudioI18n.t(k);
+                return (s && s !== k) ? s : (fb || k);
+            }
+            return fb || k;
+        };
+        const expected = allowed ? list : list;
+        const same = sel.options.length === list.length && list.every((o, i) => sel.options[i] && sel.options[i].value === o.value);
+        if (!same) {
+            sel.innerHTML = '';
+            for (const o of list) {
+                const opt = document.createElement('option');
+                opt.value = o.value;
+                opt.setAttribute('data-i18n-option', o.i18n);
+                opt.textContent = i18(o.i18n, o.fb);
+                sel.appendChild(opt);
+            }
+        }
+        if (allowed) sel.value = prev;
+        else {
+            sel.value = '';
+            sel.selectedIndex = -1;
+            if (document.getElementById('personas')) document.getElementById('personas').value = '0';
+            if (document.getElementById('mascotas')) document.getElementById('mascotas').value = '0';
+            if (document.getElementById('fondo')) document.getElementById('fondo').checked = false;
+        }
+    }
+    window.syncTemaOpciones = syncTemaOpciones;
 
     function onEstiloChange() {
         let est = document.getElementById('estilo').value;
