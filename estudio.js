@@ -61,20 +61,51 @@
   } finally { bitmap.close?.(); }
  }
  function openWhatsAppSafely(url) {
-  // Misma pulsación: si hay ventana en blanco abierta al inicio, se redirige; si el navegador la bloquea, queda el botón de continuar.
-  try {
-   if (window.__waPopup && !window.__waPopup.closed) { window.__waPopup.location.href = url; return true; }
-  } catch {}
-  const opened = window.open(url,'_blank','noopener,noreferrer');
-  return !!opened;
+  // Misma pestaña: en Android, iOS y WebViews no se abre about:blank ni un popup bloqueado.
+  // location.assign deja el paso de resumen en el historial, así el atrás del celular vuelve al pedido.
+  if (Array.isArray(window.__opened)) window.__opened.push(url);
+  if (window.__bloquearSalidaWhatsApp) return true;
+  try { window.location.assign(url); return true; }
+  catch {
+   try { window.location.href = url; return true; }
+   catch { return false; }
+  }
  }
  function whatsappUrl(message) {
   return 'https://wa.me/' + (window.sitioActual?.whatsapp || '595972173847') + '?text=' + encodeURIComponent(message);
  }
  function revealWhatsApp(url, allowShare) {
-  $('whatsapp-continuar').href = url;
-  $('whatsapp-continuar').hidden = false;
-  shareBtn.hidden = !allowShare;
+  const cont = $('whatsapp-continuar');
+  if (cont) {
+   cont.href = url;
+   cont.removeAttribute('target');
+   cont.hidden = false;
+  }
+  if (shareBtn) shareBtn.hidden = !allowShare;
+ }
+ function etiquetaEnviar() {
+  const btn = $('enviar-obra');
+  if (!btn) return 'Enviar pedido';
+  if (window.EstudioI18n && typeof EstudioI18n.t === 'function') {
+   const s = EstudioI18n.t('comun.enviar');
+   if (s && s !== 'comun.enviar') return s;
+  }
+  return btn.dataset.etiqueta || 'Enviar pedido';
+ }
+ function setEnviando(on, label) {
+  const btn = $('enviar-obra');
+  if (!btn) return;
+  if (on) {
+   if (!btn.dataset.etiqueta) btn.dataset.etiqueta = btn.textContent.trim() || etiquetaEnviar();
+   btn.disabled = true;
+   btn.setAttribute('aria-busy', 'true');
+   if (label) btn.textContent = label;
+  } else {
+   btn.disabled = false;
+   btn.removeAttribute('aria-busy');
+   btn.textContent = etiquetaEnviar();
+   delete btn.dataset.etiqueta;
+  }
  }
  window.sitioActual = data.clone(defaults.sitio);
  let seed = [...document.querySelectorAll('#mainGallery .gallery-item')].map((button, order) => ({
@@ -124,37 +155,36 @@
    errorCampo('fotos_referencia','Cargá al menos una imagen o elegí que necesitás asesoramiento.');picker.focus();return;
   }
   const text = prepararMensajeObra();if (!text) return;
+  hideWhatsAppActions();
   if (!references.length) {
    const url = whatsappUrl(text);
-   revealWhatsApp(url, false);
-   openWhatsAppSafely(url);
+   if (!openWhatsAppSafely(url)) revealWhatsApp(url, false);
    status('Revisá el mensaje en WhatsApp antes de enviarlo.');
    return;
   }
-  // Abrir ventana en el mismo toque para que el celular no bloquee WhatsApp después de subir.
-  try { window.__waPopup = window.open('about:blank','_blank'); } catch { window.__waPopup = null; }
-  uploading = true; lockQuote(true); hideWhatsAppActions();
+  uploading = true;
+  const subiendo = (i) => 'Subiendo foto ' + i + ' de ' + references.length + '…';
+  setEnviando(true, subiendo(1));
+  lockQuote(true);
   const links = [];
   try {
    const api = await firebase();
    const pedido = (crypto.randomUUID && crypto.randomUUID()) || (api.newId());
    for (let i = 0; i < references.length; i++) {
-    status('Subiendo foto ' + (i+1) + ' de ' + references.length + '…');
+    status(subiendo(i+1));
+    setEnviando(true, subiendo(i+1));
     const compressed = await compressReference(references[i].file);
     if (compressed.size > 8*1024*1024) throw Error('La foto comprimida supera 8 MB.');
     const ext = (compressed.type||'').includes('jpeg') ? 'jpg' : 'webp';
     const path = 'pedidos/' + pedido + '/' + (i+1) + '.' + ext;
-    const url = await api.uploadReference(compressed, path, p => { if (p>=90) status('Subiendo foto ' + (i+1) + ' de ' + references.length + '…'); });
+    const url = await api.uploadReference(compressed, path, p => { if (p>=90) status(subiendo(i+1)); });
     links.push(url); references[i].url = url; references[i].path = path;
    }
    const message = withPhotoLinks(text, links);
    const wa = whatsappUrl(message);
-   revealWhatsApp(wa, false);
-   openWhatsAppSafely(wa);
    status('Se abrió WhatsApp con el pedido y el enlace de ' + (links.length===1?'tu foto':'tus fotos') + ' de referencia. Revisá el mensaje antes de enviarlo.');
+   if (!openWhatsAppSafely(wa)) revealWhatsApp(wa, false);
   } catch (error) {
-   try { if (window.__waPopup && !window.__waPopup.closed) window.__waPopup.close(); } catch {}
-   window.__waPopup = null;
    const message = withPhotoNote(text);
    const wa = whatsappUrl(message);
    const sharable = canSharePhotos(referenceFiles(), message);
@@ -163,9 +193,10 @@
    const why = (error && error.message) ? error.message : 'sin conexión';
    status('No se pudo subir ' + (references.length===1?'la foto':'las fotos') + ' (' + why + '). Se abrió WhatsApp: enviá ' + (references.length===1?'la imagen':'las imágenes') + ' en ese mismo chat' + (sharable ? ' o usá «Compartir fotos por WhatsApp».' : '.'));
   } finally {
-   uploading = false; lockQuote(false); window.__waPopup = null; renderPreviews();
+   uploading = false; lockQuote(false); setEnviando(false); renderPreviews();
   }
  };
+
  shareBtn.addEventListener('click', async () => {
   if (uploading || !references.length) return;
   const text = prepararMensajeObra();if (!text) return;
