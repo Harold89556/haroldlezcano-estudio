@@ -627,11 +627,13 @@ let base;
   assert.match(txt,/200\s*[×x]\s*100\s*cm/);
   const geom=await page.evaluate(()=>{
     const svg=document.querySelector('#vista-escala svg');
-    const art=svg.querySelector('rect,ellipse,circle,polygon');
-    const person=svg.querySelector('path');
+    const art=svg.querySelector('circle,ellipse,polygon,rect[stroke]');
+    const person=svg.querySelector('image[href*="persona-escala-170"]')||svg.querySelector('image');
     const ab=art.getBBox();const pb=person.getBBox();
-    return {artW:ab.width,personW:pb.width,label:svg.querySelector('text')&&[...svg.querySelectorAll('text')].map(t=>t.textContent).join(' | ')};
+    return {artW:ab.width,personW:pb.width,label:svg.querySelector('text')&&[...svg.querySelectorAll('text')].map(t=>t.textContent).join(' | '),center:svg.getAttribute('data-art-center-cm'),persona:svg.getAttribute('data-persona-cm')};
   });
+  assert.equal(geom.center,'158');
+  assert.equal(geom.persona,'170');
   assert.ok(geom.artW>geom.personW,JSON.stringify(geom));
   await page.locator('#vista-escala svg').scrollIntoViewIfNeeded();
   await page.screenshot({path:'/workspace/escala-personalizada.png'});
@@ -1202,6 +1204,156 @@ let base;
   await context.close();
  });
 
+
+
+ await test('Escala: figura fotoreal de 1,70 m, centro a 158 cm y regla de curador',async()=>{
+  const {page,context,errors}=await session();
+  await page.setViewportSize({width:390,height:844});
+  await page.goto(base+'/index.html#cotizacion');
+  await page.waitForSelector('#asistente-pedido:not([hidden]) #asistente-opciones .guia-card[data-value=oleo]');
+  await elegirAsistente(page,'oleo');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/estilo');
+  await elegirAsistente(page,'Realista');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/tema');
+  await elegirAsistente(page,'Paisaje');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/forma'||document.querySelector('#asistente-opciones .guia-card[data-value=Estandar]'));
+  await elegirAsistente(page,'Estandar');
+  await page.waitForSelector('#asistente-extra #tamano_predefinido, #tamano_predefinido');
+  const leer=()=>page.evaluate(()=>{
+    const host=document.getElementById('vista-escala')||document.getElementById('vista-escala-escultura');
+    const svg=host&&host.querySelector('svg');
+    const img=svg&&(svg.querySelector('image[href*="persona-escala-170"]')||svg.querySelector('image'));
+    if(!svg||!img) return null;
+    const scale=Number(svg.getAttribute('data-scale'));
+    return {
+      modo:svg.getAttribute('data-modo'),
+      persona:Number(svg.getAttribute('data-persona-cm')),
+      center:Number(svg.getAttribute('data-art-center-cm')),
+      bottom:Number(svg.getAttribute('data-art-bottom-cm')),
+      top:Number(svg.getAttribute('data-art-top-cm')),
+      scale,
+      figH:Number(img.getAttribute('height'))/scale,
+      txt:host.textContent,
+      hasCircle:!!svg.querySelector('circle'),
+      hasRect:!!svg.querySelector('rect[stroke]')
+    };
+  });
+  await page.selectOption('#tamano_predefinido','30x40');
+  await page.waitForFunction(()=>document.querySelector('#vista-escala svg'));
+  let v=await leer();
+  assert.equal(v.persona,170);
+  assert.ok(Math.abs(v.figH-170)<0.1, JSON.stringify(v));
+  assert.equal(v.center,158);
+  assert.match(v.txt,/Persona de 1,70 m/);
+  assert.match(v.txt,/Centro a 158 cm/);
+  assert.match(v.txt,/30\s*[×x]\s*40/);
+  await page.locator('#vista-escala svg').scrollIntoViewIfNeeded();
+  await page.evaluate(()=>{const c=document.querySelector('#asistente-pedido .asistente-cuerpo'); if(c) c.scrollTop=c.scrollHeight;});
+  await page.screenshot({path:'/workspace/escala-30x40-estandar-t62u.png',animations:'disabled'});
+
+  await page.locator('#asistente-formato-cambiar').click();
+  await page.waitForSelector('#asistente-formato-sheet:not([hidden])');
+  await page.locator('#asistente-formato-sheet .asistente-formato-opcion[data-value=Circular]').click();
+  await page.waitForFunction(()=>document.getElementById('forma_lienzo').value==='Circular');
+  await page.selectOption('#tamano_predefinido','50x50');
+  await page.waitForFunction(()=>{
+    const svg=document.querySelector('#vista-escala svg');
+    return svg&&svg.querySelector('circle')&&/50/.test(document.getElementById('vista-escala').textContent);
+  });
+  v=await leer();
+  assert.equal(v.center,158);
+  assert.equal(v.hasCircle,true);
+  assert.ok(Math.abs(v.figH-170)<0.1, JSON.stringify(v));
+  assert.match(v.txt,/Diámetro|Diametro|50/);
+  assert.match(v.txt,/Centro a 158 cm/);
+  await page.locator('#vista-escala svg').scrollIntoViewIfNeeded();
+  await page.screenshot({path:'/workspace/escala-50x50-circular-t62u.png',animations:'disabled'});
+
+  await page.locator('#asistente-formato-cambiar').click();
+  await page.waitForSelector('#asistente-formato-sheet:not([hidden])');
+  await page.locator('#asistente-formato-sheet .asistente-formato-opcion[data-value=Estandar]').click();
+  await page.waitForFunction(()=>document.getElementById('forma_lienzo').value==='Estandar');
+  await page.selectOption('#tamano_predefinido','personalizado');
+  await page.fill('#ancho_cm','150');await page.fill('#alto_cm','100');
+  await page.waitForFunction(()=>{
+    const svg=document.querySelector('#vista-escala svg');
+    return svg&&svg.getAttribute('data-art-center-cm')==='158'&&/150/.test(document.getElementById('vista-escala').textContent);
+  });
+  v=await leer();
+  assert.equal(v.center,158);
+  assert.equal(v.bottom,108);
+  assert.match(v.txt,/150\s*[×x]\s*100/);
+  await page.locator('#vista-escala svg').scrollIntoViewIfNeeded();
+  await page.screenshot({path:'/workspace/escala-150x100-grande-t62u.png',animations:'disabled'});
+
+  await page.fill('#ancho_cm','100');await page.fill('#alto_cm','260');
+  await page.waitForFunction(()=>{
+    const svg=document.querySelector('#vista-escala svg');
+    return svg&&Number(svg.getAttribute('data-art-bottom-cm'))===30;
+  });
+  v=await leer();
+  assert.equal(v.bottom,30);
+  assert.equal(v.center,160);
+  assert.ok(v.top>280, JSON.stringify(v));
+  assert.ok(Math.abs(v.figH-170)<0.1, JSON.stringify(v));
+
+  await page.evaluate(()=>AsistentePedido.irA('trabajo'));
+  await elegirAsistente(page,'escultura');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/tipo_escultura');
+  await elegirAsistente(page,'Relieve');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/material_escultura');
+  await elegirAsistente(page,'Arcilla');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/altura_escultura');
+  await page.waitForSelector('#vista-escala-escultura svg, #asistente-extra #vista-escala-escultura svg');
+  await page.fill('#escultura_cm','80');
+  await page.evaluate(()=>{const e=document.getElementById('escultura_cm');e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}));if(window.onEsculturaCmBlur)onEsculturaCmBlur();if(window.calcular)calcular();});
+  await page.waitForFunction(()=>{
+    const svg=document.querySelector('#vista-escala-escultura svg');
+    return svg&&svg.getAttribute('data-modo')==='relieve'&&Number(svg.getAttribute('data-art-center-cm'))===158;
+  });
+  const rel=await page.evaluate(()=>{
+    const host=document.getElementById('vista-escala-escultura');
+    const svg=host.querySelector('svg');
+    const img=svg.querySelector('image[href*="persona-escala-170"]')||svg.querySelector('image');
+    const scale=Number(svg.getAttribute('data-scale'));
+    return {modo:svg.getAttribute('data-modo'),center:Number(svg.getAttribute('data-art-center-cm')),bottom:Number(svg.getAttribute('data-art-bottom-cm')),persona:Number(svg.getAttribute('data-persona-cm')),figH:Number(img.getAttribute('height'))/scale,txt:host.textContent};
+  });
+  assert.equal(rel.modo,'relieve');
+  assert.equal(rel.center,158);
+  assert.equal(rel.persona,170);
+  assert.ok(Math.abs(rel.figH-170)<0.1, JSON.stringify(rel));
+  assert.match(rel.txt,/Centro a 158 cm/);
+  await page.locator('#vista-escala-escultura svg').scrollIntoViewIfNeeded();
+  await page.screenshot({path:'/workspace/escala-relieve-t62u.png',animations:'disabled'});
+
+  await page.evaluate(()=>AsistentePedido.irA('tipo_escultura'));
+  await elegirAsistente(page,'Figura completa');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/material_escultura'||document.querySelector('#asistente-opciones .guia-card[data-value=Fibra], #material_escultura'));
+  const hash=await page.evaluate(()=>location.hash);
+  if(hash.includes('material')){
+    await elegirAsistente(page,'Fibra');
+  }
+  await page.waitForFunction(()=>location.hash==='#cotizacion/altura_escultura'||document.querySelector('#vista-escala-escultura svg'));
+  await page.waitForSelector('#vista-escala-escultura svg');
+  await page.evaluate(()=>{if(window.calcular)calcular();if(window.CotizadorVisual)CotizadorVisual.updateEscalaEscultura();});
+  const scu=await page.evaluate(()=>{
+    const host=document.getElementById('vista-escala-escultura');
+    const svg=host.querySelector('svg');
+    const img=svg.querySelector('image[href*="persona-escala-170"]')||svg.querySelector('image');
+    const scale=Number(svg.getAttribute('data-scale'));
+    return {modo:svg.getAttribute('data-modo'),bottom:Number(svg.getAttribute('data-art-bottom-cm')),persona:Number(svg.getAttribute('data-persona-cm')),figH:Number(img.getAttribute('height'))/scale,txt:host.textContent};
+  });
+  assert.equal(scu.modo,'escultura');
+  assert.equal(scu.bottom,0);
+  assert.equal(scu.persona,170);
+  assert.ok(Math.abs(scu.figH-170)<0.1, JSON.stringify(scu));
+  assert.equal(/Centro a /.test(scu.txt),false);
+  assert.match(scu.txt,/Persona de 1,70 m/);
+  await page.locator('#vista-escala-escultura svg').scrollIntoViewIfNeeded();
+  await page.screenshot({path:'/workspace/escala-escultura-360-t62u.png',animations:'disabled'});
+  assert.deepEqual(errors,[]);
+  await context.close();
+ });
 
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(root,'resultados-navegador.json'),JSON.stringify(results,null,2));
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{await browser?.close();server.close();});

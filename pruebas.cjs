@@ -1095,5 +1095,134 @@ test('41. Acrílico no reutiliza las fotos de óleo, y el relieve tiene imágene
   assert.ok(gAncho2 && gAncho2.hidden, 'el ancho no se muestra en bulto redondo');
 });
 
+
+test('42. Escala: figura de 1,70 m, centro a 158 cm y regla de curador',()=>{
+  const a=iniciar();a.listo();
+  const CV=a.w.CotizadorVisual;
+  assert.equal(CV.PERSONA_CM,170);
+  const c40=CV.colgadoCurador(40);
+  assert.equal(c40.centerCm,158);assert.equal(c40.bottomCm,138);assert.equal(c40.elevado,false);
+  const c50=CV.colgadoCurador(50);
+  assert.equal(c50.centerCm,158);assert.equal(c50.bottomCm,133);
+  const c100=CV.colgadoCurador(100);
+  assert.equal(c100.centerCm,158);assert.equal(c100.bottomCm,108);
+  const c244=CV.colgadoCurador(244);
+  assert.equal(c244.elevado,false);assert.equal(c244.centerCm,158);assert.equal(c244.topCm,280);
+  const c250=CV.colgadoCurador(250);
+  assert.equal(c250.elevado,true);assert.equal(c250.bottomCm,30);assert.equal(c250.topCm,280);assert.equal(c250.centerCm,155);
+  const c260=CV.colgadoCurador(260);
+  assert.equal(c260.elevado,true);assert.equal(c260.bottomCm,30);assert.equal(c260.centerCm,160);assert.ok(c260.techoCm>=290);
+  const mu=CV.colgadoMural(200);
+  assert.equal(mu.bottomCm,15);assert.equal(mu.topCm,215);
+  const muAlto=CV.colgadoMural(300);
+  assert.equal(muAlto.bottomCm,0);
+  const muTecho=CV.colgadoMural(265);
+  assert.equal(muTecho.bottomCm,15);
+  const mu266=CV.colgadoMural(266);
+  assert.equal(mu266.bottomCm,14);
+
+  const langs=['es','en','pt','fr','it','de','zh','ja','ko','hi','ru'];
+  langs.forEach((lang)=>{
+    assert.ok(a.w.EstudioI18n.claves(lang).includes('escala.centroA'), 'falta escala.centroA en '+lang);
+    assert.ok(a.w.EstudioI18n.claves(lang).includes('escala.baseA'), 'falta escala.baseA en '+lang);
+    a.w.EstudioI18n.setIdioma(lang,{silent:true});
+    const s=a.w.EstudioI18n.t('escala.centroA',{n:'1,58 m'});
+    assert.ok(s && s!=='escala.centroA' && s.includes('1,58 m'), lang+': '+s);
+  });
+  a.w.EstudioI18n.setIdioma('es',{silent:true});
+
+  const leer=(id='vista-escala')=>{
+    const host=a.d.getElementById(id);
+    assert.ok(host && !host.hidden, 'falta '+id);
+    const svg=host.querySelector('svg');
+    assert.ok(svg,'falta svg en '+id);
+    const img=svg.querySelector('image[href*="persona-escala-170"]');
+    assert.ok(img,'falta figura humana en '+id);
+    const scale=Number(svg.getAttribute('data-scale'));
+    const h=Number(img.getAttribute('height'));
+    assert.equal(Number(svg.getAttribute('data-persona-cm')),170);
+    assert.ok(scale>0);
+    assert.ok(Math.abs(h/scale-170)<0.05,'altura figura '+(h/scale)+' scale='+scale);
+    return {
+      svg, img, scale, h,
+      center:Number(svg.getAttribute('data-art-center-cm')),
+      bottom:Number(svg.getAttribute('data-art-bottom-cm')),
+      top:Number(svg.getAttribute('data-art-top-cm')),
+      modo:svg.getAttribute('data-modo'),
+      txt:host.textContent,
+      shapes:[...svg.querySelectorAll('circle,ellipse,polygon,rect[stroke]')].map(n=>n.tagName.toLowerCase())
+    };
+  };
+
+  let v=leer();
+  assert.equal(v.center,158);assert.equal(v.bottom,138);
+  assert.match(v.txt,/Persona de 1,70 m/);
+  assert.match(v.txt,/Centro a 158 cm/);
+  assert.match(v.txt,/30\s*×\s*40/);
+  assert.ok(v.shapes.includes('rect'));
+
+  a.set('forma_lienzo','Circular');a.w.onFormaChange();
+  a.set('tamano_predefinido','50x50');a.w.handleTamanoChange();
+  v=leer();
+  assert.equal(v.center,158);assert.equal(v.bottom,133);
+  assert.match(v.txt,/Diámetro/);
+  assert.match(v.txt,/50 cm/);
+  assert.match(v.txt,/Centro a 158 cm/);
+  assert.ok(v.shapes.includes('circle'));
+
+  a.set('forma_lienzo','Estandar');a.w.onFormaChange();
+  a.set('tamano_predefinido','personalizado');a.w.handleTamanoChange();
+  a.d.getElementById('ancho_cm').value='150';
+  a.d.getElementById('alto_cm').value='100';
+  a.w.onMedidaManualInput();
+  v=leer();
+  assert.equal(v.center,158);assert.equal(v.bottom,108);
+  assert.match(v.txt,/150\s*×\s*100/);
+  assert.match(v.txt,/Centro a 158 cm/);
+
+  a.d.getElementById('ancho_cm').value='100';
+  a.d.getElementById('alto_cm').value='260';
+  a.w.onMedidaManualInput();
+  v=leer();
+  assert.equal(v.bottom,30);assert.equal(v.center,160);
+  assert.ok(v.top>280);
+  assert.match(v.txt,/Centro a 160 cm/);
+
+  a.set('tamano_predefinido','30x40');a.w.handleTamanoChange();
+  a.w.setUnidad('m',{currentTarget:a.d.getElementById('btn-uni-m')});
+  v=leer();
+  assert.equal(v.center,158);
+  assert.match(v.txt,/Centro a 1,58 m/);
+  a.w.setUnidad('cm',{currentTarget:a.d.getElementById('btn-uni-cm')});
+
+  a.set('estilo','Mural');a.w.onEstiloChange();
+  a.set('mural_ancho','200');a.set('mural_alto','200');a.w.calcular();
+  v=leer();
+  assert.equal(v.modo,'mural');
+  assert.equal(v.bottom,15);
+  assert.match(v.txt,/Base a 15 cm/);
+  assert.equal(/Centro a /.test(v.txt),false);
+  assert.equal(Number(v.svg.getAttribute('data-persona-cm')),170);
+
+  a.set('estilo','Escultura');a.w.onEstiloChange();
+  a.set('tipo_escultura','Relieve');a.w.onTipoEsculturaChange();
+  a.set('escultura_cm','80');
+  if(a.w.onEsculturaCmBlur) a.w.onEsculturaCmBlur();
+  a.w.calcular();
+  v=leer('vista-escala-escultura');
+  assert.equal(v.modo,'relieve');
+  assert.equal(v.center,158);
+  assert.match(v.txt,/Centro a 158 cm/);
+  assert.match(v.txt,/Persona de 1,70 m/);
+
+  a.set('tipo_escultura','Figura completa');a.w.onTipoEsculturaChange();
+  a.w.calcular();
+  v=leer('vista-escala-escultura');
+  assert.equal(v.modo,'escultura');
+  assert.equal(v.bottom,0);
+  assert.equal(/Centro a /.test(v.txt),false);
+  assert.match(v.txt,/Persona de 1,70 m/);
+});
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));
 

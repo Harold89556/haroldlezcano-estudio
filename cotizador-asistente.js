@@ -929,7 +929,12 @@
         CotizadorVisual.updateEscala();
       }
     }
-    if (paso.id === 'tamano_mural') { take($('step-unidad')); take($('contenedor-murales')); }
+    if (paso.id === 'tamano_mural') {
+      take($('step-unidad'));
+      take($('contenedor-murales'));
+      take($('vista-escala'));
+      if (window.CotizadorVisual) CotizadorVisual.updateEscala();
+    }
     if (paso.id === 'fotos') {
       take($('step-fotos'));
       const lab = document.querySelector('#step-fotos label[for="fotos_referencia"]');

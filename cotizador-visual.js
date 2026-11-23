@@ -1,6 +1,14 @@
 /* Guías visuales del cotizador: tarjetas con imagen + texto y vista de escala con persona de 1,70 m. */
 (function () {
   const PERSONA_CM = 170;
+  const PERSONA_SRC = 'img/persona-escala-170.webp';
+  const PERSONA_IMG_W = 302;
+  const PERSONA_IMG_H = 1020;
+  const PERSONA_W_CM = PERSONA_CM * (PERSONA_IMG_W / PERSONA_IMG_H);
+  const CENTRO_IDEAL_CM = 158;
+  const MIN_BOTTOM_CM = 30;
+  const TECHO_CM = 280;
+  const MURAL_BASE_CM = 15;
   const GROUPS = {
     estilo: { select: 'estilo', label: 'Estilo' },
     tecnica: { select: 'tecnica', label: 'Técnica' },
@@ -364,96 +372,112 @@
     return el;
   }
 
-  function personPath(x, groundY, scale, labelY) {
-    // Adulto 170 cm de frente (~7,5 cabezas). Cabeza ~23 cm, hombros ~45–46 cm,
-    // brazos colgando hasta media muslo, entrepierna ~ mitad. Escala = px/cm.
-    const S = scale;
-    const cx = x;
-    const top = groundY - PERSONA_CM * S;
+  function i18nEscala(key, fb, vars) {
+    if (window.EstudioI18n && typeof EstudioI18n.t === 'function') {
+      const s = vars ? EstudioI18n.t(key, vars) : EstudioI18n.t(key);
+      if (s && s !== key) return s;
+    }
+    if (vars && typeof fb === 'string') {
+      let s = fb;
+      Object.keys(vars).forEach((k) => { s = s.replaceAll('{' + k + '}', String(vars[k])); });
+      return s;
+    }
+    return fb;
+  }
+  function formatoMedidaEscala(cm) {
+    return (typeof formatoDesdeCm === 'function') ? formatoDesdeCm(cm) : (Math.round(cm) + ' cm');
+  }
+  function formatoParEscala(w, h) {
+    return (typeof formatoParDesdeCm === 'function') ? formatoParDesdeCm(w, h) : (formatoMedidaEscala(w) + ' × ' + formatoMedidaEscala(h));
+  }
+  /* Colgado de curador: centro a 158 cm (altura del rostro). Si el borde inferior
+     quedaría bajo 30 cm o el superior sobre un techo de 280 cm, se sube la base a 30 cm
+     y se extiende el techo si hace falta. */
+  function colgadoCurador(artHcm) {
+    artHcm = Number(artHcm);
+    if (!Number.isFinite(artHcm) || artHcm <= 0) return null;
+    const ideal = CENTRO_IDEAL_CM;
+    let bottom = ideal - artHcm / 2;
+    let top = bottom + artHcm;
+    const elevado = bottom < MIN_BOTTOM_CM || top > TECHO_CM;
+    if (elevado) {
+      bottom = MIN_BOTTOM_CM;
+      top = bottom + artHcm;
+    }
+    return {
+      bottomCm: bottom,
+      topCm: top,
+      centerCm: bottom + artHcm / 2,
+      techoCm: Math.max(TECHO_CM, top + 8),
+      elevado: !!elevado
+    };
+  }
+  function colgadoMural(artHcm) {
+    artHcm = Number(artHcm);
+    if (!Number.isFinite(artHcm) || artHcm <= 0) return null;
+    let bottom = MURAL_BASE_CM;
+    if (bottom + artHcm > TECHO_CM) bottom = Math.max(0, Math.min(MURAL_BASE_CM, TECHO_CM - artHcm));
+    if (artHcm >= TECHO_CM) bottom = 0;
+    const top = bottom + artHcm;
+    return {
+      bottomCm: bottom,
+      topCm: top,
+      centerCm: bottom + artHcm / 2,
+      techoCm: Math.max(TECHO_CM, top + 8),
+      elevado: false
+    };
+  }
+  function personFigure(x, groundY, scale, labelY) {
+    const h = PERSONA_CM * scale;
+    const w = PERSONA_W_CM * scale;
+    const x0 = x - w / 2;
+    const y0 = groundY - h;
     const ly = labelY == null ? groundY + 16 : labelY;
-    const X = (cm) => +(cx + cm * S).toFixed(2);
-    const Y = (cm) => +(top + cm * S).toFixed(2);
-    // Hueco visible entre brazo y torso para que se lea como figura humana.
-    const d = [
-      `M${X(0)} ${Y(0)}`,
-      `C${X(4)} ${Y(0)} ${X(7.6)} ${Y(4)} ${X(7.7)} ${Y(11.2)}`,
-      `C${X(7.8)} ${Y(18)} ${X(5.2)} ${Y(22.2)} ${X(2.5)} ${Y(23.1)}`,
-      `L${X(2)} ${Y(26.2)}`,
-      `C${X(9)} ${Y(27.2)} ${X(18)} ${Y(29)} ${X(23)} ${Y(32)}`,
-      `C${X(24.5)} ${Y(40)} ${X(24.8)} ${Y(55)} ${X(24)} ${Y(70)}`,
-      `C${X(23.2)} ${Y(85)} ${X(21.5)} ${Y(98)} ${X(19.5)} ${Y(108)}`,
-      `C${X(18.5)} ${Y(112)} ${X(16.5)} ${Y(114)} ${X(14.2)} ${Y(113.5)}`,
-      `C${X(12.2)} ${Y(113)} ${X(11.8)} ${Y(110)} ${X(12.5)} ${Y(106)}`,
-      `C${X(14)} ${Y(92)} ${X(15)} ${Y(75)} ${X(14.8)} ${Y(58)}`,
-      `C${X(14.6)} ${Y(48)} ${X(13.5)} ${Y(40)} ${X(11.5)} ${Y(35.5)}`,
-      `L${X(8.5)} ${Y(37)}`,
-      `C${X(10.5)} ${Y(50)} ${X(11.5)} ${Y(62)} ${X(11.8)} ${Y(72)}`,
-      `C${X(12.5)} ${Y(80)} ${X(14.5)} ${Y(85)} ${X(15.5)} ${Y(90)}`,
-      `C${X(16.2)} ${Y(96)} ${X(16)} ${Y(105)} ${X(15)} ${Y(118)}`,
-      `C${X(14)} ${Y(130)} ${X(12.5)} ${Y(142)} ${X(10.5)} ${Y(152)}`,
-      `C${X(9)} ${Y(158)} ${X(7.2)} ${Y(163)} ${X(5.8)} ${Y(166)}`,
-      `C${X(5)} ${Y(168)} ${X(5.5)} ${Y(169.5)} ${X(7.2)} ${Y(170)}`,
-      `L${X(9.2)} ${Y(170)}`,
-      `L${X(2.4)} ${Y(170)}`,
-      `L${X(2)} ${Y(165)}`,
-      `C${X(2.2)} ${Y(148)} ${X(2.5)} ${Y(125)} ${X(2.6)} ${Y(108)}`,
-      `C${X(2.7)} ${Y(96)} ${X(2)} ${Y(89)} ${X(0)} ${Y(85)}`,
-      `C${X(-2)} ${Y(89)} ${X(-2.7)} ${Y(96)} ${X(-2.6)} ${Y(108)}`,
-      `C${X(-2.5)} ${Y(125)} ${X(-2.2)} ${Y(148)} ${X(-2)} ${Y(165)}`,
-      `L${X(-2.4)} ${Y(170)}`,
-      `L${X(-9.2)} ${Y(170)}`,
-      `L${X(-7.2)} ${Y(170)}`,
-      `C${X(-5.5)} ${Y(169.5)} ${X(-5)} ${Y(168)} ${X(-5.8)} ${Y(166)}`,
-      `C${X(-7.2)} ${Y(163)} ${X(-9)} ${Y(158)} ${X(-10.5)} ${Y(152)}`,
-      `C${X(-12.5)} ${Y(142)} ${X(-14)} ${Y(130)} ${X(-15)} ${Y(118)}`,
-      `C${X(-16)} ${Y(105)} ${X(-16.2)} ${Y(96)} ${X(-15.5)} ${Y(90)}`,
-      `C${X(-14.5)} ${Y(85)} ${X(-12.5)} ${Y(80)} ${X(-11.8)} ${Y(72)}`,
-      `C${X(-11.5)} ${Y(62)} ${X(-10.5)} ${Y(50)} ${X(-8.5)} ${Y(37)}`,
-      `L${X(-11.5)} ${Y(35.5)}`,
-      `C${X(-13.5)} ${Y(40)} ${X(-14.6)} ${Y(48)} ${X(-14.8)} ${Y(58)}`,
-      `C${X(-15)} ${Y(75)} ${X(-14)} ${Y(92)} ${X(-12.5)} ${Y(106)}`,
-      `C${X(-11.8)} ${Y(110)} ${X(-12.2)} ${Y(113)} ${X(-14.2)} ${Y(113.5)}`,
-      `C${X(-16.5)} ${Y(114)} ${X(-18.5)} ${Y(112)} ${X(-19.5)} ${Y(108)}`,
-      `C${X(-21.5)} ${Y(98)} ${X(-23.2)} ${Y(85)} ${X(-24)} ${Y(70)}`,
-      `C${X(-24.8)} ${Y(55)} ${X(-24.5)} ${Y(40)} ${X(-23)} ${Y(32)}`,
-      `C${X(-18)} ${Y(29)} ${X(-9)} ${Y(27.2)} ${X(-2)} ${Y(26.2)}`,
-      `L${X(-2.5)} ${Y(23.1)}`,
-      `C${X(-5.2)} ${Y(22.2)} ${X(-7.8)} ${Y(18)} ${X(-7.7)} ${Y(11.2)}`,
-      `C${X(-7.6)} ${Y(4)} ${X(-4)} ${Y(0)} ${X(0)} ${Y(0)}`,
-      'Z'
-    ].join(' ');
+    const markX = Math.max(7, x0 - 9);
+    const persona = i18nEscala('escala.persona', 'Persona de 1,70 m');
+    const extra = (typeof unidadActualVal === 'function' && unidadActualVal() === 'in') ? ' (67 in)' : '';
     return [
-      `<path d="${d}" fill="#a8a8a8"/>`,
-      `<text x="${cx}" y="${ly}" text-anchor="middle" fill="#d4af37" font-size="11">${(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('escala.persona'):'Persona de 1,70 m'}${(typeof unidadActualVal==='function'&&unidadActualVal()==='in')?' (67 in)':''}</text>`
+      `<image href="${PERSONA_SRC}" x="${x0.toFixed(2)}" y="${y0.toFixed(2)}" width="${w.toFixed(2)}" height="${h.toFixed(2)}" preserveAspectRatio="xMidYMax meet" data-persona-cm="${PERSONA_CM}"/>`,
+      `<line x1="${markX.toFixed(2)}" y1="${y0.toFixed(2)}" x2="${markX.toFixed(2)}" y2="${groundY.toFixed(2)}" stroke="#d4af37" stroke-width="1.2"/>`,
+      `<line x1="${(markX - 3).toFixed(2)}" y1="${y0.toFixed(2)}" x2="${(markX + 3).toFixed(2)}" y2="${y0.toFixed(2)}" stroke="#d4af37" stroke-width="1.2"/>`,
+      `<line x1="${(markX - 3).toFixed(2)}" y1="${groundY.toFixed(2)}" x2="${(markX + 3).toFixed(2)}" y2="${groundY.toFixed(2)}" stroke="#d4af37" stroke-width="1.2"/>`,
+      `<text x="${x.toFixed(2)}" y="${ly}" text-anchor="middle" fill="#d4af37" font-size="11">${persona}${extra}</text>`
     ].join('');
   }
-
-  function layoutScale(artWcm, artHcm) {
-    // Persona ~76% de la altura del viewBox; obras más altas que 170 cm reducen la escala conjunta.
-    const W = 360, H = 280;
-    const topPad = 18, bottomPad = 34, sidePad = 16, gap = 18;
+  function wallAndFloor(L, worldTopCm) {
+    const wallTop = L.ground - worldTopCm * L.scale;
+    const wallX = Math.max(L.sidePad, L.artX - 7);
+    const y = Math.max(4, wallTop - 6);
+    return [
+      `<rect x="${wallX.toFixed(2)}" y="${y.toFixed(2)}" width="${Math.max(8, L.W - wallX - 6).toFixed(2)}" height="${(L.ground - y).toFixed(2)}" fill="rgba(255,255,255,0.035)" stroke="none"/>`,
+      `<line x1="${wallX.toFixed(2)}" y1="${L.ground.toFixed(2)}" x2="${wallX.toFixed(2)}" y2="${y.toFixed(2)}" stroke="#555" stroke-width="1.5"/>`,
+      `<line x1="${L.sidePad}" y1="${L.ground}" x2="${L.W - L.sidePad}" y2="${L.ground}" stroke="#444" stroke-width="1.2"/>`
+    ].join('');
+  }
+  function floorLine(L) {
+    return `<line x1="${L.sidePad}" y1="${L.ground}" x2="${L.W - L.sidePad}" y2="${L.ground}" stroke="#444" stroke-width="1.2"/>`;
+  }
+  function layoutScale(artWcm, worldTopCm) {
+    /* Encaja persona de 170 cm y lo más alto de la escena (obra, techo) en el recuadro. */
+    const W = 360, H = 300;
+    const topPad = 28, bottomPad = 36, sidePad = 12, gap = 14;
     const usableH = H - topPad - bottomPad;
     const usableW = W - sidePad * 2;
-    const personWcm = 48;
-    let scale = (H * 0.76) / PERSONA_CM;
-    const fitH = Math.max(PERSONA_CM, artHcm);
-    if (fitH * scale > usableH) scale = usableH / fitH;
+    const fitH = Math.max(PERSONA_CM, Number(worldTopCm) || 0, 1);
+    let scale = usableH / fitH;
+    let personW = PERSONA_W_CM * scale;
     let artW = Math.max(4, artWcm * scale);
-    let artH = Math.max(4, artHcm * scale);
-    let personW = personWcm * scale;
-    const needW = personW + gap + artW;
+    const needW = 12 + personW + gap + artW;
     if (needW > usableW) {
       scale *= usableW / needW;
+      personW = PERSONA_W_CM * scale;
       artW = Math.max(4, artWcm * scale);
-      artH = Math.max(4, artHcm * scale);
-      personW = personWcm * scale;
     }
     const ground = H - bottomPad;
-    const personX = Math.max(sidePad + personW / 2 + 10, 102);
+    const personX = sidePad + 12 + personW / 2;
     const artX = personX + personW / 2 + gap;
-    const artY = ground - artH;
-    const labelY = Math.min(H - 10, ground + 20);
-    return { W, H, scale, ground, personX, artX, artY, artW, artH, labelY, sidePad };
+    const labelY = Math.min(H - 8, ground + 18);
+    return { W, H, scale, ground, personX, artX, artW, labelY, sidePad, personW };
   }
 
   function artworkShape(forma, x, y, w, h, fill) {
@@ -475,36 +499,96 @@
     return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${fill}" stroke="#d4af37" stroke-width="2"/>`;
   }
 
+  function worldTopVista(colg) {
+    /* Para obras habituales no encogemos a un techo de 280 cm: basta la persona y un poco de muro sobre la obra.
+       Solo si el curador extendió el techo (obras muy altas) se muestra esa altura. */
+    if (!colg) return PERSONA_CM;
+    if (colg.techoCm > TECHO_CM) return Math.max(PERSONA_CM, colg.techoCm);
+    return Math.max(PERSONA_CM, (colg.topCm || 0) + 12);
+  }
+  function etiquetaCentro(centerCm) {
+    const n = formatoMedidaEscala(centerCm);
+    return i18nEscala('escala.centroA', 'Centro a {n}', { n: n });
+  }
+  function etiquetaBase(bottomCm) {
+    const n = formatoMedidaEscala(bottomCm);
+    return i18nEscala('escala.baseA', 'Base a {n}', { n: n });
+  }
+  function labelObra(dimText, extra, L, artX, artY, artW) {
+    const labelX = Math.min(L.W - L.sidePad, Math.max(L.sidePad + 40, artX + artW / 2));
+    let labelTop = artY - (extra ? 20 : 8);
+    let anchor = 'middle';
+    if (labelTop < 12) {
+      labelTop = Math.max(12, artY + 14);
+      /* si no hay aire arriba, el texto va a la derecha de la obra */
+    }
+    const line2 = extra ? `<tspan x="${labelX}" dy="13">${extra}</tspan>` : '';
+    return `<text x="${labelX}" y="${Math.max(12, labelTop)}" text-anchor="${anchor}" fill="#e5ca72" font-size="11"><tspan x="${labelX}" dy="0">${dimText}</tspan>${line2}</text>`;
+  }
   function updateEscala() {
     const el = ensureEscala();
     if (!el) return;
+    const est = document.getElementById('estilo')?.value || '';
+    const esMural = est === 'Mural';
+    const enAsistente = el.classList.contains('en-asistente');
     const cuadros = document.getElementById('contenedor-cuadros');
-    if (!cuadros || cuadros.style.display === 'none') { el.hidden = true; return; }
-    el.hidden = false;
-    const dim = typeof obtenerDimensiones === 'function' ? obtenerDimensiones() : null;
-    if (!dim || !dim.valida) {
-      el.innerHTML = '<p class="vista-escala-nota">'+((window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('escala.elegi'):'Elegí un tamaño para ver la obra al lado de una persona de 1,70 m.')+'</p>';
-      return;
+    const murales = document.getElementById('contenedor-murales');
+    if (!enAsistente) {
+      const visibleCuadro = cuadros && cuadros.style.display !== 'none';
+      const visibleMural = murales && murales.style.display !== 'none';
+      if (!(esMural ? visibleMural : visibleCuadro)) { el.hidden = true; return; }
+      if (esMural && murales && el.parentNode !== murales.parentNode) {
+        murales.insertAdjacentElement('afterend', el);
+      }
     }
-    const forma = document.getElementById('forma_lienzo')?.value || 'Estandar';
-    const artHcm = forma === 'Circular' ? dim.ancho : dim.alto;
-    const artWcm = dim.ancho;
-    const L = layoutScale(artWcm, artHcm);
+    el.hidden = false;
+    let artWcm, artHcm, forma = 'Estandar', colg, modo = esMural ? 'mural' : 'cuadro';
+    if (esMural) {
+      artWcm = (typeof muralAnchoCm === 'function') ? muralAnchoCm() : Number(document.getElementById('mural_ancho')?.value);
+      artHcm = (typeof muralAltoCm === 'function') ? muralAltoCm() : Number(document.getElementById('mural_alto')?.value);
+      if (!Number.isFinite(artWcm) || !Number.isFinite(artHcm) || artWcm < 1 || artHcm < 1) {
+        el.innerHTML = '<p class="vista-escala-nota">'+i18nEscala('escala.elegi','Elegí un tamaño para ver la obra al lado de una persona de 1,70 m.')+'</p>';
+        return;
+      }
+      colg = colgadoMural(artHcm);
+    } else {
+      const dim = typeof obtenerDimensiones === 'function' ? obtenerDimensiones() : null;
+      if (!dim || !dim.valida) {
+        el.innerHTML = '<p class="vista-escala-nota">'+i18nEscala('escala.elegi','Elegí un tamaño para ver la obra al lado de una persona de 1,70 m.')+'</p>';
+        return;
+      }
+      forma = document.getElementById('forma_lienzo')?.value || 'Estandar';
+      artHcm = forma === 'Circular' ? dim.ancho : dim.alto;
+      artWcm = dim.ancho;
+      colg = colgadoCurador(artHcm);
+    }
+    if (!colg) { el.hidden = true; return; }
+    const worldTop = worldTopVista(colg);
+    const L = layoutScale(artWcm, worldTop);
+    const artW = Math.max(4, artWcm * L.scale);
+    const artH = Math.max(4, artHcm * L.scale);
+    const artX = L.artX;
+    const artY = L.ground - colg.topCm * L.scale;
     let fill = 'rgba(212,175,55,0.25)';
     let imageTag = '';
     const ref = document.querySelector('#referencias-previews img');
-    if (ref && ref.src) {
+    if (!esMural && ref && ref.src) {
       const clipId = 'clip-obra';
-      imageTag = `<defs><clipPath id="${clipId}">${artworkShape(forma, L.artX, L.artY, L.artW, L.artH, '#000').replace(/fill="[^"]*"/, 'fill="#fff"').replace(/ stroke="[^"]*"/g, '').replace(/ stroke-width="[^"]*"/g, '')}</clipPath></defs>` +
-        `<image href="${ref.src}" x="${L.artX}" y="${L.artY}" width="${L.artW}" height="${L.artH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clipId})" opacity="0.95"/>`;
+      imageTag = `<defs><clipPath id="${clipId}">${artworkShape(forma, artX, artY, artW, artH, '#000').replace(/fill="[^"]*"/, 'fill="#fff"').replace(/ stroke="[^"]*"/g, '').replace(/ stroke-width="[^"]*"/g, '')}</clipPath></defs>` +
+        `<image href="${ref.src}" x="${artX}" y="${artY}" width="${artW}" height="${artH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clipId})" opacity="0.95"/>`;
       fill = 'transparent';
     }
-    const label = forma === 'Circular'
-      ? ((window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('escala.diametro'):'Diámetro') + ' ' + ((typeof formatoDesdeCm==='function')?formatoDesdeCm(dim.ancho):(Math.round(dim.ancho)+' cm'))
-      : ((typeof formatoParDesdeCm==='function')?formatoParDesdeCm(dim.ancho,dim.alto):((typeof formatoDesdeCm==='function')?(formatoDesdeCm(dim.ancho)+' × '+formatoDesdeCm(dim.alto)):(`${Math.round(dim.ancho)} × ${Math.round(dim.alto)} cm`)));
-    const labelX = Math.min(L.W - L.sidePad, Math.max(L.sidePad + 40, L.artX + L.artW / 2));
-    const labelTop = Math.max(14, L.artY - 8);
-    el.innerHTML = `<svg viewBox="0 0 ${L.W} ${L.H}" role="img" aria-label="Comparación de tamaño: obra ${label} junto a una persona de 1,70 metros">${imageTag}${personPath(L.personX, L.ground, L.scale, L.labelY)}${artworkShape(forma, L.artX, L.artY, L.artW, L.artH, fill)}<text x="${labelX}" y="${labelTop}" text-anchor="middle" fill="#e5ca72" font-size="12">${label}</text><line x1="${L.sidePad}" y1="${L.ground}" x2="${L.W - L.sidePad}" y2="${L.ground}" stroke="#444" stroke-width="1"/></svg><p class="vista-escala-nota">${(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('escala.notaCuadro'):'La obra se muestra a escala real junto a una persona adulta de 1,70 m.'}${(typeof unidadActualVal==='function'&&unidadActualVal()==='in')?' (67 in).':''}</p>`;
+    const dimText = esMural
+      ? formatoParEscala(artWcm, artHcm)
+      : (forma === 'Circular'
+        ? (i18nEscala('escala.diametro','Diámetro') + ' ' + formatoMedidaEscala(artWcm))
+        : formatoParEscala(artWcm, forma === 'Circular' ? artWcm : artHcm));
+    const extra = esMural ? etiquetaBase(colg.bottomCm) : etiquetaCentro(colg.centerCm);
+    const nota = esMural
+      ? i18nEscala('escala.notaMural','El mural se muestra a escala sobre el muro, junto a una persona de 1,70 m.')
+      : i18nEscala('escala.notaCuadro','La obra se muestra a escala real junto a una persona adulta de 1,70 m.');
+    const uni = (typeof unidadActualVal==='function'&&unidadActualVal()==='in')?' (67 in).':'';
+    el.innerHTML = `<svg viewBox="0 0 ${L.W} ${L.H}" role="img" data-scale="${L.scale}" data-persona-cm="${PERSONA_CM}" data-art-center-cm="${colg.centerCm}" data-art-bottom-cm="${colg.bottomCm}" data-art-top-cm="${colg.topCm}" data-modo="${modo}" aria-label="Comparación de tamaño: obra ${dimText} junto a una persona de 1,70 metros">${wallAndFloor(L, worldTop)}${imageTag}${personFigure(L.personX, L.ground, L.scale, L.labelY)}${artworkShape(forma, artX, artY, artW, artH, fill)}${labelObra(dimText, extra, L, artX, artY, artW)}</svg><p class="vista-escala-nota">${nota}${uni}</p>`;
   }
 
   function updateEscalaEscultura() {
@@ -524,31 +608,26 @@
       ? ((Number.isFinite(wLeido) && wLeido > 0) ? wLeido : cm * 1.1)
       : cm * (tipo === 'Busto' ? 0.7 : tipo === 'Medio cuerpo' ? 0.55 : 0.4);
     const esRelieve = tipo === 'Relieve';
-    let bottomCm = 0, topCm = artHcm;
-    if (esRelieve) {
-      const centerCm = 120;
-      bottomCm = centerCm - artHcm / 2;
-      if (bottomCm < 10) bottomCm = 10;
-      if (bottomCm + artHcm > 210) bottomCm = Math.max(10, 210 - artHcm);
-      topCm = bottomCm + artHcm;
-    }
-    const L = layoutScale(artWcm, esRelieve ? Math.max(artHcm, topCm) : artHcm);
-    const artW = artWcm * L.scale;
-    const artH = artHcm * L.scale;
+    const colg = esRelieve ? colgadoCurador(artHcm) : { bottomCm: 0, topCm: artHcm, centerCm: artHcm / 2, techoCm: Math.max(PERSONA_CM, artHcm), elevado: false };
+    const worldTop = worldTopVista(colg);
+    const L = layoutScale(artWcm, worldTop);
+    const artW = Math.max(4, artWcm * L.scale);
+    const artH = Math.max(4, artHcm * L.scale);
     const artX = L.artX;
-    const artY = esRelieve ? (L.ground - topCm * L.scale) : L.artY;
-    const hCm = (typeof alturaEsculturaCm==='function')?alturaEsculturaCm():cm;
-    const label = esRelieve
-      ? ((typeof formatoParDesdeCm==='function')?formatoParDesdeCm(artWcm,hCm):(((typeof formatoDesdeCm==='function')?formatoDesdeCm(artWcm):(Math.round(artWcm)+' cm')) + ' × ' + ((typeof formatoDesdeCm==='function')?formatoDesdeCm(hCm):(Math.round(hCm)+' cm'))))
-      : (`${tipo}: ` + ((typeof formatoDesdeCm==='function')?formatoDesdeCm(hCm): (Math.round(hCm)+' cm')));
-    const labelX = Math.min(L.W - L.sidePad, Math.max(L.sidePad + 40, artX + artW / 2));
-    const labelTop = Math.max(14, artY - 8);
-    const wallX = artX - 5;
-    const wall = esRelieve ? `<line x1="${wallX}" y1="${L.ground}" x2="${wallX}" y2="${Math.max(16, artY - 18)}" stroke="#555" stroke-width="2"/><rect x="${artX + 3}" y="${artY + 3}" width="${Math.max(2, artW * 0.08)}" height="${artH}" rx="1" fill="rgba(80,80,80,0.35)"/>` : '';
-    const aria = esRelieve ? `Relieve de ${Math.round(artWcm)} × ${Math.round(hCm)} cm junto a una persona de 1,70 m` : `Escultura de ${cm} cm junto a una persona de 1,70 m`;
-    const notaClave = esRelieve ? 'escala.notaRelieve' : 'escala.notaEscultura';
-    const notaFb = esRelieve ? 'Tamaño del panel a escala, colgado, junto a una persona de 1,70 m.' : 'Altura de la pieza a escala junto a una persona de 1,70 m.';
-    el.innerHTML = `<svg viewBox="0 0 ${L.W} ${L.H}" role="img" aria-label="${aria}">${personPath(L.personX, L.ground, L.scale, L.labelY)}${wall}<rect x="${artX}" y="${artY}" width="${artW}" height="${artH}" rx="${esRelieve?2:6}" fill="rgba(180,180,180,0.35)" stroke="#d4af37" stroke-width="2"/><text x="${labelX}" y="${labelTop}" text-anchor="middle" fill="#e5ca72" font-size="12">${label}</text><line x1="${L.sidePad}" y1="${L.ground}" x2="${L.W - L.sidePad}" y2="${L.ground}" stroke="#444" stroke-width="1"/></svg><p class="vista-escala-nota">${(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t(notaClave,notaFb):notaFb}${(typeof unidadActualVal==='function'&&unidadActualVal()==='in')?' (67 in).':''}</p>`;
+    const artY = L.ground - colg.topCm * L.scale;
+    const dimText = esRelieve
+      ? formatoParEscala(artWcm, artHcm)
+      : (`${tipo}: ` + formatoMedidaEscala(artHcm));
+    const extra = esRelieve ? etiquetaCentro(colg.centerCm) : '';
+    const wall = esRelieve
+      ? wallAndFloor(L, worldTop) + `<rect x="${artX + 3}" y="${artY + 3}" width="${Math.max(2, artW * 0.08)}" height="${artH}" rx="1" fill="rgba(80,80,80,0.35)"/>`
+      : floorLine(L);
+    const aria = esRelieve ? `Relieve de ${Math.round(artWcm)} × ${Math.round(artHcm)} cm junto a una persona de 1,70 m` : `Escultura de ${cm} cm junto a una persona de 1,70 m`;
+    const nota = esRelieve
+      ? i18nEscala('escala.notaRelieve','Tamaño del panel a escala, colgado, junto a una persona de 1,70 m.')
+      : i18nEscala('escala.notaEscultura','Altura de la pieza a escala junto a una persona de 1,70 m.');
+    const uni = (typeof unidadActualVal==='function'&&unidadActualVal()==='in')?' (67 in).':'';
+    el.innerHTML = `<svg viewBox="0 0 ${L.W} ${L.H}" role="img" data-scale="${L.scale}" data-persona-cm="${PERSONA_CM}" data-art-center-cm="${colg.centerCm}" data-art-bottom-cm="${colg.bottomCm}" data-art-top-cm="${colg.topCm}" data-modo="${esRelieve?'relieve':'escultura'}" aria-label="${aria}">${wall}${personFigure(L.personX, L.ground, L.scale, L.labelY)}<rect x="${artX}" y="${artY}" width="${artW}" height="${artH}" rx="${esRelieve?2:6}" fill="rgba(180,180,180,0.35)" stroke="#d4af37" stroke-width="2"/>${labelObra(dimText, extra, L, artX, artY, artW)}</svg><p class="vista-escala-nota">${nota}${uni}</p>`;
   }
 
   function refreshAll() {
@@ -566,6 +645,6 @@
   }
 
   window.CotizadorVisual = {
-    refreshAll, updateEscala, updateEscalaEscultura, renderFondo, renderSujetos, item, defaults, current, GROUPS, svgData, clavesGuia, estiloActual, tecnicaActual, mediaForma, urlTemaActual, corteDeUrl
+    refreshAll, updateEscala, updateEscalaEscultura, renderFondo, renderSujetos, item, defaults, current, GROUPS, svgData, clavesGuia, estiloActual, tecnicaActual, mediaForma, urlTemaActual, corteDeUrl, colgadoCurador, colgadoMural, personFigure, PERSONA_CM, PERSONA_W_CM, PERSONA_SRC, CENTRO_IDEAL_CM, MIN_BOTTOM_CM, TECHO_CM
   };
 })();
