@@ -75,7 +75,12 @@ async function abrirCarpetaAdmin(page,id){
  else await page.evaluate(id=>{ if(typeof abrirAlbumAdmin==='function') abrirAlbumAdmin(id); },id);
  await page.waitForSelector('#galeria-folder-bar:not([hidden])');
 }
-async function siguienteAsistente(page){ await page.locator('#asistente-siguiente').click(); }
+async function siguienteAsistente(page){
+  const before=await page.evaluate(()=>({hash:location.hash,n:document.getElementById('asistente-paso-n')?.textContent||''}));
+  const still=await page.evaluate(b=>location.hash===b.hash&&(document.getElementById('asistente-paso-n')?.textContent||'')===b.n,before);
+  if(still && await page.locator('#asistente-siguiente').isVisible()) await page.locator('#asistente-siguiente').click();
+  await page.waitForFunction(b=>location.hash!==b.hash||(document.getElementById('asistente-paso-n')?.textContent||'')!==b.n,before,{timeout:4000});
+}
 
 const photo=(name='foto.png',size)=>({name,mimeType:'image/png',buffer:size?Buffer.alloc(size):png});
 async function test(name,fn){try{await fn();results.push({prueba:name,resultado:'OK'});}catch(error){results.push({prueba:name,resultado:'FALLO',detalle:error.stack});process.exitCode=1;}}
@@ -200,6 +205,78 @@ let base;
   }));
   assert.equal(disp.continuar,'none');
   assert.equal(disp.share,'none');
+  await context.close();
+ });
+ await test('El asistente avanza solo al tocar una opción, sin saltar dos pasos, y Atrás conserva la elección',async()=>{
+  const {page,context}=await session();
+  await page.setViewportSize({width:390,height:844});
+  await page.goto(base+'/index.html#cotizacion');
+  await page.waitForSelector('#asistente-pedido:not([hidden]) #asistente-opciones .guia-card[data-value=oleo]');
+  await elegirAsistente(page,'oleo');
+  assert.match(await page.locator('#asistente-opciones .guia-card[data-value=oleo]').getAttribute('aria-selected'),/true/);
+  await page.waitForFunction(()=>location.hash==='#cotizacion/estilo',null,{timeout:3000});
+  assert.ok(await page.locator('#asistente-opciones .guia-card[data-value=Realista]').count());
+  // Double / fast taps must not skip estilo
+  await elegirAsistente(page,'Realista');
+  await elegirAsistente(page,'Hiperrealista').catch(()=>{});
+  await page.waitForFunction(()=>location.hash==='#cotizacion/tema',null,{timeout:3000});
+  assert.equal(new URL(page.url()).hash,'#cotizacion/tema');
+  assert.equal(await page.evaluate(()=>document.getElementById('estilo').value),'Realista');
+  await elegirAsistente(page,'Retrato');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/sujetos',null,{timeout:3000});
+  await page.goBack();
+  await page.waitForFunction(()=>location.hash==='#cotizacion/tema');
+  assert.equal(await page.locator('#asistente-opciones .guia-card[data-value=Retrato]').getAttribute('aria-selected'),'true');
+  assert.equal(await page.locator('#asistente-siguiente').isVisible(),true);
+  await page.screenshot({path:'/workspace/auto-avance-t55u.png',animations:'disabled'});
+  await context.close();
+ });
+ await test('Al llegar a los datos del pedido, el campo Nombre queda a la vista en el celular',async()=>{
+  const {page,context}=await session();
+  async function llegarADatos(){
+    await elegirAsistente(page,'oleo');
+    await page.waitForFunction(()=>location.hash==='#cotizacion/estilo');
+    await elegirAsistente(page,'Realista');
+    await page.waitForFunction(()=>location.hash==='#cotizacion/tema');
+    await elegirAsistente(page,'Retrato');
+    await page.waitForFunction(()=>location.hash==='#cotizacion/sujetos');
+    await elegirAsistente(page,'1'); await siguienteAsistente(page);
+    await elegirAsistente(page,'simple');
+    await page.waitForFunction(()=>location.hash==='#cotizacion/forma');
+    await elegirAsistente(page,'Estandar');
+    await page.waitForFunction(()=>location.hash==='#cotizacion/tamano');
+    await page.selectOption('#tamano_predefinido','30x40');
+    await siguienteAsistente(page);
+    await elegirAsistente(page,'SinMarco');
+    await page.waitForFunction(()=>location.hash==='#cotizacion/fotos');
+    await page.selectOption('#fotos_referencia','No, necesito asesoramiento');
+    await siguienteAsistente(page);
+    await page.waitForFunction(()=>location.hash==='#cotizacion/datos');
+    await page.waitForSelector('#asistente-pedido:not([hidden]) label[for="envio_nombre"], #asistente-extra #envio_nombre');
+  }
+  const vistos=[];
+  for(const vp of [{width:360,height:740},{width:390,height:844},{width:412,height:915}]){
+    await page.setViewportSize(vp);
+    await page.goto(base+'/index.html#cotizacion');
+    await page.waitForSelector('#asistente-pedido:not([hidden]) #asistente-opciones .guia-card[data-value=oleo]');
+    await llegarADatos();
+    const geom=await page.evaluate(()=>{
+      const label=document.querySelector('#asistente-pedido label[for="envio_nombre"]');
+      const input=document.getElementById('envio_nombre');
+      const pie=document.querySelector('#asistente-pedido .asistente-pie');
+      const head=document.querySelector('#asistente-pedido .asistente-cabecera');
+      if(!label||!input||!pie||!head) return {missing:true,hasLabel:!!label,hasInput:!!input,hasPie:!!pie,hasHead:!!head};
+      const L=label.getBoundingClientRect(), I=input.getBoundingClientRect(), P=pie.getBoundingClientRect(), H=head.getBoundingClientRect();
+      return {label:{y:L.top,bottom:L.bottom},input:{y:I.top,bottom:I.bottom},pieTop:P.top,headerBottom:H.bottom,viewH:innerHeight};
+    });
+    assert.ok(!geom.missing,JSON.stringify({vp,geom}));
+    assert.ok(geom.label.y>=geom.headerBottom-2,JSON.stringify({vp,geom}));
+    assert.ok(geom.label.bottom<=geom.pieTop+1,JSON.stringify({vp,geom}));
+    assert.ok(geom.input.y>=0 && geom.input.bottom<=geom.pieTop+1,JSON.stringify({vp,geom}));
+    assert.ok(geom.input.y<geom.viewH*0.65,JSON.stringify({vp,geom}));
+    vistos.push(geom);
+    if(vp.height===844) await page.screenshot({path:'/workspace/datos-nombre-t55u.png',animations:'disabled'});
+  }
   await context.close();
  });
  await test('Inicio, menú inferior y hashes',async()=>{

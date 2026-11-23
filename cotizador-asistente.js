@@ -240,6 +240,7 @@
   }
 
   function elegir(paso, value) {
+    if (avanzando && avanceIndice === indice) return;
     if (paso.id === 'trabajo') aplicarTrabajo(value);
     else if (paso.id === 'estilo') setVal('estilo', value);
     else if (paso.id === 'tema') setVal('tema', value);
@@ -262,6 +263,7 @@
     else if (paso.id === 'estilo_mural') setVal('estilo_mural', value);
     else if (paso.id === 'tipo_restauracion') setVal('tipo_restauracion', value);
     pintar();
+    if (esAutoPaso(paso) && puedeSeguir(paso)) programarAvance();
   }
 
   function puedeSeguir(paso) {
@@ -284,6 +286,84 @@
     if (paso.id === 'datos') return !!(valor('envio_nombre') || '').trim();
     if (paso.id === 'resumen') return true;
     return false;
+  }
+
+  const AUTO_PASOS = {
+    trabajo:1, estilo:1, tema:1, fondo:1, color:1, forma:1, marco:1,
+    tipo_escultura:1, material_escultura:1, estilo_mural:1, tipo_restauracion:1
+  };
+  const AVANCE_MS = 400;
+  let avanceTimer = null;
+  let avanceIndice = null;
+  let avanzando = false;
+  let ultimoPasoPintado = null;
+
+  function esAutoPaso(paso) {
+    const id = typeof paso === 'string' ? paso : (paso && paso.id);
+    return !!(id && AUTO_PASOS[id]);
+  }
+  function enPruebaSincrona() {
+    return window.__bloquearAvanceAsistente === true
+      || /jsdom/i.test((typeof navigator !== 'undefined' && navigator.userAgent) || '');
+  }
+  function cancelarAvance() {
+    if (avanceTimer) { clearTimeout(avanceTimer); avanceTimer = null; }
+    avanzando = false;
+    avanceIndice = null;
+  }
+  function programarAvance() {
+    if (enPruebaSincrona() || window.restaurandoRuta) return;
+    cancelarAvance();
+    avanzando = true;
+    avanceIndice = indice;
+    avanceTimer = setTimeout(() => {
+      const mismo = avanzando && avanceIndice === indice;
+      avanceTimer = null;
+      avanzando = false;
+      avanceIndice = null;
+      if (mismo) siguiente();
+    }, AVANCE_MS);
+  }
+  function mostrarSiguiente(paso) {
+    if (!paso || paso.id === 'resumen') return false;
+    if (esAutoPaso(paso)) return puedeSeguir(paso);
+    return true;
+  }
+  function cuerpoAsistente() { return $('asistente-cuerpo') || document.querySelector('.asistente-cuerpo'); }
+  function irArribaDelPaso(paso) {
+    const cuerpo = cuerpoAsistente();
+    if (!cuerpo) return;
+    cuerpo.scrollTop = 0;
+    if (!paso || paso.id !== 'datos') return;
+    const dest = document.querySelector('#asistente-cuerpo label[for="envio_nombre"], .asistente-cuerpo label[for="envio_nombre"]') || $('envio_nombre');
+    if (!dest) return;
+    const alinear = () => {
+      cuerpo.scrollTop = 0;
+      const cr = cuerpo.getBoundingClientRect();
+      const tr = dest.getBoundingClientRect();
+      const margen = 8;
+      const next = cuerpo.scrollTop + (tr.top - cr.top) - margen;
+      cuerpo.scrollTop = Math.max(0, next);
+    };
+    alinear();
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(alinear);
+  }
+  function asegurarCampoVisible(el) {
+    if (!el || typeof el.scrollIntoView !== 'function') return;
+    const root = $('asistente-pedido');
+    if (!root || root.hidden || !root.contains(el)) return;
+    el.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'auto' });
+    const cuerpo = cuerpoAsistente();
+    if (!cuerpo || !cuerpo.contains(el)) return;
+    const cr = cuerpo.getBoundingClientRect();
+    const tr = el.getBoundingClientRect();
+    const pie = root.querySelector('.asistente-pie');
+    const pieTop = pie ? pie.getBoundingClientRect().top : cr.bottom;
+    if (tr.bottom > pieTop - 8 || tr.top < cr.top + 8) {
+      const mid = tr.top + tr.height / 2;
+      const visor = cr.top + Math.min((pieTop - cr.top) / 2, cr.height / 2);
+      cuerpo.scrollTop += (mid - visor);
+    }
   }
 
   function card(opt, paso) {
@@ -364,6 +444,7 @@
     return !prev || prev.id === 'trabajo' ? null : prev.id;
   }
   function restaurarPaso(id) {
+    cancelarAvance();
     const root = $('asistente-pedido');
     if (root && root.hidden) abrir({ conservar: true });
     const lista = pasos();
@@ -374,6 +455,7 @@
     pintar();
   }
   function irA(id) {
+    cancelarAvance();
     const lista = pasos();
     const i = lista.findIndex((p) => p.id === id);
     if (i < 0) return;
@@ -732,7 +814,7 @@
     const enviar = $('enviar-obra');
     if (atras) atras.disabled = false;
     const ultimo = paso.id === 'resumen';
-    sig.hidden = ultimo;
+    sig.hidden = !mostrarSiguiente(paso);
     sig.disabled = !puedeSeguir(paso);
     if (enviar) {
       enviar.textContent = i18n('comun.enviar');
@@ -749,6 +831,9 @@
       $('asistente-precio').textContent = $('precioFinal').textContent;
     }
     actualizarAcciones();
+    const cambio = ultimoPasoPintado !== paso.id;
+    ultimoPasoPintado = paso.id;
+    if (cambio || paso.id === 'datos') irArribaDelPaso(paso);
   }
 
   function actualizarAcciones() {
@@ -762,7 +847,7 @@
     if (atras) atras.disabled = false;
     const ultimo = paso.id === 'resumen';
     if (sig) {
-      sig.hidden = ultimo;
+      sig.hidden = !mostrarSiguiente(paso);
       sig.disabled = !puedeSeguir(paso);
     }
     if (paso.id === 'resumen' && $('asistente-precio') && $('precioFinal')) {
@@ -772,6 +857,7 @@
   }
 
   function abrir(opts) {
+    cancelarAvance();
     const root = $('asistente-pedido');
     if (!root) return;
     const conservar = opts && opts.conservar;
@@ -786,6 +872,7 @@
   }
 
   function cerrar(opts) {
+    cancelarAvance();
     const root = $('asistente-pedido');
     if (!root || root.hidden) return;
     restoreParked();
@@ -800,6 +887,7 @@
   }
 
   function siguiente() {
+    cancelarAvance();
     const lista = pasos();
     const paso = lista[indice];
     if (!paso || !puedeSeguir(paso)) return;
@@ -811,6 +899,7 @@
   }
 
   function atras() {
+    cancelarAvance();
     if (window.EstudioRuta && typeof EstudioRuta.volverRuta === 'function') EstudioRuta.volverRuta();
     else if (indice > 0) { indice -= 1; pintar(); }
   }
@@ -848,10 +937,15 @@
         else abrir();
       });
     });
+    document.addEventListener('focusin', (ev) => {
+      const el = ev.target;
+      if (!el || !el.tagName || !/^(INPUT|SELECT|TEXTAREA)$/.test(el.tagName)) return;
+      asegurarCampoVisible(el);
+    });
     if (location.hash === '#cotizacion' || document.body.dataset.pantalla === 'cotizacion') abrir();
   }
 
-  window.AsistentePedido = { abrir, cerrar, pintar, iniciar, irA, restaurarPaso, pasoAnterior, hashPaso, aplicarSugerencia, sugerencias: sugerenciasPresupuesto, actualizarBarra };
+  window.AsistentePedido = { abrir, cerrar, pintar, iniciar, irA, restaurarPaso, pasoAnterior, hashPaso, aplicarSugerencia, sugerencias: sugerenciasPresupuesto, actualizarBarra, esAutoPaso, cancelarAvance, AVANCE_MS };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
   else iniciar();
 })();
