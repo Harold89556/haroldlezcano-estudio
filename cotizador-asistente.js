@@ -89,7 +89,7 @@
     } else if (trabajo === 'escultura') {
       s.push({ id: 'tipo_escultura', pregunta: i18n('wizard.tipoEscultura.pregunta'), ayuda: i18n('wizard.tipoEscultura.ayuda') });
       s.push({ id: 'material_escultura', pregunta: i18n('wizard.material.pregunta'), ayuda: i18n('wizard.material.ayuda') });
-      s.push({ id: 'altura_escultura', pregunta: i18n('wizard.altura.pregunta'), ayuda: i18n('wizard.altura.ayuda') });
+      s.push({ id: 'altura_escultura', pregunta: valor('tipo_escultura')==='Relieve' ? i18n('wizard.alturaRelieve.pregunta') : i18n('wizard.altura.pregunta'), ayuda: valor('tipo_escultura')==='Relieve' ? i18n('wizard.alturaRelieve.ayuda') : i18n('wizard.altura.ayuda') });
     } else if (trabajo === 'mural') {
       s.push({ id: 'estilo_mural', pregunta: i18n('wizard.estiloMural.pregunta'), ayuda: i18n('wizard.estiloMural.pregunta') });
       s.push({ id: 'tamano_mural', pregunta: i18n('wizard.tamanoMural.pregunta'), ayuda: i18n('wizard.tamanoMural.ayuda') });
@@ -411,7 +411,13 @@
       add(i18n('chip.trabajo'), i18n('trabajo.escultura'));
       add(i18n('chip.tipo'), etiquetaOpcion('tipo_escultura'));
       add(i18n('escultura.material','Material'), etiquetaOpcion('material_escultura'));
-      if (typeof alturaEsculturaCm==='function' && Number.isFinite(alturaEsculturaCm())) add(i18n('chip.altura'), formatoDesdeCm(alturaEsculturaCm()));
+      if (typeof alturaEsculturaCm==='function' && Number.isFinite(alturaEsculturaCm()) && alturaEsculturaCm()>0) {
+        if (valor('tipo_escultura')==='Relieve' && typeof anchoEsculturaCm==='function' && Number.isFinite(anchoEsculturaCm()) && anchoEsculturaCm()>0) {
+          add(i18n('chip.tamano'), (typeof formatoParDesdeCm==='function')?formatoParDesdeCm(anchoEsculturaCm(),alturaEsculturaCm()):(formatoDesdeCm(anchoEsculturaCm())+' × '+formatoDesdeCm(alturaEsculturaCm())));
+        } else {
+          add(i18n('chip.altura'), formatoDesdeCm(alturaEsculturaCm()));
+        }
+      }
       const kg = typeof pesoEsculturaKg==='function' ? pesoEsculturaKg() : null;
       if (Number.isFinite(kg)) add(i18n('chip.peso'), i18n('escultura.peso',{n: kg>=20?Math.round(kg):kg}));
     } else if (trabajo === 'mural') {
@@ -659,7 +665,13 @@
       add('trabajo', i18n('chip.trabajo'), i18n('trabajo.escultura'));
       add('tipo_escultura', i18n('chip.tipo'), etiquetaOpcion('tipo_escultura'));
       add('material_escultura', i18n('escultura.material','Material'), etiquetaOpcion('material_escultura'));
-      if (typeof alturaEsculturaCm==='function' && Number.isFinite(alturaEsculturaCm()) && alturaEsculturaCm()>0) add('altura_escultura', i18n('chip.altura'), formatoDesdeCm(alturaEsculturaCm()));
+      if (typeof alturaEsculturaCm==='function' && Number.isFinite(alturaEsculturaCm()) && alturaEsculturaCm()>0) {
+        if (valor('tipo_escultura')==='Relieve' && typeof anchoEsculturaCm==='function' && Number.isFinite(anchoEsculturaCm()) && anchoEsculturaCm()>0) {
+          add('altura_escultura', i18n('chip.tamano'), (typeof formatoParDesdeCm==='function')?formatoParDesdeCm(anchoEsculturaCm(),alturaEsculturaCm()):(formatoDesdeCm(anchoEsculturaCm())+' × '+formatoDesdeCm(alturaEsculturaCm())));
+        } else {
+          add('altura_escultura', i18n('chip.altura'), formatoDesdeCm(alturaEsculturaCm()));
+        }
+      }
     } else if (trabajo === 'mural') {
       add('trabajo', i18n('chip.trabajo'), i18n('trabajo.mural'));
       add('estilo_mural', i18n('chip.estilo'), etiquetaOpcion('estilo_mural'));
@@ -908,6 +920,7 @@
       /* las tarjetas ya muestran el material; la nota queda en la ayuda */
     }
     if (paso.id === 'altura_escultura') {
+      if (window.onTipoEsculturaChange) onTipoEsculturaChange();
       take($('step-unidad'));
       take($('grupo-altura-escultura'));
       take($('vista-escala-escultura') || $('vista-escala'));

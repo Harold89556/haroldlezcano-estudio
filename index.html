@@ -422,6 +422,15 @@
 <div aria-live="polite" class="field-error" id="error-material_escultura"></div>
 </div>
 <div class="stepper-group altura-escultura" id="grupo-altura-escultura" style="margin-top: 15px; display:none;">
+<div id="grupo-escultura-ancho" hidden>
+<label for="escultura_ancho_cm" id="label-ancho-escultura">Ancho del panel en centímetros</label>
+<div class="stepper">
+<button aria-label="Disminuir ancho" class="stepper-btn" onclick="stepEscAncho(-1)" type="button">−</button>
+<input aria-describedby="hint-altura-escultura error-escultura_ancho_cm" id="escultura_ancho_cm" inputmode="numeric" max="200" min="30" onblur="onEsculturaAnchoBlur()" oninput="onEsculturaAnchoInput()" step="1" type="number" value="55"/>
+<button aria-label="Aumentar ancho" class="stepper-btn" onclick="stepEscAncho(1)" type="button">+</button>
+</div>
+<div aria-live="polite" class="field-error" id="error-escultura_ancho_cm"></div>
+</div>
 <label for="escultura_cm" id="label-altura-escultura">Altura en centímetros</label>
 <p class="altura-escultura-rango" id="hint-altura-escultura">Entre 30 y 200 cm.</p>
 <div class="stepper">

@@ -991,5 +991,109 @@ test('40. En Tamaño no se repiten las tarjetas de forma, y la lista cambia el f
   assert.ok(!W.pasos().some(s=>s.id==='forma'));
 });
 
+test('41. Acrílico no reutiliza las fotos de óleo, y el relieve tiene imágenes y tamaño de panel propios',()=>{
+  const a=iniciar();a.listo();
+  const W=a.w.AsistentePedido;
+  W.abrir();
+  const elige=(v)=>{const c=a.d.querySelector('#asistente-opciones .guia-card[data-value="'+v+'"]');assert.ok(c,v);c.click();};
+  const srcs=()=>Object.fromEntries([...a.d.querySelectorAll('#asistente-opciones .guia-card')].map(c=>[c.getAttribute('data-value'), (c.querySelector('img')||{}).getAttribute('src')||'']));
+  const ir=(trabajo,estilo,paso)=>{
+    W.irA('trabajo');elige(trabajo);
+    a.set('estilo',estilo);if(a.w.onEstiloChange)a.w.onEstiloChange();
+    if(paso!=='estilo' && paso!=='tema'){
+      a.set('tema','Retrato');if(a.w.onTemaChange)a.w.onTemaChange();
+    }
+    W.irA(paso);
+    return srcs();
+  };
+  const estilos=['Realista','Hiperrealista','Espatulado','Bocetado'];
+  for(const es of estilos){
+    const oilTema=ir('oleo',es,'tema');
+    const acTema=ir('acrilico',es,'tema');
+    for(const k of ['Retrato','Paisaje','Bodegon']){
+      assert.ok(oilTema[k], es+' óleo falta '+k);
+      assert.ok(acTema[k], es+' acrílico falta '+k);
+      assert.match(acTema[k],/acrilico-tema-/);
+      assert.notEqual(acTema[k], oilTema[k], es+' '+k+' acrílico reutiliza óleo: '+acTema[k]);
+    }
+    const oilF=ir('oleo',es,'fondo');
+    if(es!=='Espatulado'){
+      const acF=ir('acrilico',es,'fondo');
+      for(const k of ['simple','detallado']){
+        assert.match(acF[k],/acrilico-fondo-/);
+        assert.notEqual(acF[k], oilF[k], es+' fondo '+k+' reutiliza óleo');
+      }
+    }
+    const oilS=ir('oleo',es,'sujetos');
+    const acS=ir('acrilico',es,'sujetos');
+    for(const k of ['1','2','mascota']){
+      assert.match(acS[k],/acrilico-sujetos-/);
+      assert.notEqual(acS[k], oilS[k], es+' sujetos '+k+' reutiliza óleo');
+    }
+    a.set('tema','Paisaje');if(a.w.onTemaChange)a.w.onTemaChange();
+    W.irA('forma');
+    const formaSrcs=[...a.d.querySelectorAll('#asistente-opciones .guia-card img')].map(i=>i.getAttribute('src')||'');
+    assert.ok(formaSrcs.length>=4, 'forma acrílico');
+    assert.ok(formaSrcs.every(u=>/acrilico-tema-paisaje/.test(u)), 'forma debe usar el tema acrílico: '+JSON.stringify(formaSrcs));
+  }
+  const oilAbs=ir('oleo','Abstracto','tema');
+  const acAbs=ir('acrilico','Abstracto','tema');
+  for(const k of ['CampoColor','Geometrico','Gestual','Materia','Emocion']){
+    assert.match(acAbs[k],/acrilico-tema-abstracto-/);
+    assert.notEqual(acAbs[k], oilAbs[k], 'abstracto '+k+' reutiliza óleo');
+  }
+
+  W.irA('trabajo');elige('escultura');
+  W.irA('tipo_escultura');elige('Busto');
+  W.irA('material_escultura');
+  const mat3d=srcs();
+  W.irA('tipo_escultura');elige('Relieve');
+  W.irA('material_escultura');
+  const matR=srcs();
+  for(const k of ['Arcilla','Cemento','Fibra','Chapa','Chatarra']){
+    assert.ok(matR[k], 'falta material relieve '+k);
+    assert.match(matR[k],/-relieve\.webp$/);
+    assert.notEqual(matR[k], mat3d[k], k+' relieve reutiliza bulto redondo');
+  }
+  const claves=a.w.CotizadorVisual.clavesGuia('material_escultura:Arcilla');
+  assert.equal(claves[0],'material_escultura:Arcilla:Relieve');
+  const clavesAc=(()=>{a.set('tecnica','Acrilico');a.set('estilo','Realista');return a.w.CotizadorVisual.clavesGuia('tema:Paisaje');})();
+  assert.ok(clavesAc.includes('tema:Paisaje:Realista:Acrilico'));
+  assert.ok(!clavesAc.includes('tema:Paisaje:Realista'), JSON.stringify(clavesAc));
+  assert.ok(!clavesAc.includes('tema:Paisaje') || clavesAc[0].endsWith(':Acrilico'), JSON.stringify(clavesAc));
+  // default oil still falls back
+  a.set('tecnica','Oleo');a.set('estilo','Realista');
+  const clavesOil=a.w.CotizadorVisual.clavesGuia('tema:Paisaje');
+  assert.ok(clavesOil.includes('tema:Paisaje:Realista')||clavesOil.includes('tema:Paisaje'));
+  a.set('estilo','Escultura');if(a.w.onEstiloChange)a.w.onEstiloChange();
+  a.set('tecnica','');
+  if(!a.d.getElementById('material_escultura').value) a.set('material_escultura','Fibra');
+  if(a.w.onMaterialEsculturaChange)a.w.onMaterialEsculturaChange();
+
+  W.irA('altura_escultura');
+  const gAncho=a.d.getElementById('grupo-escultura-ancho');
+  assert.ok(gAncho && !gAncho.hidden, 'el ancho del panel debe verse en relieve');
+  assert.match(a.d.getElementById('asistente-pregunta').textContent,/panel/i);
+  const h0=a.w.alturaEsculturaCm();
+  const w0=a.w.anchoEsculturaCm();
+  assert.ok(Math.abs(w0-h0*1.1)<0.2, 'ancho por defecto 1.1×alto: '+w0+' vs '+h0);
+  const precio0=a.w.presupuesto().total;
+  const peso0=a.w.pesoEsculturaKg();
+  const pesoLegacy=a.w.pesoEsculturaKg('Relieve',h0,'Fibra',h0*1.1);
+  assert.equal(peso0, pesoLegacy);
+  a.set('escultura_ancho_cm', String(Math.round((w0+20)*10)/10));
+  if(a.d.getElementById('escultura_ancho_cm')) a.d.getElementById('escultura_ancho_cm').dataset.autoAncho='0';
+  if(a.w.aplicarAnchoEscultura) a.w.aplicarAnchoEscultura(a.d.getElementById('escultura_ancho_cm').value, true);
+  else if(a.w.onEsculturaAnchoBlur) a.w.onEsculturaAnchoBlur();
+  const precio1=a.w.presupuesto().total;
+  const peso1=a.w.pesoEsculturaKg();
+  assert.equal(precio1, precio0, 'el precio del relieve no debe cambiar al variar el ancho');
+  assert.notEqual(peso1, peso0, 'el peso debe cambiar con el ancho del panel');
+  W.irA('tipo_escultura');elige('Busto');
+  W.irA('altura_escultura');
+  const gAncho2=a.d.getElementById('grupo-escultura-ancho');
+  assert.ok(gAncho2 && gAncho2.hidden, 'el ancho no se muestra en bulto redondo');
+});
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));
 

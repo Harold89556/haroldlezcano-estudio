@@ -79,6 +79,20 @@ function asignarMedidaDesdeCm(id,cm,u){
  asignarMedida(id,deCm(cm,u||unidadActualVal()),u||unidadActualVal());
 }
 function alturaEsculturaCm(){return aCm(valor('escultura_cm'),unidadActualVal());}
+function anchoEsculturaPorDefectoCm(h){
+  h=Number(h);
+  if(!Number.isFinite(h)||h<=0) return NaN;
+  return Math.round(h*1.1*10)/10;
+}
+function anchoEsculturaCm(){
+  const tipo=(typeof valor==='function'?valor('tipo_escultura'):'')||'';
+  const h=alturaEsculturaCm();
+  const fallback=anchoEsculturaPorDefectoCm(h);
+  if(tipo!=='Relieve') return fallback;
+  const w=aCm(valor('escultura_ancho_cm'),unidadActualVal());
+  if(Number.isFinite(w)&&w>0) return w;
+  return fallback;
+}
 function muralAnchoCm(){return aCm(valor('mural_ancho'),unidadActualVal());}
 function muralAltoCm(){return aCm(valor('mural_alto'),unidadActualVal());}
 function factorMaterialEscultura(mat){
@@ -86,7 +100,7 @@ function factorMaterialEscultura(mat){
  const f=Number(tab[mat||valor('material_escultura')||'Fibra']);
  return Number.isFinite(f)&&f>0?f:1;
 }
-function pesoEsculturaKg(tipo,cm,material){
+function pesoEsculturaKg(tipo,cm,material,ancho){
  tipo=tipo||valor('tipo_escultura');
  cm=Number.isFinite(cm)?cm:alturaEsculturaCm();
  material=material||valor('material_escultura')||'Fibra';
@@ -96,7 +110,16 @@ function pesoEsculturaKg(tipo,cm,material){
  const a0=Number(p.areaRefCm2)||18000;
  const factorTipo=tipo==='Busto'?(Number(p.factorBusto)||0.38):tipo==='Medio cuerpo'?(Number(p.factorMedio)||0.62):tipo==='Relieve'?(Number(p.factorRelieve)||0.55):1;
  const escala=Math.max(0.05,cm/h0);
- const area=a0*escala*escala*factorTipo;
+ const factorRelieve=Number(p.factorRelieve)||0.55;
+ let area;
+ if(tipo==='Relieve'){
+  let w=Number.isFinite(ancho)?ancho:(typeof anchoEsculturaCm==='function'?anchoEsculturaCm():NaN);
+  if(!Number.isFinite(w)||w<=0) w=cm*1.1;
+  const k=(a0*factorRelieve)/(1.1*h0*h0);
+  area=w*cm*k;
+ }else{
+  area=a0*escala*escala*factorTipo;
+ }
  const esHierro=material==='Chapa'||material==='Chatarra';
  const espesor=esHierro?(material==='Chatarra'?(Number(p.espesorChatarra)||0.75):(Number(p.espesorChapa)||0.5)):material==='Cemento'?(Number(p.espesorCemento)||2.2):material==='Arcilla'?(Number(p.espesorArcilla)||2.5):(Number(p.espesorFibra)||0.5);
  const dens=esHierro?(Number(p.densidadAcero)||7.85):material==='Cemento'?(Number(p.densidadCemento)||2.3):material==='Arcilla'?(Number(p.densidadArcilla)||2.4):(Number(p.densidadFibra)||1.8);

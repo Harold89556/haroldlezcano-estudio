@@ -25,22 +25,43 @@
   function estiloActual() {
     return document.getElementById('estilo')?.value || '';
   }
+  function tipoEsculturaActual() {
+    return document.getElementById('tipo_escultura')?.value || '';
+  }
   function clavesGuia(key) {
     const te = tecnicaActual();
     const es = estiloActual();
+    const tipoEsc = tipoEsculturaActual();
     const special = /Mural|Escultura|Restauracion/.test(key);
     const yaTecnica = /:(Oleo|Acrilico|Carbonilla)$/.test(key);
     const styleable = /^(tema|fondo|enmarcado|sujetos|forma_lienzo|color):/.test(key);
     const yaEstilo = styleable && /:(Realista|Hiperrealista|Abstracto|Espatulado|Bocetado)(:|$)/.test(key);
     const keys = [];
-    if (special || yaTecnica || yaEstilo) {
+    if (/^material_escultura:/.test(key) && tipoEsc === 'Relieve' && !/:Relieve$/.test(key)) {
+      keys.push(key + ':Relieve');
       keys.push(key);
+      return keys;
+    }
+    if (/:Relieve$/.test(key) || special || yaTecnica) {
+      keys.push(key);
+      return keys;
+    }
+    const noCaerEnOleo = te === 'Acrilico' || te === 'Carbonilla';
+    if (yaEstilo) {
+      if (te) keys.push(key + ':' + te);
+      if (!noCaerEnOleo) keys.push(key);
+      if (!keys.length) keys.push(key);
       return keys;
     }
     if (styleable) {
       if (es && te) keys.push(key + ':' + es + ':' + te);
       if (te) keys.push(key + ':' + te);
-      if (es) keys.push(key + ':' + es);
+      if (!noCaerEnOleo) {
+        if (es) keys.push(key + ':' + es);
+        keys.push(key);
+      }
+      if (!keys.length) keys.push(key);
+      return keys;
     } else if (te && /^(estilo):/.test(key)) {
       keys.push(key + ':' + te);
     }
@@ -84,7 +105,24 @@
     'tema-retrato-espatulado.webp': [0.16, 0.11, 0.60, 0.78],
     'tema-retrato-hiperrealista.webp': [0.21, 0.12, 0.63, 0.80],
     'tema-retrato-monocromatico.webp': [0.18, 0.14, 0.62, 0.74],
-    'tema-retrato.webp': [0.22, 0.11, 0.54, 0.75]
+    'tema-retrato.webp': [0.22, 0.11, 0.54, 0.75],
+    'acrilico-tema-abstracto-campo-color.webp': [0.11, 0.11, 0.82, 0.79],
+    'acrilico-tema-abstracto-emocion.webp': [0.10, 0.16, 0.80, 0.70],
+    'acrilico-tema-abstracto-geometrico.webp': [0.17, 0.08, 0.73, 0.87],
+    'acrilico-tema-abstracto-gestual.webp': [0.07, 0.14, 0.86, 0.68],
+    'acrilico-tema-abstracto-materia.webp': [0.14, 0.08, 0.70, 0.82],
+    'acrilico-tema-bodegon-espatulado.webp': [0.06, 0.08, 0.88, 0.76],
+    'acrilico-tema-bodegon-hiperrealista.webp': [0.06, 0.09, 0.84, 0.86],
+    'acrilico-tema-bodegon-monocromatico.webp': [0.17, 0.17, 0.71, 0.69],
+    'acrilico-tema-bodegon.webp': [0.12, 0.08, 0.76, 0.76],
+    'acrilico-tema-paisaje-espatulado.webp': [0.05, 0.10, 0.90, 0.76],
+    'acrilico-tema-paisaje-hiperrealista.webp': [0.06, 0.10, 0.88, 0.76],
+    'acrilico-tema-paisaje-monocromatico.webp': [0.08, 0.16, 0.85, 0.75],
+    'acrilico-tema-paisaje.webp': [0.07, 0.14, 0.86, 0.68],
+    'acrilico-tema-retrato-espatulado.webp': [0.16, 0.08, 0.68, 0.84],
+    'acrilico-tema-retrato-hiperrealista.webp': [0.21, 0.11, 0.63, 0.82],
+    'acrilico-tema-retrato-monocromatico.webp': [0.12, 0.10, 0.76, 0.72],
+    'acrilico-tema-retrato.webp': [0.16, 0.07, 0.68, 0.86],
   };
   const CORTE_TEMA_DEFECTO = [0.12, 0.12, 0.76, 0.72];
 
@@ -481,13 +519,36 @@
     if (!tipo || !Number.isFinite(cm) || cm<=0) { el.hidden = true; return; }
     el.hidden = false;
     const artHcm = cm;
-    const artWcm = cm * (tipo === 'Relieve' ? 1.1 : tipo === 'Busto' ? 0.7 : tipo === 'Medio cuerpo' ? 0.55 : 0.4);
-    const L = layoutScale(artWcm, artHcm);
+    const wLeido = (tipo === 'Relieve' && typeof anchoEsculturaCm === 'function') ? anchoEsculturaCm() : NaN;
+    const artWcm = (tipo === 'Relieve')
+      ? ((Number.isFinite(wLeido) && wLeido > 0) ? wLeido : cm * 1.1)
+      : cm * (tipo === 'Busto' ? 0.7 : tipo === 'Medio cuerpo' ? 0.55 : 0.4);
+    const esRelieve = tipo === 'Relieve';
+    let bottomCm = 0, topCm = artHcm;
+    if (esRelieve) {
+      const centerCm = 120;
+      bottomCm = centerCm - artHcm / 2;
+      if (bottomCm < 10) bottomCm = 10;
+      if (bottomCm + artHcm > 210) bottomCm = Math.max(10, 210 - artHcm);
+      topCm = bottomCm + artHcm;
+    }
+    const L = layoutScale(artWcm, esRelieve ? Math.max(artHcm, topCm) : artHcm);
+    const artW = artWcm * L.scale;
+    const artH = artHcm * L.scale;
+    const artX = L.artX;
+    const artY = esRelieve ? (L.ground - topCm * L.scale) : L.artY;
     const hCm = (typeof alturaEsculturaCm==='function')?alturaEsculturaCm():cm;
-    const label = `${tipo}: ` + ((typeof formatoDesdeCm==='function')?formatoDesdeCm(hCm): (Math.round(hCm)+' cm'));
-    const labelX = Math.min(L.W - L.sidePad, Math.max(L.sidePad + 40, L.artX + L.artW / 2));
-    const labelTop = Math.max(14, L.artY - 8);
-    el.innerHTML = `<svg viewBox="0 0 ${L.W} ${L.H}" role="img" aria-label="Escultura de ${cm} cm junto a una persona de 1,70 m">${personPath(L.personX, L.ground, L.scale, L.labelY)}<rect x="${L.artX}" y="${L.artY}" width="${L.artW}" height="${L.artH}" rx="6" fill="rgba(180,180,180,0.35)" stroke="#d4af37" stroke-width="2"/><text x="${labelX}" y="${labelTop}" text-anchor="middle" fill="#e5ca72" font-size="12">${label}</text><line x1="${L.sidePad}" y1="${L.ground}" x2="${L.W - L.sidePad}" y2="${L.ground}" stroke="#444" stroke-width="1"/></svg><p class="vista-escala-nota">${(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t('escala.notaEscultura'):'Altura de la pieza a escala junto a una persona de 1,70 m.'}${(typeof unidadActualVal==='function'&&unidadActualVal()==='in')?' (67 in).':''}</p>`;
+    const label = esRelieve
+      ? ((typeof formatoParDesdeCm==='function')?formatoParDesdeCm(artWcm,hCm):(((typeof formatoDesdeCm==='function')?formatoDesdeCm(artWcm):(Math.round(artWcm)+' cm')) + ' × ' + ((typeof formatoDesdeCm==='function')?formatoDesdeCm(hCm):(Math.round(hCm)+' cm'))))
+      : (`${tipo}: ` + ((typeof formatoDesdeCm==='function')?formatoDesdeCm(hCm): (Math.round(hCm)+' cm')));
+    const labelX = Math.min(L.W - L.sidePad, Math.max(L.sidePad + 40, artX + artW / 2));
+    const labelTop = Math.max(14, artY - 8);
+    const wallX = artX - 5;
+    const wall = esRelieve ? `<line x1="${wallX}" y1="${L.ground}" x2="${wallX}" y2="${Math.max(16, artY - 18)}" stroke="#555" stroke-width="2"/><rect x="${artX + 3}" y="${artY + 3}" width="${Math.max(2, artW * 0.08)}" height="${artH}" rx="1" fill="rgba(80,80,80,0.35)"/>` : '';
+    const aria = esRelieve ? `Relieve de ${Math.round(artWcm)} × ${Math.round(hCm)} cm junto a una persona de 1,70 m` : `Escultura de ${cm} cm junto a una persona de 1,70 m`;
+    const notaClave = esRelieve ? 'escala.notaRelieve' : 'escala.notaEscultura';
+    const notaFb = esRelieve ? 'Tamaño del panel a escala, colgado, junto a una persona de 1,70 m.' : 'Altura de la pieza a escala junto a una persona de 1,70 m.';
+    el.innerHTML = `<svg viewBox="0 0 ${L.W} ${L.H}" role="img" aria-label="${aria}">${personPath(L.personX, L.ground, L.scale, L.labelY)}${wall}<rect x="${artX}" y="${artY}" width="${artW}" height="${artH}" rx="${esRelieve?2:6}" fill="rgba(180,180,180,0.35)" stroke="#d4af37" stroke-width="2"/><text x="${labelX}" y="${labelTop}" text-anchor="middle" fill="#e5ca72" font-size="12">${label}</text><line x1="${L.sidePad}" y1="${L.ground}" x2="${L.W - L.sidePad}" y2="${L.ground}" stroke="#444" stroke-width="1"/></svg><p class="vista-escala-nota">${(window.EstudioI18n&&EstudioI18n.t)?EstudioI18n.t(notaClave,notaFb):notaFb}${(typeof unidadActualVal==='function'&&unidadActualVal()==='in')?' (67 in).':''}</p>`;
   }
 
   function refreshAll() {

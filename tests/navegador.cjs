@@ -1155,5 +1155,53 @@ let base;
  });
 
 
+
+ await test('Acrílico no comparte fotos con el óleo, y el relieve muestra materiales en 2.5D',async()=>{
+  const {page,context,errors}=await session();
+  await page.setViewportSize({width:390,height:844});
+  await page.goto(base+'/index.html#cotizacion');
+  await page.waitForSelector('#asistente-pedido:not([hidden]) #asistente-opciones .guia-card[data-value=oleo]');
+  await elegirAsistente(page,'oleo');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/estilo');
+  await elegirAsistente(page,'Realista');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/tema');
+  const oil=await page.locator('#asistente-opciones .guia-card').evaluateAll(els=>Object.fromEntries(els.map(c=>[c.getAttribute('data-value'),(c.querySelector('img')||{}).getAttribute('src')||''])));
+  assert.ok(/tema-paisaje\.webp$/.test(oil.Paisaje),JSON.stringify(oil));
+  await page.evaluate(()=>AsistentePedido.irA('trabajo'));
+  await elegirAsistente(page,'acrilico');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/estilo');
+  await elegirAsistente(page,'Realista');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/tema');
+  const acr=await page.locator('#asistente-opciones .guia-card').evaluateAll(els=>Object.fromEntries(els.map(c=>[c.getAttribute('data-value'),(c.querySelector('img')||{}).getAttribute('src')||''])));
+  assert.ok(/acrilico-tema-paisaje/.test(acr.Paisaje),JSON.stringify(acr));
+  assert.notEqual(acr.Paisaje,oil.Paisaje);
+  assert.ok(/acrilico-tema-retrato/.test(acr.Retrato),JSON.stringify(acr));
+  assert.notEqual(acr.Retrato,oil.Retrato);
+  await elegirAsistente(page,'Retrato');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/sujetos'||document.querySelector('#asistente-opciones .guia-card[data-value="1"]'));
+  await page.evaluate(()=>AsistentePedido.irA('fondo'));
+  await page.waitForFunction(()=>!!document.querySelector('#asistente-opciones .guia-card[data-value="simple"]'));
+  const acF=await page.locator('#asistente-opciones .guia-card').evaluateAll(els=>Object.fromEntries(els.map(c=>[c.getAttribute('data-value'),(c.querySelector('img')||{}).getAttribute('src')||''])));
+  assert.ok(/acrilico-fondo-/.test(acF.simple),JSON.stringify(acF));
+  await page.evaluate(()=>AsistentePedido.irA('trabajo'));
+  await elegirAsistente(page,'escultura');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/tipo_escultura');
+  await elegirAsistente(page,'Relieve');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/material_escultura');
+  const mat=await page.locator('#asistente-opciones .guia-card').evaluateAll(els=>Object.fromEntries(els.map(c=>[c.getAttribute('data-value'),(c.querySelector('img')||{}).getAttribute('src')||''])));
+  assert.ok(/arcilla-relieve/.test(mat.Arcilla),JSON.stringify(mat));
+  assert.ok(/cemento-relieve/.test(mat.Cemento),JSON.stringify(mat));
+  assert.ok(/fibra-relieve/.test(mat.Fibra),JSON.stringify(mat));
+  assert.ok(/chapa-relieve/.test(mat.Chapa),JSON.stringify(mat));
+  assert.ok(/chatarra-relieve/.test(mat.Chatarra),JSON.stringify(mat));
+  await elegirAsistente(page,'Arcilla');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/altura_escultura');
+  assert.equal(await page.locator('#grupo-escultura-ancho').isVisible(),true);
+  assert.match(await page.locator('#asistente-pregunta').textContent(),/panel/i);
+  assert.deepEqual(errors,[]);
+  await context.close();
+ });
+
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(root,'resultados-navegador.json'),JSON.stringify(results,null,2));
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{await browser?.close();server.close();});
