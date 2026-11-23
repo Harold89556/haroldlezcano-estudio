@@ -936,5 +936,60 @@ test('39. En Forma, cada opción muestra la imagen del Tema elegido recortada a 
   assert.ok(!a.d.querySelector('#asistente-opciones .guia-media-forma'),'fallback no debe enmascarar forma-*');
 });
 
+
+test('40. En Tamaño no se repiten las tarjetas de forma, y la lista cambia el formato',()=>{
+  const a=iniciar();a.listo();
+  const W=a.w.AsistentePedido;
+  W.abrir();
+  const elige=(v)=>{const c=a.d.querySelector('#asistente-opciones .guia-card[data-value="'+v+'"]');assert.ok(c,v);c.click();};
+  W.irA('trabajo');elige('oleo');
+  a.set('estilo','Hiperrealista');if(a.w.onEstiloChange)a.w.onEstiloChange();
+  a.set('tema','Paisaje');if(a.w.onTemaChange)a.w.onTemaChange();
+  a.set('forma_lienzo','Estandar');if(a.w.onFormaChange)a.w.onFormaChange();
+  a.set('tamano_predefinido','50x70');if(a.w.handleTamanoChange)a.w.handleTamanoChange();
+  const precioRect=a.price();
+  W.irA('tamano');
+  assert.equal(a.d.querySelectorAll('#asistente-pedido #guias-forma_lienzo, #asistente-extra #guias-forma_lienzo, #asistente-extra #formato-lienzo-container').length,0);
+  assert.equal(a.d.querySelectorAll('#asistente-pedido .guia-card[data-value="Estandar"], #asistente-pedido .guia-card[data-value="Circular"]').length,0);
+  const linea=a.d.getElementById('asistente-formato-linea');
+  assert.ok(linea,'falta la línea compacta de formato');
+  assert.match(linea.textContent,/Formato:\s*Estándar/);
+  const btn=a.d.getElementById('asistente-formato-cambiar');
+  assert.ok(btn);assert.match(btn.textContent,/Cambiar/);
+  const sheet=a.d.getElementById('asistente-formato-sheet');
+  assert.ok(sheet);assert.equal(sheet.hidden,true);
+  btn.click();
+  assert.equal(sheet.hidden,false);
+  const opts=[...sheet.querySelectorAll('.asistente-formato-opcion')];
+  assert.deepEqual(opts.map(o=>o.dataset.value),['Estandar','Circular','Ovalado','Hexagonal']);
+  assert.ok(opts.every(o=>!o.querySelector('img')),'la lista no debe tener imágenes');
+  assert.match(opts.map(o=>o.textContent).join('|'),/Estándar/);
+  assert.match(opts.map(o=>o.textContent).join('|'),/Circular/);
+  const circ=opts.find(o=>o.dataset.value==='Circular');
+  circ.click();
+  assert.equal(a.d.getElementById('forma_lienzo').value,'Circular');
+  assert.equal(sheet.hidden,true);
+  assert.match(a.d.getElementById('asistente-formato-valor').textContent,/Circular/);
+  const optsTam=[...a.d.getElementById('tamano_predefinido').options].map(o=>o.value);
+  assert.ok(optsTam.includes('50x50') && optsTam.includes('70x70'), JSON.stringify(optsTam));
+  assert.ok(!optsTam.includes('50x70') && !optsTam.includes('70x100'), JSON.stringify(optsTam));
+  a.set('tamano_predefinido','50x50');if(a.w.handleTamanoChange)a.w.handleTamanoChange();
+  assert.notEqual(a.price(),precioRect,'el precio debe actualizarse al cambiar la forma');
+  assert.notEqual(a.price(),'');
+  // chips and going back to Forma stay in sync
+  const chip=a.d.querySelector('.asistente-chip[data-paso="forma"]');
+  assert.ok(chip);assert.match(chip.textContent,/Circular/);
+  W.irA('forma');
+  const sel=a.d.querySelector('#asistente-opciones .guia-card[data-value="Circular"]');
+  assert.equal(sel&&sel.getAttribute('aria-selected'),'true');
+  // carbonilla has no forma step and no compact line
+  W.irA('trabajo');elige('carbonilla');
+  a.set('estilo','Realista');if(a.w.onEstiloChange)a.w.onEstiloChange();
+  a.set('tema','Retrato');if(a.w.onTemaChange)a.w.onTemaChange();
+  W.irA('tamano');
+  assert.ok(!a.d.getElementById('asistente-formato-linea'));
+  assert.ok(!W.pasos().some(s=>s.id==='forma'));
+});
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));
 

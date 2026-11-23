@@ -1110,5 +1110,50 @@ let base;
  });
 
 
+
+ await test('En Tamaño no hay tarjetas de formato, y la lista cambia la forma',async()=>{
+  const {page,context,errors}=await session();
+  await page.setViewportSize({width:390,height:844});
+  await page.goto(base+'/index.html#cotizacion');
+  await page.waitForSelector('#asistente-pedido:not([hidden]) #asistente-opciones .guia-card[data-value=oleo]');
+  await elegirAsistente(page,'oleo');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/estilo');
+  await elegirAsistente(page,'Hiperrealista');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/tema');
+  await elegirAsistente(page,'Paisaje');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/forma');
+  await elegirAsistente(page,'Estandar');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/tamano');
+  await page.waitForSelector('#asistente-extra #tamano_predefinido, #asistente-formato-linea');
+  await page.selectOption('#tamano_predefinido','50x70');
+  assert.equal(await page.locator('#asistente-pedido #guias-forma_lienzo, #asistente-extra #formato-lienzo-container, #asistente-extra .guia-card').count(),0);
+  assert.equal(await page.locator('#asistente-formato-linea').isVisible(),true);
+  assert.match(await page.locator('#asistente-formato-linea').textContent(),/Formato:\s*Estándar/);
+  assert.equal(await page.locator('#asistente-formato-sheet').isVisible(),false);
+  await page.evaluate(()=>{const c=document.querySelector('#asistente-pedido .asistente-cuerpo'); if(c) c.scrollTop=0;});
+  await page.locator('#asistente-formato-linea').scrollIntoViewIfNeeded();
+  await page.screenshot({path:'/workspace/tamano-formato-compacto-t60u.png',animations:'disabled'});
+  await page.locator('#asistente-formato-cambiar').click();
+  await page.waitForSelector('#asistente-formato-sheet:not([hidden])');
+  const opts=await page.locator('#asistente-formato-sheet .asistente-formato-opcion').evaluateAll(els=>els.map(e=>({v:e.dataset.value,t:e.textContent,img:!!e.querySelector('img')})));
+  assert.deepEqual(opts.map(o=>o.v),['Estandar','Circular','Ovalado','Hexagonal']);
+  assert.ok(opts.every(o=>!o.img),JSON.stringify(opts));
+  await page.screenshot({path:'/workspace/tamano-formato-lista-t60u.png',animations:'disabled'});
+  const precio1=await page.locator('#asistente-precio-vivo').textContent();
+  await page.locator('#asistente-formato-sheet .asistente-formato-opcion[data-value=Circular]').click();
+  await page.waitForFunction(()=>document.getElementById('forma_lienzo').value==='Circular'&&document.getElementById('asistente-formato-sheet').hidden);
+  assert.match(await page.locator('#asistente-formato-valor').textContent(),/Circular/);
+  assert.equal(await page.locator('#asistente-formato-sheet').isVisible(),false);
+  const vals=await page.locator('#tamano_predefinido option').evaluateAll(els=>els.map(o=>o.value));
+  assert.ok(vals.includes('50x50')&&!vals.includes('50x70'),JSON.stringify(vals));
+  await page.selectOption('#tamano_predefinido','50x50');
+  await page.waitForFunction(()=>document.getElementById('tamano_predefinido').value==='50x50');
+  const precio2=await page.locator('#asistente-precio-vivo').textContent();
+  assert.notEqual(precio2.trim(),precio1.trim());
+  assert.deepEqual(errors,[]);
+  await context.close();
+ });
+
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(root,'resultados-navegador.json'),JSON.stringify(results,null,2));
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{await browser?.close();server.close();});

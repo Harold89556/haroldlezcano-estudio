@@ -653,6 +653,7 @@
         const sujetos = p >= 1 ? i18n('sujetos.dos') : i18n('sujetos.una');
         add('sujetos', i18n('chip.sujetos'), m >= 1 ? sujetos + i18n('chip.yMascota') : sujetos);
       }
+      if (has('forma')) add('forma', i18n('chip.forma'), etiquetaForma(valor('forma_lienzo')));
       add('tamano', i18n('chip.tamano'), etiquetaTamano(valor('tamano_predefinido')));
     } else if (trabajo === 'escultura') {
       add('trabajo', i18n('chip.trabajo'), i18n('trabajo.escultura'));
@@ -738,9 +739,145 @@
     }
   }
 
+
+  function etiquetaForma(value) {
+    const v = value || valor('forma_lienzo') || 'Estandar';
+    if (v === 'Estandar') return i18n('wizard.formato.estandar', 'Estándar');
+    if (v === 'Circular') return i18n('card.circular', 'Circular');
+    if (v === 'Ovalado') return i18n('card.ovalado', 'Ovalado');
+    if (v === 'Hexagonal') return i18n('card.hexagonal', 'Hexagonal');
+    return etiquetaOpcion('forma_lienzo') || v;
+  }
+  function opcionesFormaCorta() {
+    return [
+      { value: 'Estandar', title: i18n('wizard.formato.estandar', 'Estándar') },
+      { value: 'Circular', title: i18n('card.circular', 'Circular') },
+      { value: 'Ovalado', title: i18n('card.ovalado', 'Ovalado') },
+      { value: 'Hexagonal', title: i18n('card.hexagonal', 'Hexagonal') }
+    ];
+  }
+  function cerrarListaFormato() {
+    const sheet = $('asistente-formato-sheet');
+    if (sheet) sheet.hidden = true;
+    const btn = $('asistente-formato-cambiar');
+    if (btn) {
+      btn.setAttribute('aria-expanded', 'false');
+      btn.focus();
+    }
+  }
+  function abrirListaFormato() {
+    const sheet = $('asistente-formato-sheet');
+    if (!sheet) return;
+    sheet.hidden = false;
+    const btn = $('asistente-formato-cambiar');
+    if (btn) btn.setAttribute('aria-expanded', 'true');
+    const actual = valor('forma_lienzo') || 'Estandar';
+    const opt = sheet.querySelector('[data-value="' + actual + '"]');
+    if (opt && typeof opt.focus === 'function') opt.focus();
+  }
+  function elegirFormato(value) {
+    setVal('forma_lienzo', value);
+    if (window.onFormaChange) onFormaChange();
+    if (window.CotizadorVisual && CotizadorVisual.updateEscala) CotizadorVisual.updateEscala();
+    const linea = $('asistente-formato-valor');
+    if (linea) linea.textContent = etiquetaForma(value);
+    cerrarListaFormato();
+    const sheet = $('asistente-formato-sheet');
+    if (sheet) {
+      sheet.querySelectorAll('.asistente-formato-opcion').forEach((opt) => {
+        const on = opt.dataset.value === value;
+        opt.classList.toggle('activa', on);
+        opt.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+    }
+    actualizarAcciones();
+  }
+  function montarFormatoResumen() {
+    if (!pasos().some((p) => p.id === 'forma')) return;
+    const extra = $('asistente-extra');
+    const root = $('asistente-pedido');
+    if (!extra || !root) return;
+    const fila = document.createElement('div');
+    fila.id = 'asistente-formato-linea';
+    fila.className = 'asistente-formato-linea';
+    const texto = document.createElement('p');
+    texto.className = 'asistente-formato-texto';
+    const valorSpan = document.createElement('span');
+    valorSpan.id = 'asistente-formato-valor';
+    valorSpan.textContent = etiquetaForma();
+    const plantilla = i18n('wizard.formato.linea', { forma: '\u0001' });
+    const partes = String(plantilla).split('\u0001');
+    if (partes.length === 2) {
+      if (partes[0]) texto.append(document.createTextNode(partes[0]));
+      texto.append(valorSpan);
+      if (partes[1]) texto.append(document.createTextNode(partes[1]));
+    } else {
+      texto.append(document.createTextNode(i18n('chip.forma', 'Formato') + ': '), valorSpan);
+    }
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'asistente-formato-cambiar';
+    btn.className = 'asistente-formato-cambiar';
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-controls', 'asistente-formato-sheet');
+    btn.textContent = i18n('wizard.formato.cambiar', 'Cambiar');
+    btn.addEventListener('click', () => {
+      const sheet = $('asistente-formato-sheet');
+      if (sheet && !sheet.hidden) cerrarListaFormato();
+      else abrirListaFormato();
+    });
+    fila.append(texto, btn);
+    const unidad = $('step-unidad');
+    if (unidad && unidad.parentNode === extra) unidad.insertAdjacentElement('afterend', fila);
+    else extra.insertBefore(fila, extra.firstChild);
+
+    const prev = $('asistente-formato-sheet');
+    if (prev) prev.remove();
+    const sheet = document.createElement('div');
+    sheet.id = 'asistente-formato-sheet';
+    sheet.className = 'asistente-formato-sheet';
+    sheet.hidden = true;
+    const fondo = document.createElement('button');
+    fondo.type = 'button';
+    fondo.className = 'asistente-formato-fondo';
+    fondo.setAttribute('aria-label', i18n('comun.cerrar', 'Cerrar'));
+    fondo.addEventListener('click', cerrarListaFormato);
+    const caja = document.createElement('div');
+    caja.className = 'asistente-formato-caja';
+    caja.setAttribute('role', 'dialog');
+    caja.setAttribute('aria-modal', 'true');
+    const tituloLista = i18n('wizard.formato.listaTitulo', i18n('form.formatoLienzo', 'Formato del lienzo'));
+    caja.setAttribute('aria-label', tituloLista);
+    const tit = document.createElement('h3');
+    tit.id = 'asistente-formato-titulo';
+    tit.textContent = tituloLista;
+    caja.setAttribute('aria-labelledby', 'asistente-formato-titulo');
+    const list = document.createElement('div');
+    list.className = 'asistente-formato-lista';
+    list.setAttribute('role', 'listbox');
+    const actual = valor('forma_lienzo') || 'Estandar';
+    opcionesFormaCorta().forEach((o) => {
+      const opt = document.createElement('button');
+      opt.type = 'button';
+      opt.className = 'asistente-formato-opcion' + (o.value === actual ? ' activa' : '');
+      opt.setAttribute('role', 'option');
+      opt.setAttribute('aria-selected', o.value === actual ? 'true' : 'false');
+      opt.dataset.value = o.value;
+      opt.textContent = o.title;
+      opt.addEventListener('click', () => elegirFormato(o.value));
+      list.append(opt);
+    });
+    caja.append(tit, list);
+    sheet.append(fondo, caja);
+    root.append(sheet);
+  }
+
   function pintar() {
     const root = $('asistente-pedido');
     if (!root || root.hidden) return;
+    cerrarListaFormato();
+    const hojaPrev = $('asistente-formato-sheet');
+    if (hojaPrev) hojaPrev.remove();
     restoreParked();
     const lista = pasos();
     if (indice >= lista.length) indice = lista.length - 1;
@@ -761,11 +898,11 @@
     extra.replaceChildren();
     if (paso.id === 'tamano') {
       take($('step-unidad'));
-      take($('formato-lienzo-container'));
       take($('step-tamano'));
       take($('tamano_manual_container'));
       take($('vista-escala'));
       if (window.CotizadorVisual) CotizadorVisual.updateEscala();
+      montarFormatoResumen();
     }
     if (paso.id === 'material_escultura') {
       /* las tarjetas ya muestran el material; la nota queda en la ayuda */
@@ -876,6 +1013,8 @@
     const root = $('asistente-pedido');
     if (!root || root.hidden) return;
     restoreParked();
+    const hojaPrev = $('asistente-formato-sheet');
+    if (hojaPrev) hojaPrev.remove();
     const enviar = $('enviar-obra');
     if (enviar) { enviar.classList.remove('asistente-enviar'); enviar.textContent = i18n('comun.enviar'); }
     root.hidden = true;
@@ -914,6 +1053,8 @@
     document.addEventListener('keydown', (ev) => {
       if (ev.key === 'Escape' && !$('asistente-pedido').hidden) {
         ev.preventDefault();
+        const sheet = $('asistente-formato-sheet');
+        if (sheet && !sheet.hidden) { cerrarListaFormato(); return; }
         $('asistente-cerrar').click();
       }
     });

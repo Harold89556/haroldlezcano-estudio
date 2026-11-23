@@ -689,6 +689,77 @@ body.editor-abierto .admin-bottom-nav, body:has(#admin-workspace[hidden]) .admin
 .asistente-extra .en-asistente:not([hidden]), .en-asistente:not([hidden]) { display: block !important; }
 /* En el asistente, Ancho/Alto y su nota solo aparecen con el tamaño "Personalizado" */
 #tamano_manual_container.en-asistente:not(.manual-visible) { display: none !important; }
+.asistente-formato-linea {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 4px 0 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+}
+.asistente-formato-texto { margin: 0; font-size: 15px; color: #eee; line-height: 1.35; }
+#asistente-formato-valor { font-weight: 700; color: #f0d77f; }
+.asistente-formato-cambiar {
+  flex: 0 0 auto;
+  border-radius: 99px;
+  padding: 6px 12px;
+  min-height: 36px;
+  border: 1px solid rgba(212,175,55,.45);
+  background: rgba(212,175,55,.15);
+  color: #e5ca72;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.asistente-formato-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.asistente-formato-sheet[hidden] { display: none !important; }
+.asistente-formato-fondo {
+  position: absolute; inset: 0;
+  border: 0; padding: 0;
+  background: rgba(0,0,0,.5);
+  cursor: pointer;
+}
+.asistente-formato-caja {
+  position: relative;
+  background: #1a1a1a;
+  border-radius: 16px 16px 0 0;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid rgba(212,175,55,.3);
+  box-shadow: 0 -8px 28px rgba(0,0,0,.45);
+}
+.asistente-formato-caja h3 { margin: 0 0 12px; font-size: 16px; color: #f0d77f; }
+.asistente-formato-lista { display: flex; flex-direction: column; gap: 6px; }
+.asistente-formato-opcion {
+  text-align: left;
+  padding: 12px 14px;
+  min-height: 48px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.05);
+  color: #eee;
+  font: inherit;
+  font-size: 16px;
+  cursor: pointer;
+}
+.asistente-formato-opcion.activa,
+.asistente-formato-opcion[aria-selected="true"] {
+  border-color: #d4af37;
+  background: rgba(212,175,55,.18);
+  color: #f0d77f;
+  font-weight: 600;
+}
+
 .asistente-extra .form-card { margin: 0; }
 .asistente-resumen { list-style: none; padding: 0; margin: 0 0 16px; }
 .asistente-resumen li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.08); font-size: 14px; color: #ddd; }
