@@ -1045,5 +1045,70 @@ let base;
  });
 
 
+
+ await test('En Forma, las opciones muestran la misma imagen del Tema recortada a cada forma',async()=>{
+  const {page,context,errors}=await session();
+  await page.setViewportSize({width:390,height:844});
+  await page.goto(base+'/index.html#cotizacion');
+  await page.waitForSelector('#asistente-pedido:not([hidden]) #asistente-opciones .guia-card[data-value=oleo]');
+  await elegirAsistente(page,'oleo');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/estilo');
+  await elegirAsistente(page,'Hiperrealista');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/tema');
+  await elegirAsistente(page,'Paisaje');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/forma');
+  await page.waitForSelector('#asistente-opciones .guia-card[data-value=Estandar] img');
+  await page.waitForFunction(()=>{
+    const imgs=[...document.querySelectorAll('#asistente-opciones .guia-card img')];
+    return imgs.length===4 && imgs.every(i=>i.complete && i.naturalWidth>0);
+  });
+  async function leerForma(){
+    return page.locator('#asistente-opciones .guia-card').evaluateAll(els=>els.map(e=>({
+      v:e.dataset.value,
+      shape:e.getAttribute('data-forma-shape'),
+      src:e.querySelector('img')?.getAttribute('src')||'',
+      mask:!!e.querySelector('.forma-canvas--'+(e.dataset.value||'').toLowerCase()),
+      wall:!!e.querySelector('.guia-media-forma')
+    })));
+  }
+  const paisaje=await leerForma();
+  assert.equal(paisaje.length,4,JSON.stringify(paisaje));
+  assert.ok(paisaje.every(o=>/tema-paisaje-hiperrealista\.webp$/.test(o.src) && o.shape===o.v && o.mask && o.wall),JSON.stringify(paisaje));
+  assert.deepEqual(paisaje.map(o=>o.v).sort(),['Circular','Estandar','Hexagonal','Ovalado'].sort());
+  await page.evaluate(()=>{const c=document.querySelector('#asistente-pedido .asistente-cuerpo'); if(c) c.scrollTop=0;});
+  await page.screenshot({path:'/workspace/forma-paisaje-hiperrealista-t59u.png',animations:'disabled'});
+  await page.goBack();
+  await page.waitForFunction(()=>location.hash==='#cotizacion/tema');
+  await elegirAsistente(page,'Bodegon');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/forma');
+  await page.waitForFunction(()=>{
+    const imgs=[...document.querySelectorAll('#asistente-opciones .guia-card img')];
+    return imgs.length===4 && imgs.every(i=>i.complete && i.naturalWidth>0 && /tema-bodegon-hiperrealista\.webp$/.test(i.getAttribute('src')||''));
+  });
+  const bodegon=await leerForma();
+  assert.ok(bodegon.every(o=>/tema-bodegon-hiperrealista\.webp$/.test(o.src) && o.mask && o.wall),JSON.stringify(bodegon));
+  await page.evaluate(()=>{const c=document.querySelector('#asistente-pedido .asistente-cuerpo'); if(c) c.scrollTop=0;});
+  await page.screenshot({path:'/workspace/forma-bodegon-t59u.png',animations:'disabled'});
+  await page.goBack();
+  await page.waitForFunction(()=>location.hash==='#cotizacion/tema');
+  await page.goBack();
+  await page.waitForFunction(()=>location.hash==='#cotizacion/estilo');
+  await elegirAsistente(page,'Abstracto');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/tema');
+  await elegirAsistente(page,'Geometrico');
+  await page.waitForFunction(()=>location.hash==='#cotizacion/forma');
+  await page.waitForFunction(()=>{
+    const imgs=[...document.querySelectorAll('#asistente-opciones .guia-card img')];
+    return imgs.length===4 && imgs.every(i=>i.complete && i.naturalWidth>0 && /tema-abstracto-geometrico\.webp$/.test(i.getAttribute('src')||''));
+  });
+  const abs=await leerForma();
+  assert.ok(abs.every(o=>/tema-abstracto-geometrico\.webp$/.test(o.src) && o.mask && o.wall),JSON.stringify(abs));
+  await page.evaluate(()=>{const c=document.querySelector('#asistente-pedido .asistente-cuerpo'); if(c) c.scrollTop=0;});
+  await page.screenshot({path:'/workspace/forma-abstracto-t59u.png',animations:'disabled'});
+  assert.deepEqual(errors,[]);
+  await context.close();
+ });
+
+
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(root,'resultados-navegador.json'),JSON.stringify(results,null,2));
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{await browser?.close();server.close();});

@@ -607,10 +607,16 @@ test('35. En un mismo paso del asistente, cada opción tiene una imagen distinta
   const srcs=()=>[...a.d.querySelectorAll('#asistente-opciones .guia-card img')].map(i=>i.getAttribute('src')||'');
   const revisar=(id,min)=>{
     W.irA(id);
-    const imgs=srcs();
+    const cards=[...a.d.querySelectorAll('#asistente-opciones .guia-card')];
+    const imgs=cards.map(c=>(c.querySelector('img')||{}).getAttribute('src')||'');
+    const claves=cards.map(c=>{
+      const src=(c.querySelector('img')||{}).getAttribute('src')||'';
+      const sh=c.getAttribute('data-forma-shape')||'';
+      return sh ? sh+'|'+src : src;
+    });
     assert.ok(imgs.length>=min, id+' tiene '+imgs.length+' opciones');
     assert.ok(imgs.every(u=>u.startsWith('img/guias/')&&u.endsWith('.webp')), id+' '+JSON.stringify(imgs));
-    assert.equal(new Set(imgs).size,imgs.length, id+' comparte imagen: '+JSON.stringify(imgs));
+    assert.equal(new Set(claves).size,claves.length, id+' comparte imagen: '+JSON.stringify(claves));
   };
   revisar('trabajo',6);
   const elige=(v)=>{const c=a.d.querySelector('#asistente-opciones .guia-card[data-value="'+v+'"]');assert.ok(c,v);c.click();};
@@ -708,15 +714,20 @@ test('37. Las imágenes de Tema, Fondo, Sujetos, Forma y Marco cambian con el es
   const fAbs=irForma('Abstracto');
   const fEsp=irForma('Espatulado');
   const fMono=irForma('Bocetado');
-  assert.match(fReal.Estandar,/forma-estandar\.webp/);
-  assert.match(fHiper.Estandar,/forma-estandar-hiperrealista\.webp/);
-  assert.match(fAbs.Estandar,/forma-estandar-abstracto\.webp/);
-  assert.match(fEsp.Estandar,/forma-estandar-espatulado\.webp/);
-  assert.match(fMono.Estandar,/forma-estandar-monocromatico\.webp/);
-  assert.match(fHiper.Circular,/forma-circular-hiperrealista\.webp/);
-  assert.match(fAbs.Circular,/forma-circular-abstracto\.webp/);
+  assert.match(fReal.Estandar,/tema-retrato\.webp/);
+  assert.match(fHiper.Estandar,/tema-retrato-hiperrealista\.webp/);
+  assert.match(fAbs.Estandar,/tema-abstracto-campo-color\.webp/);
+  assert.match(fEsp.Estandar,/tema-retrato-espatulado\.webp/);
+  assert.match(fMono.Estandar,/tema-retrato-monocromatico\.webp/);
+  assert.match(fHiper.Circular,/tema-retrato-hiperrealista\.webp/);
+  assert.match(fAbs.Circular,/tema-abstracto-campo-color\.webp/);
+  assert.equal(fHiper.Estandar,fHiper.Circular);
+  assert.equal(fAbs.Estandar,fAbs.Circular);
   assert.notEqual(fHiper.Estandar,fReal.Estandar);
   assert.notEqual(fAbs.Estandar,fReal.Estandar);
+  const formasHiper=[...a.d.querySelectorAll('#asistente-opciones .guia-card')].map(c=>c.getAttribute('data-forma-shape'));
+  assert.deepEqual(formasHiper.sort(),['Circular','Estandar','Hexagonal','Ovalado'].sort());
+  assert.ok(a.d.querySelector('.forma-canvas--estandar') && a.d.querySelector('.forma-canvas--circular') && a.d.querySelector('.forma-canvas--ovalado') && a.d.querySelector('.forma-canvas--hexagonal'));
   // Fondo and sujetos (retrato only) follow the style
   const irFondo=(estilo)=>{
     W.irA('trabajo');elige('oleo');
@@ -876,6 +887,53 @@ test('38. Sin paso de marco, la nota y los contactos aparecen, el WhatsApp lo di
   delete sinNuevas.textos.enmarcadoNuevoTel;
   const merged=a.w.EstudioDatos.validateSite(sinNuevas);
   assert.match(merged.textos.enmarcadoNota,/sin enmarcar/i);
+});
+
+
+test('39. En Forma, cada opción muestra la imagen del Tema elegido recortada a esa forma',()=>{
+  const a=iniciar();a.listo();
+  const W=a.w.AsistentePedido;
+  W.abrir();
+  const elige=(v)=>{const c=a.d.querySelector('#asistente-opciones .guia-card[data-value="'+v+'"]');assert.ok(c,v);c.click();};
+  const cards=()=>[...a.d.querySelectorAll('#asistente-opciones .guia-card')];
+  const ir=(estilo,tema)=>{
+    W.irA('trabajo');elige('oleo');
+    a.set('estilo',estilo);if(a.w.onEstiloChange)a.w.onEstiloChange();
+    a.set('tema',tema);if(a.w.onTemaChange)a.w.onTemaChange();
+    W.irA('forma');
+    return cards();
+  };
+  const revisar=(lista,re,etiqueta)=>{
+    assert.equal(lista.length,4,etiqueta+' '+lista.length);
+    const srcs=lista.map(c=>(c.querySelector('img')||{}).getAttribute('src')||'');
+    const shapes=lista.map(c=>c.getAttribute('data-forma-shape'));
+    assert.ok(srcs.every(s=>re.test(s)), etiqueta+' '+JSON.stringify(srcs));
+    assert.equal(new Set(srcs).size,1, etiqueta+' debe repetir la misma foto de tema');
+    assert.deepEqual(shapes.slice().sort(),['Circular','Estandar','Hexagonal','Ovalado'].sort());
+    for(const c of lista){
+      const sh=(c.getAttribute('data-forma-shape')||'').toLowerCase();
+      assert.ok(c.querySelector('.guia-media-forma'), etiqueta+' sin pared/lienzo');
+      assert.ok(c.querySelector('.forma-canvas--'+sh), etiqueta+' falta máscara '+sh);
+    }
+  };
+  revisar(ir('Hiperrealista','Paisaje'),/tema-paisaje-hiperrealista\.webp$/,'paisaje hiperrealista');
+  revisar(ir('Hiperrealista','Bodegon'),/tema-bodegon-hiperrealista\.webp$/,'bodegón hiperrealista');
+  revisar(ir('Realista','Bodegon'),/tema-bodegon\.webp$/,'bodegón');
+  revisar(ir('Abstracto','Geometrico'),/tema-abstracto-geometrico\.webp$/,'abstracto geométrico');
+  // Al cambiar el tema o el estilo, Forma se actualiza enseguida
+  a.set('tema','CampoColor');if(a.w.onTemaChange)a.w.onTemaChange();
+  W.irA('forma');
+  revisar(cards(),/tema-abstracto-campo-color\.webp$/,'cambio a campo de color');
+  a.set('estilo','Espatulado');if(a.w.onEstiloChange)a.w.onEstiloChange();
+  a.set('tema','Paisaje');if(a.w.onTemaChange)a.w.onTemaChange();
+  W.irA('forma');
+  revisar(cards(),/tema-paisaje-espatulado\.webp$/,'cambio a paisaje espatulado');
+  // Sin tema, se usan las fotos forma-* de siempre
+  a.set('tema','');if(a.w.onTemaChange)a.w.onTemaChange();
+  W.irA('forma');
+  const fallback=cards().map(c=>(c.querySelector('img')||{}).getAttribute('src')||'');
+  assert.match(fallback[0]||'',/forma-/);
+  assert.ok(!a.d.querySelector('#asistente-opciones .guia-media-forma'),'fallback no debe enmascarar forma-*');
 });
 
 console.log(JSON.stringify(results,null,2));fs.writeFileSync(path.join(base,'resultados-pruebas.json'),JSON.stringify(results,null,2));

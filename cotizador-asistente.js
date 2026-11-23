@@ -366,12 +366,19 @@
     btn.setAttribute('role', 'option');
     btn.setAttribute('aria-selected', opt.selected ? 'true' : 'false');
     btn.dataset.value = opt.value;
-    const media = document.createElement('div');
-    media.className = 'guia-media';
-    if (opt.url) {
-      const img = document.createElement('img');
-      img.src = opt.url; img.alt = ''; img.loading = 'eager'; img.decoding = 'sync';
-      media.append(img);
+    let media;
+    if (paso.id === 'forma' && window.CotizadorVisual && typeof CotizadorVisual.mediaForma === 'function') {
+      media = CotizadorVisual.mediaForma(opt.value, opt.url);
+      btn.dataset.formaShape = opt.value;
+      btn.dataset.formaSrc = media.dataset.formaSrc || '';
+    } else {
+      media = document.createElement('div');
+      media.className = 'guia-media';
+      if (opt.url) {
+        const img = document.createElement('img');
+        img.src = opt.url; img.alt = ''; img.loading = 'eager'; img.decoding = 'sync';
+        media.append(img);
+      }
     }
     const cap = document.createElement('div');
     cap.className = 'guia-cap';

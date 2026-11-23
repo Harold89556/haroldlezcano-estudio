@@ -63,6 +63,101 @@
     return acc;
   }
 
+  /* Recorte de la zona pintada en las fotos de Tema (fracción x,y,w,h). */
+  const CORTES_TEMA = {
+    'tema-abstracto-campo-color.webp': [0.12, 0.16, 0.68, 0.70],
+    'tema-abstracto-emocion.webp': [0.12, 0.15, 0.70, 0.66],
+    'tema-abstracto-geometrico.webp': [0.27, 0.16, 0.51, 0.67],
+    'tema-abstracto-gestual.webp': [0.17, 0.13, 0.62, 0.76],
+    'tema-abstracto-materia.webp': [0.16, 0.11, 0.62, 0.78],
+    'tema-bodegon-abstracto.webp': [0.20, 0.08, 0.70, 0.68],
+    'tema-bodegon-espatulado.webp': [0.16, 0.08, 0.72, 0.70],
+    'tema-bodegon-hiperrealista.webp': [0.06, 0.09, 0.88, 0.74],
+    'tema-bodegon-monocromatico.webp': [0.17, 0.14, 0.76, 0.70],
+    'tema-bodegon.webp': [0.20, 0.18, 0.60, 0.62],
+    'tema-paisaje-abstracto.webp': [0.20, 0.14, 0.67, 0.74],
+    'tema-paisaje-espatulado.webp': [0.22, 0.13, 0.62, 0.76],
+    'tema-paisaje-hiperrealista.webp': [0.14, 0.14, 0.72, 0.62],
+    'tema-paisaje-monocromatico.webp': [0.14, 0.14, 0.78, 0.70],
+    'tema-paisaje.webp': [0.29, 0.18, 0.57, 0.61],
+    'tema-retrato-abstracto.webp': [0.18, 0.12, 0.62, 0.76],
+    'tema-retrato-espatulado.webp': [0.16, 0.11, 0.60, 0.78],
+    'tema-retrato-hiperrealista.webp': [0.21, 0.12, 0.63, 0.80],
+    'tema-retrato-monocromatico.webp': [0.18, 0.14, 0.62, 0.74],
+    'tema-retrato.webp': [0.22, 0.11, 0.54, 0.75]
+  };
+  const CORTE_TEMA_DEFECTO = [0.12, 0.12, 0.76, 0.72];
+
+  function nombreArchivo(url) {
+    return String(url || '').split('?')[0].split('#')[0].split('/').pop() || '';
+  }
+  function corteDeUrl(url) {
+    const name = nombreArchivo(url);
+    return CORTES_TEMA[name] || CORTE_TEMA_DEFECTO;
+  }
+  function urlTemaActual() {
+    const tema = document.getElementById('tema')?.value || '';
+    if (!tema) return '';
+    return item('tema:' + tema).url || '';
+  }
+  function aplicarCorte(img, corte, caja) {
+    const aplicar = () => {
+      const W = caja.clientWidth, H = caja.clientHeight;
+      const nw = img.naturalWidth, nh = img.naturalHeight;
+      if (!W || !H || !nw || !nh) return;
+      const cx = corte[0], cy = corte[1], cw = Math.max(0.05, corte[2]), ch = Math.max(0.05, corte[3]);
+      const sx = cx * nw, sy = cy * nh, sw = cw * nw, sh = ch * nh;
+      const scale = Math.max(W / sw, H / sh);
+      img.style.width = (nw * scale) + 'px';
+      img.style.height = (nh * scale) + 'px';
+      img.style.maxWidth = 'none';
+      img.style.left = (-sx * scale) + 'px';
+      img.style.top = (-sy * scale) + 'px';
+    };
+    if (img.complete && img.naturalWidth) aplicar();
+    else img.addEventListener('load', aplicar, { once: true });
+    if (typeof ResizeObserver === 'function') {
+      const ro = new ResizeObserver(aplicar);
+      ro.observe(caja);
+    }
+  }
+  function mediaForma(shape, fallbackUrl) {
+    const url = urlTemaActual() || fallbackUrl || '';
+    const media = document.createElement('div');
+    const shapeClass = String(shape || 'Estandar').toLowerCase();
+    media.className = 'guia-media';
+    media.dataset.formaShape = shape;
+    media.dataset.formaSrc = url;
+    if (!url) {
+      media.innerHTML = '<span class="guia-placeholder" aria-hidden="true"></span>';
+      return media;
+    }
+    if (!urlTemaActual()) {
+      const img = document.createElement('img');
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.alt = '';
+      img.src = url;
+      media.append(img);
+      return media;
+    }
+    media.classList.add('guia-media-forma');
+    const hang = document.createElement('div');
+    hang.className = 'forma-hang forma-hang--' + shapeClass;
+    const canvas = document.createElement('div');
+    canvas.className = 'forma-canvas forma-canvas--' + shapeClass;
+    const img = document.createElement('img');
+    img.loading = 'eager';
+    img.decoding = 'sync';
+    img.alt = '';
+    img.src = url;
+    canvas.append(img);
+    hang.append(canvas);
+    media.append(hang);
+    aplicarCorte(img, corteDeUrl(url), canvas);
+    return media;
+  }
+
   function svgData(svg) {
     return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   }
@@ -91,17 +186,24 @@
     btn.setAttribute('role', 'option');
     btn.setAttribute('aria-selected', selected ? 'true' : 'false');
     btn.dataset.value = value;
-    const media = document.createElement('div');
-    media.className = 'guia-media';
-    if (g.url) {
-      const img = document.createElement('img');
-      img.loading = 'lazy';
-      img.decoding = 'async';
-      img.alt = '';
-      img.src = g.url;
-      media.append(img);
+    let media;
+    if (key.startsWith('forma_lienzo:')) {
+      media = mediaForma(value, g.url);
+      btn.dataset.formaShape = value;
+      btn.dataset.formaSrc = media.dataset.formaSrc || '';
     } else {
-      media.innerHTML = '<span class="guia-placeholder" aria-hidden="true"></span>';
+      media = document.createElement('div');
+      media.className = 'guia-media';
+      if (g.url) {
+        const img = document.createElement('img');
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        img.alt = '';
+        img.src = g.url;
+        media.append(img);
+      } else {
+        media.innerHTML = '<span class="guia-placeholder" aria-hidden="true"></span>';
+      }
     }
     const cap = document.createElement('div');
     cap.className = 'guia-cap';
@@ -403,6 +505,6 @@
   }
 
   window.CotizadorVisual = {
-    refreshAll, updateEscala, updateEscalaEscultura, renderFondo, renderSujetos, item, defaults, current, GROUPS, svgData, clavesGuia, estiloActual, tecnicaActual
+    refreshAll, updateEscala, updateEscalaEscultura, renderFondo, renderSujetos, item, defaults, current, GROUPS, svgData, clavesGuia, estiloActual, tecnicaActual, mediaForma, urlTemaActual, corteDeUrl
   };
 })();

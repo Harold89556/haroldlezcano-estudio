@@ -579,6 +579,48 @@ body.editor-abierto .admin-bottom-nav, body:has(#admin-workspace[hidden]) .admin
 .guia-card.active::after, .guia-card[aria-selected="true"]::after { content: "✓"; position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; border-radius: 50%; background: #d4af37; color: #111; font-size: 13px; font-weight: 800; line-height: 22px; text-align: center; z-index: 2; box-shadow: 0 2px 8px rgba(0,0,0,.5); }
 .guia-media { aspect-ratio: 16/11; background: #0c0c0c; overflow: hidden; }
 .guia-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.guia-media-forma {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 16px 18px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.22), transparent 58%),
+    linear-gradient(180deg, #e8e4da 0%, #d4cec2 100%);
+}
+.forma-hang {
+  max-width: 82%;
+  max-height: 84%;
+  flex: 0 0 auto;
+  filter:
+    drop-shadow(0 0 0.5px #f3ead8)
+    drop-shadow(0 0 0.7px rgba(243,234,216,.95))
+    drop-shadow(0 7px 12px rgba(0,0,0,.32));
+}
+.forma-hang--estandar { width: 46%; aspect-ratio: 3/4; }
+.forma-hang--circular { width: 58%; aspect-ratio: 1; }
+.forma-hang--ovalado { width: 42%; aspect-ratio: 3/4; }
+.forma-hang--hexagonal { width: 66%; aspect-ratio: 1.1547 / 1; }
+.forma-canvas {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #1a1a1a;
+}
+.forma-canvas--estandar { border-radius: 2px; }
+.forma-canvas--circular { border-radius: 50%; clip-path: circle(50% at 50% 50%); }
+.forma-canvas--ovalado { border-radius: 50%; clip-path: ellipse(50% 50% at 50% 50%); }
+.forma-canvas--hexagonal { clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); }
+.forma-canvas img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  display: block;
+}
 .guia-cap { padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 3px; }
 .guia-cap strong { font-size: 12px; color: #f0d77f; }
 .guia-cap span { font-size: 11px; color: #bdbdbd; line-height: 1.35; }
